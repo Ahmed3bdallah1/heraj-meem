@@ -1,0 +1,97 @@
+{
+  "id": "heraj-prod-env",
+  "name": "Heraj Production",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "https://api.baho.com.sa/api",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "server_url",
+      "value": "https://api.baho.com.sa",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "ad_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "conversation_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "category_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "store_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "city_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "region_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "seller_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "page",
+      "value": "1",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "limit",
+      "value": "10",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

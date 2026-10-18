@@ -257,6 +257,7 @@ class ApiService {
     Duration? sendTimeOut = _sendTimeout,
     Duration? receiveTimeout = _receiveTimeout,
     Map<String, dynamic> additionalHeaders = const {},
+    bool alreadyRetried = false,
   }) async {
     providerContainer.refresh(hasInternetProvider2);
     final Map<String, dynamic> headers =
@@ -362,6 +363,27 @@ class ApiService {
         throw DioException(requestOptions: response.requestOptions);
       }
     } on DioException catch (e) {
+      final canRefresh = e.response?.statusCode == 401 &&
+          !alreadyRetried &&
+          !url.contains('auth/refresh') &&
+          !url.contains('auth/otp');
+      if (canRefresh && await _refreshAccessToken()) {
+        return _hitApi(
+          methodType: methodType,
+          url: url,
+          returnDataOnly: returnDataOnly,
+          cancelToken: cancelToken,
+          requestBody: requestBody,
+          queryParameters: queryParameters,
+          logging: logging,
+          ignoreError: ignoreError,
+          header: null,
+          sendTimeOut: sendTimeOut,
+          receiveTimeout: receiveTimeout,
+          additionalHeaders: additionalHeaders,
+          alreadyRetried: true,
+        );
+      }
       rethrow;
       // if (e.response?.statusCode == 401) {
       //   // Token expired, refresh the token
@@ -384,6 +406,34 @@ class ApiService {
       //   rethrow;
       // }
     }
+  }
+
+  Future<bool> _refreshAccessToken() async {
+    final refresh = dataManager.getRefreshToken();
+    if (refresh == null || refresh.isEmpty) return false;
+    try {
+      final response = await _dio.post(
+        ApiPath.refreshSession,
+        data: {'refreshToken': refresh},
+        options: Options(
+          headers: {
+            'Content-Type': Headers.jsonContentType,
+            'Accept': Headers.jsonContentType,
+          },
+        ),
+      );
+      final data = response.data is Map ? response.data['data'] : null;
+      final accessToken = data is Map ? data['accessToken'] : null;
+      if (accessToken is String && accessToken.isNotEmpty) {
+        await dataManager.setToken(accessToken);
+        final nextRefresh = data['refreshToken'];
+        if (nextRefresh is String && nextRefresh.isNotEmpty) {
+          await dataManager.setRefreshToken(nextRefresh);
+        }
+        return true;
+      }
+    } catch (_) {}
+    return false;
   }
 }
 

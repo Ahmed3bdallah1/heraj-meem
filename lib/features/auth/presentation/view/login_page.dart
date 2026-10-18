@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,19 +11,21 @@ import 'package:heraj_meem/core/service/local_data_manager.dart';
 import 'package:heraj_meem/features/root/view/root_view.dart';
 import 'package:heraj_meem/gen/assets.gen.dart';
 import 'package:heraj_meem/main.dart';
-import 'package:heraj_meem/ui/shared_widgets/container_button.dart';
 import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../helper/responsive.dart';
-import '../../../../../helper/phone_validation_mixin.dart';
 import '../../../../../ui/shared_widgets/custom_reactive_form_consumer.dart';
 import '../../../../../ui/shared_widgets/custom_text_field.dart';
 import '../../../../../ui/ui.dart';
 import '../../../onboarding/view/get_started_screen.dart' show isUserProvider;
 import '../manager/auth_provuder.dart';
+import '../view/widgets/country_code_button.dart';
 import '../view/widgets/otp_bottom_sheet.dart';
+import 'otp_register_page.dart';
+
+final acceptPolicyProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final securePasswordProvider =
     StateProvider.family.autoDispose<bool, dynamic>((ref, _) => true);
@@ -38,8 +38,7 @@ class LoginPage extends ConsumerStatefulWidget {
   ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage>
-    with PhoneValidationMixin {
+class _LoginPageState extends ConsumerState<LoginPage> {
   late final FormGroup formGroup;
   final FocusNode phoneNode = FocusNode();
 
@@ -54,26 +53,16 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
     formGroup = FormGroup({
       'country_code': FormControl<String>(
-        value: '+90',
+        value: '+966',
         validators: [Validators.required],
       ),
       'phone': FormControl<String>(
         validators: [
           Validators.required,
+          Validators.minLength(9),
+          Validators.maxLength(15),
         ],
       ),
-    });
-
-    formGroup.control('phone').setValidators([
-      Validators.required,
-      Validators.minLength(getPhoneLengthForCountryCode(
-          formGroup.control('country_code').value)!),
-      Validators.maxLength(getPhoneLengthForCountryCode(
-          formGroup.control('country_code').value)!),
-    ]);
-
-    formGroup.control('country_code').valueChanges.listen((_) {
-      formGroup.control('phone').updateValueAndValidity();
     });
 
     super.initState();
@@ -111,7 +100,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
               fit: StackFit.expand,
               children: [
                 Image.asset(
-                  Assets.base.getStarted1.path,
+                  Assets.base.loginHero.path,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(color: AppColor.backGround);
@@ -149,16 +138,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
             ),
           ),
           Positioned(
-            bottom: ref.watch(isUserProvider)
-                ? height * .1
-                : MediaQuery.of(context).padding.bottom,
+            bottom: MediaQuery.of(context).padding.bottom+30,
             left: 0,
             right: 0,
             child: ReactiveForm(
               formGroup: formGroup,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20).copyWith(bottom: 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,90 +167,20 @@ class _LoginPageState extends ConsumerState<LoginPage>
                     ),
                     const Gap(24),
                     Row(
-                      spacing: 6,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ReactiveValueListenableBuilder<String>(
-                          formControlName: 'country_code',
-                          builder: (context, countryCodeControl, child) {
-                            final phoneCode =
-                                (!(countryCodeControl.value?.contains("+") ??
-                                            false)
-                                        ? '+${countryCodeControl.value}'
-                                        : countryCodeControl.value) ??
-                                    '+90';
-                            Country country =
-                                getCountryFromPhoneCode(phoneCode);
-
-                            return InkWell(
-                              onTap: () {
-                                showCountryPicker(
-                                  context: context,
-                                  onSelect: (Country selectedCountry) {
-                                    formGroup
-                                        .control('country_code')
-                                        .updateValue(
-                                          selectedCountry.phoneCode,
-                                          emitEvent: true,
-                                        );
-                                  },
-                                  countryListTheme: CountryListThemeData(
-                                    flagSize: 24,
-                                    backgroundColor: Colors.white,
-                                    textStyle: AppFont.font14W500Black,
-                                    inputDecoration: InputDecoration(
-                                      labelText: 'Search'.tr,
-                                      hintText: 'Start typing to search'.tr,
-                                      prefixIcon: const Icon(Icons.search),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: AppColor.primary2,
-                                        ),
-                                      ),
-                                    ),
-                                    searchTextStyle: AppFont.font14W500Black,
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 100,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  // color: AppColor.primary2,
-                                  borderRadius: BorderRadius.circular(25),
-                                  border: Border.all(
-                                      color: AppColor.grey1, width: 2),
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      country.flagEmoji,
-                                      style: AppFont.font20W700Black,
-                                    ),
-                                    const Gap(6),
-                                    Text(
-                                      country.phoneCode,
-                                      style: AppFont.font14W500Black,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        CountryCodeButton(formGroup: formGroup),
+                        const Gap(8),
                         Expanded(
                           child: CustomTextField(
-                            radius: 25,
+                            radius: 16,
                             formControlName: "phone",
-                            hintText: "Enter Phone Number".tr,
+                            hintText: "Phone Number".tr,
                             inputType: TextInputType.phone,
                             inputFormatter: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             focusNode: phoneNode,
-                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ],
@@ -279,9 +196,17 @@ class _LoginPageState extends ConsumerState<LoginPage>
                             isValid: formGroup.valid,
                             text: "Log In".tr,
                             textSize: 16,
+                            radius: 100,
                             color: AppColor.primary,
                             fontColor: Colors.white,
                             onPressed: () async {
+                              if (!ref.read(acceptPolicyProvider)) {
+                                UIHelper.showGlobalSnackBar(
+                                  text: 'Please accept the policy'.tr,
+                                  color: AppColor.danger,
+                                );
+                                return;
+                              }
                               if (formGroup.valid) {
                                 final countryCode =
                                     formGroup.value['country_code'] as String;
@@ -294,10 +219,19 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                       .preLogin({
                                     'phone': phoneNumber,
                                     'countryCode': countryCode,
-                                    'role': 'customer',
                                   });
                                   if (preLoginResponse != null &&
                                       preLoginResponse.success) {
+                                    if (preLoginResponse.data?.isNewUser ==
+                                        true) {
+                                      Get.to(() => OtpRegisterPage(
+                                            phone: phoneNumber,
+                                            countryCode: countryCode,
+                                            otpAlreadySent: true,
+                                          ));
+                                      return;
+                                    }
+                                    if (!context.mounted) return;
                                     showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
@@ -316,10 +250,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                                 .login({
                                               'phone': phoneNumber,
                                               'countryCode': countryCode,
-                                              'otp': otp,
-                                              'role': ref.watch(isUserProvider)
-                                                  ? 'customer'
-                                                  : 'vendor',
+                                              'code': otp,
                                             });
                                           } catch (e) {
                                             UIHelper.showAlert(
@@ -336,9 +267,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                                 .preLogin({
                                               'phone': phoneNumber,
                                               'countryCode': countryCode,
-                                              'role': ref.watch(isUserProvider)
-                                                  ? 'customer'
-                                                  : 'vendor',
                                             });
                                           } catch (e) {
                                             UIHelper.showAlert(
@@ -362,76 +290,66 @@ class _LoginPageState extends ConsumerState<LoginPage>
                         });
                       },
                     ),
-                    const Gap(24),
+                    const Gap(16),
                     Row(
                       children: [
-                        const Expanded(
-                          child: Divider(
-                            color: Colors.grey,
+                        const Expanded(child: Divider(color: Color(0xffE6E6E6))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            'Or'.tr,
+                            style: AppFont.font14W600Grey2.copyWith(
+                              fontSize: 18,
+                              color: const Color(0xff666666),
+                            ),
                           ),
                         ),
+                        const Expanded(child: Divider(color: Color(0xffE6E6E6))),
                       ],
                     ),
+                    const Gap(10),
+                    Center(
+                      child: Text(
+                        'Sign up with social media'.tr,
+                        style: AppFont.font14W500Black.copyWith(
+                          fontSize: 16,
+                          color: const Color(0xff1A1A1A),
+                        ),
+                      ),
+                    ),
+                    const Gap(12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          child: Text(
-                            "Or".tr,
-                            style: AppFont.font14W600Grey2,
+                        _SocialCircle(
+                          color: const Color(0xff4285F4),
+                          child: SvgPicture.asset(
+                            Assets.socialMedia.facebookSvg,
+                            width: 20,
+                            height: 20,
                           ),
+                          onTap: () {},
                         ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // ContainerButton(
-                          //   radius: 25,
-                          //   size: 60,
-                          //   color: Colors.transparent,
-                          //   widget: Padding(
-                          //     padding: EdgeInsets.all(8.0),
-                          //     child: Image.asset(
-                          //       Assets.socialMedia.facebook.path,
-                          //       width: 50,
-                          //       height: 50,
-                          //     ),
-                          //   ),
-                          //   onTap: () {},
-                          // ),
-                          if (Platform.isIOS)
-                            ContainerButton(
-                              radius: 25,
-                              size: 60,
-                              color: Colors.transparent,
-                              widget: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  Assets.socialMedia.apple.path,
-                                  width: 50,
-                                  height: 50,
-                                ),
-                              ),
-                              onTap: () {},
-                            ),
-                          ContainerButton(
-                            radius: 25,
-                            size: 60,
-                            color: Colors.transparent,
-                            widget: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Image.asset(
-                                Assets.socialMedia.gmail.path,
-                                width: 50,
-                                height: 50,
-                              ),
-                            ),
-                            onTap: () async {
+                        const Gap(20),
+                        _SocialCircle(
+                          color: const Color(0xff616161),
+                          child: SvgPicture.asset(
+                            Assets.socialMedia.appleSvg,
+                            width: 20,
+                            height: 20,
+                          ),
+                          onTap: () {},
+                        ),
+                        const Gap(20),
+                        _SocialCircle(
+                          color: Colors.white,
+                          bordered: true,
+                          child: SvgPicture.asset(
+                            Assets.socialMedia.googleSvg,
+                            width: 20,
+                            height: 20,
+                          ),
+                          onTap: () async {
                               try {
                                 final googleSignInService =
                                     GoogleSignInService();
@@ -462,9 +380,30 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                 );
                               }
                             },
+                        ),
+                      ],
+                    ),
+                    const Gap(24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account?".tr,
+                          style: AppFont.font14W500Black.copyWith(
+                            color: const Color(0xff515151),
                           ),
-                        ],
-                      ),
+                        ),
+                        const Gap(8),
+                        GestureDetector(
+                          onTap: () => Get.to(() => const OtpRegisterPage()),
+                          child: Text(
+                            'Sign up'.tr,
+                            style: AppFont.font14W600Black.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     if (dataManager.getFingerprintEnabled() &&
                         ref.watch(userProvider)?.id != null) ...[
@@ -510,6 +449,39 @@ class _LoginPageState extends ConsumerState<LoginPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SocialCircle extends StatelessWidget {
+  const _SocialCircle({
+    required this.color,
+    required this.child,
+    required this.onTap,
+    this.bordered = false,
+  });
+
+  final Color color;
+  final Widget child;
+  final VoidCallback onTap;
+  final bool bordered;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      customBorder: const CircleBorder(),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: bordered ? const Color(0xffEAEAEA) : Colors.transparent,
+          ),
+        ),
+        child: child,
       ),
     );
   }

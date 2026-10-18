@@ -3,6 +3,17 @@ import '../../../../../core/service/webservice/dio_helper.dart';
 import '../../../../../models/user_model.dart';
 import '../../../../core/service/local_data_manager.dart';
 
+String authPhone(Map<String, dynamic> data) {
+  final raw = (data['phone'] ?? '').toString().trim();
+  if (raw.startsWith('+')) return raw;
+  var country =
+      (data['countryCode'] ?? data['country_code'] ?? '+966').toString();
+  if (!country.startsWith('+')) country = '+$country';
+  var local = raw;
+  if (local.startsWith('0')) local = local.substring(1);
+  return '$country$local';
+}
+
 abstract class AuthDataSource {
   Future<UserAuthResponseModel> login(Map<String, dynamic> data);
 
@@ -30,56 +41,18 @@ class AuthDataSourceImpl extends AuthDataSource {
 
   @override
   Future<UserAuthResponseModel> login(Map<String, dynamic> data) async {
+    final displayName = data['displayName']?.toString();
     final res = await apiService.post(
       url: ApiPath.verifyOTP,
-      requestBody: {...data, "countryCode": "+${data["countryCode"]}"},
+      requestBody: {
+        'phone': authPhone(data),
+        'code': data['code'] ?? data['otp'],
+        if (displayName != null && displayName.isNotEmpty)
+          'displayName': displayName,
+      },
       returnDataOnly: false,
     );
-
-    final responseData = res["data"] as Map<String, dynamic>?;
-    if (responseData == null) {
-      throw Exception("Invalid response: missing data field");
-    }
-
-    final tokens = responseData["tokens"] as Map<String, dynamic>?;
-    if (tokens == null) {
-      throw Exception("Invalid response: missing tokens field");
-    }
-
-    final accessToken = tokens["accessToken"] as String?;
-    if (accessToken == null || accessToken.isEmpty) {
-      throw Exception("Invalid response: missing or empty accessToken");
-    }
-
-    final refreshToken = tokens["refreshToken"] as String?;
-
-    await dataManager.setToken(accessToken);
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await dataManager.setRefreshToken(refreshToken);
-    }
-
-    final userData = responseData["user"] as Map<String, dynamic>?;
-    if (userData == null) {
-      throw Exception("Invalid response: missing user field");
-    }
-
-    final userId = userData["id"] ?? userData["_id"];
-    String userIdString = '';
-    if (userId is int) {
-      userIdString = userId.toString();
-    } else if (userId is String) {
-      userIdString = userId;
-    } else {
-      throw Exception("Invalid response: user ID is missing or invalid");
-    }
-
-    await dataManager.setId(userIdString);
-    final user = UserModel.fromJson(userData);
-
-    return UserAuthResponseModel(
-        message: res["message"] as String? ?? "Logged in successfully",
-        token: accessToken,
-        user: user);
+    return _saveSession(res);
   }
 
   @override
@@ -138,33 +111,15 @@ class AuthDataSourceImpl extends AuthDataSource {
   Future<PreLoginResponseModel> preLogin(Map<String, dynamic> data) async {
     final res = await apiService.post(
       url: ApiPath.sendOTP,
-      requestBody: data,
+      requestBody: {'phone': authPhone(data)},
       returnDataOnly: false,
     );
-    return PreLoginResponseModel.fromJson(res);
+    return PreLoginResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
   @override
-  Future<UserAuthResponseModel> register(Map<String, dynamic> data) async {
-    final res =
-        await apiService.post(url: ApiPath.userRegister, requestBody: data);
-    await dataManager.setToken(res["token"]);
-
-    // Convert ID to string if needed
-    final userId = res["data"]["id"] ?? res["data"]["_id"];
-    String userIdString = '';
-    if (userId is int) {
-      userIdString = userId.toString();
-    } else if (userId is String) {
-      userIdString = userId;
-    }
-
-    await dataManager.setId(userIdString);
-    final user = UserModel.fromJson(res["data"]);
-    return UserAuthResponseModel(
-        message: res["message"] ?? "Logged in successfully",
-        token: res['token'],
-        user: user);
+  Future<UserAuthResponseModel> register(Map<String, dynamic> data) {
+    return login(data);
   }
 
   @override
@@ -227,7 +182,43 @@ class AuthDataSourceImpl extends AuthDataSource {
   Future<UserModel> getMyProfile() async {
     final response =
         await apiService.get(url: ApiPath.getUser, returnDataOnly: true);
-    return UserModel.fromJson(response["user"]);
+    return UserModel.fromJson(Map<String, dynamic>.from(response as Map));
+  }
+
+  Future<UserAuthResponseModel> _saveSession(Map<String, dynamic> res) async {
+    final responseData = res['data'] as Map<String, dynamic>?;
+    if (responseData == null) {
+      throw Exception('Invalid response: missing data field');
+    }
+
+    final accessToken = responseData['accessToken'] as String?;
+    if (accessToken == null || accessToken.isEmpty) {
+      throw Exception('Invalid response: missing or empty accessToken');
+    }
+
+    final refreshToken = responseData['refreshToken'] as String?;
+    await dataManager.setToken(accessToken);
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await dataManager.setRefreshToken(refreshToken);
+    }
+
+    UserModel user;
+    try {
+      user = await getMyProfile();
+    } catch (_) {
+      final userData = responseData['user'] as Map<String, dynamic>?;
+      if (userData == null) {
+        throw Exception('Invalid response: missing user field');
+      }
+      user = UserModel.fromJson(userData);
+    }
+
+    await dataManager.setId(user.id);
+    return UserAuthResponseModel(
+      message: res['message'] as String? ?? 'Logged in successfully',
+      token: accessToken,
+      user: user,
+    );
   }
 
   @override

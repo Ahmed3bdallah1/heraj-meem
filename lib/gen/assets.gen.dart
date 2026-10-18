@@ -46,6 +46,10 @@ class $AssetsBaseGen {
   /// File path: assets/base/loading.gif
   AssetGenImage get loading => const AssetGenImage('assets/base/loading.gif');
 
+  /// File path: assets/base/login_hero.png
+  AssetGenImage get loginHero =>
+      const AssetGenImage('assets/base/login_hero.png');
+
   /// File path: assets/base/location.png
   AssetGenImage get location => const AssetGenImage('assets/base/location.png');
 
@@ -102,6 +106,7 @@ class $AssetsBaseGen {
         getStarted1,
         getStarted2,
         loading,
+        loginHero,
         location,
         logoSplash,
         logoWhite,
@@ -126,6 +131,15 @@ class $AssetsSocialMediaGen {
   AssetGenImage get apple =>
       const AssetGenImage('assets/social_media/apple.png');
 
+  /// File path: assets/social_media/apple.svg
+  String get appleSvg => 'assets/social_media/apple.svg';
+
+  /// File path: assets/social_media/facebook.svg
+  String get facebookSvg => 'assets/social_media/facebook.svg';
+
+  /// File path: assets/social_media/google.svg
+  String get googleSvg => 'assets/social_media/google.svg';
+
   /// File path: assets/social_media/error_404_outdoor.lottie
   String get error404Outdoor => 'assets/social_media/error_404_outdoor.lottie';
 
@@ -137,7 +151,8 @@ class $AssetsSocialMediaGen {
   String get profileCircle => 'assets/social_media/profile-circle.svg';
 
   /// List of all assets
-  List<dynamic> get values => [apple, error404Outdoor, gmail, profileCircle];
+  List<dynamic> get values =>
+      [apple, appleSvg, facebookSvg, googleSvg, error404Outdoor, gmail, profileCircle];
 }
 
 class Assets {

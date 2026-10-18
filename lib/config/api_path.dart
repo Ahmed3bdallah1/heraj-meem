@@ -1,7 +1,9 @@
 abstract class ApiPath {
-  static const baseurl = "https://api.esyasatgo.com/api/";
-  static const uploadPath = 'https://esyasatgo.com/storage/';
-  static const sharePath = 'https://esyasatgo.com/';
+  /// Matches heraj_environment.json (`server_url`, `base_url`).
+  static const serverUrl = 'https://api.baho.com.sa';
+  static const baseurl = '$serverUrl/api/';
+  static const uploadPath = '$serverUrl/';
+  static const sharePath = '$serverUrl/';
   static const refresh = 'auth/v1/token?grant_type=refresh_token';
   static const userPreRegister = 'auth/register';
   static const vendorRegister = 'vendors/register';
@@ -23,8 +25,9 @@ abstract class ApiPath {
   static const getUser = 'auth/me';
   static const googleLogin = 'auth/google/mobile';
   static const selectRole = 'auth/select-role';
-  static const sendOTP = 'auth/send-otp';
-  static const verifyOTP = 'auth/verify-otp';
+  static const sendOTP = 'auth/otp/request';
+  static const verifyOTP = 'auth/otp/verify';
+  static const refreshSession = 'auth/refresh';
   static const userRegister = 'auth/verify';
   static const logOut = 'auth/logout';
   static const deleteAccount = 'auth/delete-account';
