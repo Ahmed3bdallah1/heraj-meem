@@ -1,10 +1,8 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/features/products/data/models/product_model.dart';
-import 'package:heraj_meem/widgets/disintegration_effect.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../main.dart';
 import '../../../../../ui/shared_widgets/image_or_svg.dart';
@@ -32,15 +30,10 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
   late AnimationController _heartController;
   late Animation<double> _heartScaleAnimation;
   late Animation<double> _heartRotationAnimation;
-  final GlobalKey _globalKey = GlobalKey();
-  late ui.FragmentProgram _disintegrationProgram;
-
-  bool _isDisintegrating = false;
 
   @override
   void initState() {
     super.initState();
-    _loadShader();
 
     _heartController = AnimationController(
       vsync: this,
@@ -75,34 +68,11 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
     super.dispose();
   }
 
-  Future<void> _loadShader() async {
-    _disintegrationProgram = await ui.FragmentProgram.fromAsset(
-      'assets/shaders/disintegration.frag',
-    );
-  }
-
   void _handleHeartTap() async {
-    if (_isDisintegrating) return;
-
     _heartController.forward().then((_) {
       _heartController.reverse();
     });
     await _removeItem();
-
-    // setState(() {
-    //   _isDisintegrating = true;
-    // });
-    //
-    // DisintegrationEffect.run(
-    //   context: context,
-    //   key: _globalKey,
-    //   program: _disintegrationProgram,
-    //   onComplete: _removeItem,
-    //   strength: 1.0,
-    //   edgeBias: 1.0,
-    //   windDirection: const Offset(1, -0.3),
-    //   duration: const Duration(milliseconds: 800),
-    // );
   }
 
   Future<void> _removeItem() async {
@@ -153,15 +123,9 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (_isDisintegrating) {
-      return const SizedBox.shrink();
-    }
-
     final comparePrice = _getComparePrice();
 
-    return RepaintBoundary(
-      key: _globalKey,
-      child: GestureDetector(
+    return GestureDetector(
         onTap: () => Get.to(
           () => ProductDetailsScreen(
             productId: widget.favoritesModel.id,
@@ -394,7 +358,6 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

@@ -50,7 +50,7 @@ class GetStartedScreen extends ConsumerWidget {
                 ),
                 SafeArea(
                   child: Center(
-                    child: Image.asset(Assets.base.logo.path,height: 100,)
+                    child: Image.asset(Assets.base.logoWhite.path,height: 100,)
                   ),
                 ),
               ],

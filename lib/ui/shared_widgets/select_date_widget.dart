@@ -69,7 +69,7 @@ class SelectDateWidget extends StatelessWidget {
               if (date == null)
                 const Expanded(
                     flex: 2,
-                    child: FaIcon(Icons.keyboard_arrow_down_outlined,
+                    child: Icon(Icons.keyboard_arrow_down_outlined,
                         color: Colors.black)),
             ],
           ),

@@ -49,6 +49,14 @@ class $AssetsBaseGen {
   /// File path: assets/base/location.png
   AssetGenImage get location => const AssetGenImage('assets/base/location.png');
 
+  /// File path: assets/base/logo_splash.png
+  AssetGenImage get logoSplash =>
+      const AssetGenImage('assets/base/logo_splash.png');
+
+  /// File path: assets/base/logo_white.png
+  AssetGenImage get logoWhite =>
+      const AssetGenImage('assets/base/logo_white.png');
+
   /// File path: assets/base/no_wifi.json
   String get noWifi => 'assets/base/no_wifi.json';
 
@@ -95,6 +103,8 @@ class $AssetsBaseGen {
         getStarted2,
         loading,
         location,
+        logoSplash,
+        logoWhite,
         noWifi,
         notFound,
         on1,
@@ -116,6 +126,9 @@ class $AssetsSocialMediaGen {
   AssetGenImage get apple =>
       const AssetGenImage('assets/social_media/apple.png');
 
+  /// File path: assets/social_media/error_404_outdoor.lottie
+  String get error404Outdoor => 'assets/social_media/error_404_outdoor.lottie';
+
   /// File path: assets/social_media/gmail.png
   AssetGenImage get gmail =>
       const AssetGenImage('assets/social_media/gmail.png');
@@ -124,7 +137,7 @@ class $AssetsSocialMediaGen {
   String get profileCircle => 'assets/social_media/profile-circle.svg';
 
   /// List of all assets
-  List<dynamic> get values => [apple, gmail, profileCircle];
+  List<dynamic> get values => [apple, error404Outdoor, gmail, profileCircle];
 }
 
 class Assets {

@@ -69,8 +69,8 @@ class ProfileHeaderTile extends ConsumerWidget {
                     color: AppColor.primary2,
                     fontColor: AppColor.black,
                     isExpanded: true,
-                    widget: Icon(
-                      FontAwesomeIcons.userEdit,
+                    widget: FaIcon(
+                      FontAwesomeIcons.userPen,
                       color: AppColor.black,
                       size: 14,
                     ),

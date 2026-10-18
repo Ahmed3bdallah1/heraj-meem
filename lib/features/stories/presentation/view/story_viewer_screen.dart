@@ -454,7 +454,7 @@ class _StoryViewerScreenState extends State<StoryViewerScreen> {
                                       ),
                                       if (currentStory.isAdmin) ...[
                                         const Gap(6),
-                                        Icon(
+                                        FaIcon(
                                           FontAwesomeIcons.chessKing,
                                           size: 14,
                                           color: AppColor.primary,

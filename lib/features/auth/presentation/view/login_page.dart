@@ -132,7 +132,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                 SafeArea(
                   child: Center(
                       child: Image.asset(
-                    Assets.base.logo.path,
+                    Assets.base.logoWhite.path,
                     width: width * .5,
                   )),
                 ),
