@@ -46,20 +46,18 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAxwmHLFzKaRAvjUCNTl6sltpGn8eQ_D_c',
-    appId: '1:520930212972:android:82a42dd12f0a9868982c49',
-    messagingSenderId: '520930212972',
-    projectId: 'heraj-turkia',
-    storageBucket: 'heraj-turkia.firebasestorage.app',
+    apiKey: 'AIzaSyBQ9b4U4-frUmRVjVLEaC6_bT_2kmbmYh4',
+    appId: '1:732467824772:android:d3722ef0fc98aa17b65ad1',
+    messagingSenderId: '732467824772',
+    projectId: 'heraj-meem',
+    storageBucket: 'heraj-meem.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBT0vf7ODKPLAPsurr3fR1DrzNgEZcNr90',
-    appId: '1:520930212972:ios:1fb532f64b720b80982c49',
-    messagingSenderId: '520930212972',
-    projectId: 'heraj-turkia',
-    storageBucket: 'heraj-turkia.firebasestorage.app',
-    iosBundleId: 'com.qeema.heraj',
+    apiKey: 'AIzaSyCPaBZYTiEo3FIgAW224P1IppnsbF3K4bo',
+    appId: '1:732467824772:ios:eb42650ce64ec007b65ad1',
+    messagingSenderId: '732467824772',
+    projectId: 'heraj-meem',
+    storageBucket: 'heraj-meem.firebasestorage.app',
+    iosBundleId: 'com.qeema.heraj.meem',
   );
-
 }
