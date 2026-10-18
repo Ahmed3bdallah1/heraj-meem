@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/location_service/location_service.dart';
-import 'package:heraj/core/service/location_service/location_provider.dart';
-import 'package:heraj/features/location/data/models/city_model.dart';
-import 'package:heraj/features/location/presentation/managers/location_provider.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/location_service/location_service.dart';
+import 'package:heraj_meem/core/service/location_service/location_provider.dart';
+import 'package:heraj_meem/features/location/data/models/city_model.dart';
+import 'package:heraj_meem/features/location/presentation/managers/location_provider.dart';
+import 'package:heraj_meem/main.dart';
 import 'package:location/location.dart';
 import 'package:get/get.dart';
 

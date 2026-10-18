@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/helper/riverpod.dart';
-import 'package:heraj/ui/shared_widgets/shimmer_effect.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
+import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
 import '../managers/payments_provider.dart';
 import 'widgets/payment_item_widget.dart';
 

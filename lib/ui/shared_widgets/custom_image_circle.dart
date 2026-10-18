@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:heraj/ui/shared_widgets/image_or_svg.dart';
+import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import '../../config/app_color.dart';
 
 class CustomImageCircle extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:heraj/features/auth/presentation/manager/auth_provuder.dart';
-import 'package:heraj/ui/shared_widgets/scaffold_back_ground.dart';
+import 'package:heraj_meem/features/auth/presentation/manager/auth_provuder.dart';
+import 'package:heraj_meem/ui/shared_widgets/scaffold_back_ground.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';

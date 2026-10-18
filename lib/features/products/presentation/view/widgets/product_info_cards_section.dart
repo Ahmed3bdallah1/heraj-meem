@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/localization_service/localization_service.dart';
-import 'package:heraj/features/products/data/models/product_details_model.dart';
-import 'package:heraj/features/products/presentation/view/widgets/product_tile.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
+import 'package:heraj_meem/features/products/data/models/product_details_model.dart';
+import 'package:heraj_meem/features/products/presentation/view/widgets/product_tile.dart';
+import 'package:heraj_meem/main.dart';
 
 class ProductInfoCardsSection extends StatelessWidget {
   final ProductDetailsModel product;

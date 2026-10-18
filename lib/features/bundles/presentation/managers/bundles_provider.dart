@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/bundles/domain/repo/bundles_repo.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/features/bundles/domain/repo/bundles_repo.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/main.dart';
 
 final fetchProductBundlesProvider = FutureProvider.family
     .autoDispose<List<ProductModel>, String>((ref, productId) async {

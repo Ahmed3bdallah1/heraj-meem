@@ -1,12 +1,12 @@
-import 'package:heraj/features/profile/presentation/view/widgets/edit_profile_image_widget.dart';
+import 'package:heraj_meem/features/profile/presentation/view/widgets/edit_profile_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/core/service/auth_service.dart';
-import 'package:heraj/features/profile/presentation/view/widgets/edit_personal_info.dart';
-import 'package:heraj/models/user_model.dart';
-import 'package:heraj/features/store/presentation/view/widgets/all_top_stores/animated_background.dart';
+import 'package:heraj_meem/core/service/auth_service.dart';
+import 'package:heraj_meem/features/profile/presentation/view/widgets/edit_personal_info.dart';
+import 'package:heraj_meem/models/user_model.dart';
+import 'package:heraj_meem/features/store/presentation/view/widgets/all_top_stores/animated_background.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../../config/app_color.dart';
 import '../../../../../config/app_font.dart';

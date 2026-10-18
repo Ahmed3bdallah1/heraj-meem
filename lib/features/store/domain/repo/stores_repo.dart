@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj/core/errors/failure.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/core/errors/failure.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
 import '../../data/models/open_store_model.dart';
 import '../../data/models/store_details_model.dart';
 import '../../data/models/store_model.dart';

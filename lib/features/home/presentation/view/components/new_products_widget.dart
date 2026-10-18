@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/products/presentation/view/sell_all_products_screen.dart';
-import 'package:heraj/features/products/presentation/view/widgets/product_tile.dart';
-import 'package:heraj/helper/extensions/adaptive_view.dart';
-import 'package:heraj/helper/riverpod.dart';
-import 'package:heraj/ui/shared_widgets/shimmer_effect.dart';
+import 'package:heraj_meem/features/products/presentation/view/sell_all_products_screen.dart';
+import 'package:heraj_meem/features/products/presentation/view/widgets/product_tile.dart';
+import 'package:heraj_meem/helper/extensions/adaptive_view.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
+import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
 import '../../../../../config/app_font.dart';
 import '../../managers/fetch_home_data_provider.dart';
 

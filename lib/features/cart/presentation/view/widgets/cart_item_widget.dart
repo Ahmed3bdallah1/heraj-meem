@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
 import 'package:tuple/tuple.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../main.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/store/domain/repo/stores_repo.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/store/domain/repo/stores_repo.dart';
 import '../../../../main.dart';
 import '../../data/models/open_store_model.dart';
 import '../../domain/use_case/fetch_stores_use_case.dart';

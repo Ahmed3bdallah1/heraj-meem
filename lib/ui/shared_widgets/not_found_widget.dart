@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj/config/app_font.dart';
+import 'package:heraj_meem/config/app_font.dart';
 import '../../config/app_color.dart';
 import '../../features/offline/widgets/reload_button.dart';
 import '../../gen/assets.gen.dart';

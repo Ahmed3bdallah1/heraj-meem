@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:heraj/helper/responsive.dart';
+import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';

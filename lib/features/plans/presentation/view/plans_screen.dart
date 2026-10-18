@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/plans/data/models/plans_model.dart';
-import 'package:heraj/features/plans/presentation/managers/plans_provider.dart';
-import 'package:heraj/helper/riverpod.dart';
-import 'package:heraj/ui/shared_widgets/custom_filled_button.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/plans/data/models/plans_model.dart';
+import 'package:heraj_meem/features/plans/presentation/managers/plans_provider.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
 
 final selectedPlanProvider = StateProvider<PlanModel?>((ref) => null);
 

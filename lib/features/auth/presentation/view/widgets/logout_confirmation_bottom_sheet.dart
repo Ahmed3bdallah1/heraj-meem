@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/ui/shared_widgets/custom_filled_button.dart';
-import 'package:heraj/ui/shared_widgets/custom_outlined_button.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_outlined_button.dart';
 
 class LogoutConfirmationBottomSheet extends ConsumerStatefulWidget {
   final VoidCallback onConfirm;

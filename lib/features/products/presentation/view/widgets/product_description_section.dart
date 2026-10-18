@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/products/data/models/product_details_model.dart';
-import 'package:heraj/ui/shared_widgets/shimmer_effect.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/products/data/models/product_details_model.dart';
+import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
 
 import '../../../../../core/service/localization_service/localization_service.dart';
 import '../../../../../main.dart';

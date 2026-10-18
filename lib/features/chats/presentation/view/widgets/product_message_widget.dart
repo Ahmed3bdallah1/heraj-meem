@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/ui/shared_widgets/price_widget.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/ui/shared_widgets/price_widget.dart';
 import '../../../domain/entities/message_entity.dart';
-import 'package:heraj/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
 import 'package:intl/intl.dart';
 
 class ProductMessageWidget extends StatelessWidget {

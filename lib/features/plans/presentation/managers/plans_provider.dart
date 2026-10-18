@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/plans/data/models/plans_model.dart';
-import 'package:heraj/features/plans/domain/repo/plans_repo.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/features/plans/data/models/plans_model.dart';
+import 'package:heraj_meem/features/plans/domain/repo/plans_repo.dart';
+import 'package:heraj_meem/main.dart';
 
 final fetchPlansProvider = FutureProvider.autoDispose((ref) async {
   final res = await getIt<PlansRepo>().getPlans();

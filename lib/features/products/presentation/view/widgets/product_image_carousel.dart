@@ -3,13 +3,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/favorites/presentation/managers/favorites.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/favorites/presentation/view/widgets/favorite_button.dart';
-import 'package:heraj/features/products/data/models/product_details_model.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/ui/shared_widgets/container_button.dart';
-import 'package:heraj/ui/shared_widgets/image_or_svg.dart';
+import 'package:heraj_meem/features/favorites/presentation/managers/favorites.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/favorites/presentation/view/widgets/favorite_button.dart';
+import 'package:heraj_meem/features/products/data/models/product_details_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/ui/shared_widgets/container_button.dart';
+import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 
 import 'product_badge_widget.dart';
 

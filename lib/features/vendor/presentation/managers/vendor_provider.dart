@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/vendor/data/models/vendor_profile_model.dart';
-import 'package:heraj/features/vendor/domain/use_case/get_my_products_use_case.dart';
-import 'package:heraj/features/vendor/domain/use_case/get_vendor_profile_use_case.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/vendor/data/models/vendor_profile_model.dart';
+import 'package:heraj_meem/features/vendor/domain/use_case/get_my_products_use_case.dart';
+import 'package:heraj_meem/features/vendor/domain/use_case/get_vendor_profile_use_case.dart';
 import '../../../../main.dart';
 
 final fetchVendorProfileProvider =

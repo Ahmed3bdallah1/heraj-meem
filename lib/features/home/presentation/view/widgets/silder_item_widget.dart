@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/features/products/presentation/view/product_details_screen.dart';
-import 'package:heraj/features/categories/presentation/view/category_screen.dart';
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/helper/responsive.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/categories/presentation/view/category_screen.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../../ui/shared_widgets/image_or_svg.dart';

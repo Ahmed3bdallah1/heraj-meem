@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/products/presentation/managers/product_quota_helper.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/products/presentation/managers/product_quota_helper.dart';
 
 /// Example widget showing how to use the ProductQuotaHelper
 ///

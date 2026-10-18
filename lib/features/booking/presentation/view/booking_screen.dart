@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/ui/shared_widgets/custom_image_circle.dart';
-import 'package:heraj/ui/shared_widgets/scaffold_back_ground.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_image_circle.dart';
+import 'package:heraj_meem/ui/shared_widgets/scaffold_back_ground.dart';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});

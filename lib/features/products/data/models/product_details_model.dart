@@ -1,4 +1,4 @@
-import 'package:heraj/core/service/local_data_manager.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
 
 class ProductDetailsModel {
   final String id;

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/favorites/presentation/view/widgets/favorite_widgets.dart';
-import 'package:heraj/helper/riverpod.dart';
-import 'package:heraj/features/categories/presentation/view/widgets/all_categories/animated_background.dart';
+import 'package:heraj_meem/features/favorites/presentation/view/widgets/favorite_widgets.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
+import 'package:heraj_meem/features/categories/presentation/view/widgets/all_categories/animated_background.dart';
 import '../../../../config/app_font.dart';
 import '../managers/favorites.dart';
 

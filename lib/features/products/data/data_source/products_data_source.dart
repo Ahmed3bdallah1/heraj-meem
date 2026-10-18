@@ -1,8 +1,8 @@
-import 'package:heraj/core/service/webservice/dio_helper.dart';
-import 'package:heraj/features/products/data/models/product_details_model.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/products/data/models/product_quota_model.dart';
-import 'package:heraj/features/products/data/models/review_model.dart';
+import 'package:heraj_meem/core/service/webservice/dio_helper.dart';
+import 'package:heraj_meem/features/products/data/models/product_details_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_quota_model.dart';
+import 'package:heraj_meem/features/products/data/models/review_model.dart';
 import '../../../../config/api_path.dart';
 
 abstract class ProductsDataSource {

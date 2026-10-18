@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 // import 'package:translator/translator.dart';
-// import 'package:heraj/core/service/local_data_manager.dart';
+// import 'package:heraj_meem/core/service/local_data_manager.dart';
 // import 'package:flutter/material.dart';
 
 abstract class AppString {

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:heraj/config/api_path.dart';
-import 'package:heraj/helper/responsive.dart';
+import 'package:heraj_meem/config/api_path.dart';
+import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +13,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:heraj/ui/shared_widgets/loading_widget.dart';
+import 'package:heraj_meem/ui/shared_widgets/loading_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../config/app_font.dart';

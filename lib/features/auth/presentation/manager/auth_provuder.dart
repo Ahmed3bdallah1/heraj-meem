@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:heraj/core/service/location_service/location_provider.dart';
-import 'package:heraj/features/auth/presentation/view/widgets/location_request_bottom_sheet.dart';
-import 'package:heraj/models/user_model.dart';
+import 'package:heraj_meem/core/service/location_service/location_provider.dart';
+import 'package:heraj_meem/features/auth/presentation/view/widgets/location_request_bottom_sheet.dart';
+import 'package:heraj_meem/models/user_model.dart';
 // import 'package:flutter_firebase_chat/flutter_firebase_chat.dart';
 import '../../../../../core/service/auth_service.dart';
 import '../../../../../core/service/local_data_manager.dart';

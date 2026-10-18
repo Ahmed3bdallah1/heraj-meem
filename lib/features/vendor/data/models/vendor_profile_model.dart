@@ -1,4 +1,4 @@
-import 'package:heraj/features/store/data/models/store_model.dart';
+import 'package:heraj_meem/features/store/data/models/store_model.dart';
 
 class VendorProfileModel {
   final String id;

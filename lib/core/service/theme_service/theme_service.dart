@@ -1,4 +1,4 @@
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../config/app_theme.dart';

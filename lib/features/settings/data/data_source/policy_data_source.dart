@@ -1,4 +1,4 @@
-import 'package:heraj/config/api_path.dart';
+import 'package:heraj_meem/config/api_path.dart';
 
 import '../../../../../core/service/webservice/dio_helper.dart';
 import '../../domain/entities/message_entity.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/store/presentation/view/widgets/all_top_stores/store_card.dart';
+import 'package:heraj_meem/features/store/presentation/view/widgets/all_top_stores/store_card.dart';
 import '../../../../config/app_font.dart';
 import '../managers/stores_provider.dart';
 

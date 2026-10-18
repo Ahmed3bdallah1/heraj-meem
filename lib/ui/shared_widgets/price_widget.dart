@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:heraj/core/service/localization_service/localization_service.dart';
+import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
 import '../../config/app_font.dart';
 
 class PriceWidget extends StatelessWidget {

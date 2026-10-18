@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/local_data_manager.dart';
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/features/categories/presentation/view/category_screen.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/features/categories/presentation/view/category_screen.dart';
 import '../../../../../store/presentation/view/store_category_screen.dart';
 import 'category_icon_helper.dart';
 

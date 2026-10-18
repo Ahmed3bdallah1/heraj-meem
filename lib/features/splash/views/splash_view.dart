@@ -1,11 +1,11 @@
-import 'package:heraj/features/offline/no_wifi.dart';
-import 'package:heraj/main.dart';
-import 'package:heraj/helper/riverpod.dart';
+import 'package:heraj_meem/features/offline/no_wifi.dart';
+import 'package:heraj_meem/main.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:heraj/ui/ui.dart';
+import 'package:heraj_meem/ui/ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 // import 'package:safe_device/safe_device.dart';

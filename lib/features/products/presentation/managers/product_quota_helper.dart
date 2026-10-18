@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/products/presentation/managers/products_managers.dart';
-import 'package:heraj/ui/shared_widgets/loading_widget.dart';
+import 'package:heraj_meem/features/products/presentation/managers/products_managers.dart';
+import 'package:heraj_meem/ui/shared_widgets/loading_widget.dart';
 
 class ProductQuotaHelper {
   static Future<void> checkQuotaAndNavigate({

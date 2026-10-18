@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/store/presentation/view/widgets/all_top_stores/verified_badge.dart';
+import 'package:heraj_meem/features/store/presentation/view/widgets/all_top_stores/verified_badge.dart';
 import '../../../../../../config/app_color.dart';
 import '../../../../../../ui/shared_widgets/image_or_svg.dart';
 import '../../../../data/models/store_model.dart';

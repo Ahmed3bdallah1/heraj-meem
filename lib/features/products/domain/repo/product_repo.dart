@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj/core/errors/failure.dart';
+import 'package:heraj_meem/core/errors/failure.dart';
 import '../../data/models/product_details_model.dart';
 import '../../data/models/product_model.dart';
 import '../../data/models/product_quota_model.dart';

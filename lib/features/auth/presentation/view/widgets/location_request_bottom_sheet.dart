@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/location_service/location_provider.dart';
-import 'package:heraj/core/service/location_service/location_service.dart';
-import 'package:heraj/features/home/presentation/view/widgets/location_bottom_sheet.dart';
-import 'package:heraj/gen/assets.gen.dart';
-import 'package:heraj/main.dart';
-import 'package:heraj/ui/shared_widgets/custom_filled_button.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/location_service/location_provider.dart';
+import 'package:heraj_meem/core/service/location_service/location_service.dart';
+import 'package:heraj_meem/features/home/presentation/view/widgets/location_bottom_sheet.dart';
+import 'package:heraj_meem/gen/assets.gen.dart';
+import 'package:heraj_meem/main.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
 import 'package:location/location.dart';
 
 /// Bottom sheet for requesting location permission after login

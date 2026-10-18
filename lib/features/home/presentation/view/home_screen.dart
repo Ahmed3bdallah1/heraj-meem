@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj/core/service/location_service/location_provider.dart';
-import 'package:heraj/features/home/presentation/managers/fetch_home_data_provider.dart';
+import 'package:heraj_meem/core/service/location_service/location_provider.dart';
+import 'package:heraj_meem/features/home/presentation/managers/fetch_home_data_provider.dart';
 import 'components/new_products_widget.dart';
 import 'widgets/categories_grid_widget.dart';
 import 'widgets/complete_profile_banner.dart';

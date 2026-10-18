@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/location_service/location_service.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/location_service/location_service.dart';
+import 'package:heraj_meem/main.dart';
 
 class MapSelectorScreen extends StatefulWidget {
   const MapSelectorScreen({

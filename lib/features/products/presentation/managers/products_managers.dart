@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/products/data/models/product_details_model.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/products/data/models/product_quota_model.dart';
-import 'package:heraj/features/products/data/models/review_model.dart';
-import 'package:heraj/features/products/domain/repo/product_repo.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/features/products/data/models/product_details_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_quota_model.dart';
+import 'package:heraj_meem/features/products/data/models/review_model.dart';
+import 'package:heraj_meem/features/products/domain/repo/product_repo.dart';
+import 'package:heraj_meem/main.dart';
 
 final fetchNewOpenStoreProducts = FutureProvider((ref) async {
   final res = await getIt<ProductRepo>().getNewOpenStoreProducts();

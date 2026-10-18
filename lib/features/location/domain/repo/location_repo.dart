@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj/core/errors/failure.dart';
-import 'package:heraj/features/location/data/models/city_model.dart';
-import 'package:heraj/features/location/data/models/district_model.dart';
+import 'package:heraj_meem/core/errors/failure.dart';
+import 'package:heraj_meem/features/location/data/models/city_model.dart';
+import 'package:heraj_meem/features/location/data/models/district_model.dart';
 
 abstract class LocationRepo {
   Future<Either<Failure, CitiesResponse>> getCities();

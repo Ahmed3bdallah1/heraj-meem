@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/products/domain/repo/product_repo.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/products/domain/repo/product_repo.dart';
 import '../../../../main.dart';
 import '../../../search/presentation/managers/search_filter_notifier.dart';
 

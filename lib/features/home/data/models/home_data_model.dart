@@ -1,8 +1,8 @@
-import 'package:heraj/features/home/domain/entities/ad_entity.dart';
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/store/data/models/store_model.dart';
-import 'package:heraj/features/stories/data/models/story_model.dart';
+import 'package:heraj_meem/features/home/domain/entities/ad_entity.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/store/data/models/store_model.dart';
+import 'package:heraj_meem/features/stories/data/models/story_model.dart';
 
 class HomeDataModel {
   final List<StoryModel> stories;

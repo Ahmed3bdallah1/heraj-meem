@@ -1,4 +1,4 @@
-import 'package:heraj/helper/riverpod.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../manager/update_profile_provider.dart';

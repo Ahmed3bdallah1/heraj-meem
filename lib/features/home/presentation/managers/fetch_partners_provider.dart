@@ -1,6 +1,6 @@
-import 'package:heraj/features/home/domain/entities/partners.dart';
-import 'package:heraj/features/home/domain/entities/testimonials.dart';
-import 'package:heraj/features/home/domain/use_case/fetch_partner_use_case.dart';
+import 'package:heraj_meem/features/home/domain/entities/partners.dart';
+import 'package:heraj_meem/features/home/domain/entities/testimonials.dart';
+import 'package:heraj_meem/features/home/domain/use_case/fetch_partner_use_case.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../main.dart';
 

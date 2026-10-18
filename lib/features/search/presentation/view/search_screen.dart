@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/products/presentation/managers/all_products_provider.dart';
-import 'package:heraj/features/products/presentation/view/widgets/sell_all_products/animated_product_card.dart';
-import 'package:heraj/features/search/presentation/managers/search_filter_notifier.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/products/presentation/managers/all_products_provider.dart';
+import 'package:heraj_meem/features/products/presentation/view/widgets/sell_all_products/animated_product_card.dart';
+import 'package:heraj_meem/features/search/presentation/managers/search_filter_notifier.dart';
 import '../../../../ui/shared_widgets/loading_widget.dart';
 import 'widgets/all_products_filter_drawer.dart';
 

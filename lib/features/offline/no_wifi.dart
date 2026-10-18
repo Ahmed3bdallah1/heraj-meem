@@ -1,4 +1,4 @@
-import 'package:heraj/features/offline/widgets/reload_button.dart';
+import 'package:heraj_meem/features/offline/widgets/reload_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

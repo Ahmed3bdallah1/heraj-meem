@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/bundles/presentation/managers/bundles_provider.dart';
-import 'package:heraj/features/products/presentation/view/widgets/product_tile.dart';
-import 'package:heraj/ui/shared_widgets/shimmer_effect.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/bundles/presentation/managers/bundles_provider.dart';
+import 'package:heraj_meem/features/products/presentation/view/widgets/product_tile.dart';
+import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
 
 class BundleProductsSection extends ConsumerWidget {
   final String productId;

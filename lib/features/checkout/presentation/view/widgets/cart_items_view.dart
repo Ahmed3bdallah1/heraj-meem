@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/helper/riverpod.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
 import '../../../../cart/presentation/manager/fetch_cart_provider.dart';
 import '../../../../cart/presentation/view/widgets/cart_item_widget.dart' as items;
 

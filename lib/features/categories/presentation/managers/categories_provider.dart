@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/features/categories/domain/repo/categories_repo.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/features/categories/domain/repo/categories_repo.dart';
 import '../../../../main.dart';
 
 final fetchFeaturedCategoriesProvider = FutureProvider.autoDispose<List<CategoryModel>>((ref) async {

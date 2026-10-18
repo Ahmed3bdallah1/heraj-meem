@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:heraj/config/api_path.dart';
-import 'package:heraj/core/service/local_data_manager.dart';
-import 'package:heraj/core/service/localization_service/localization_service.dart';
-import 'package:heraj/core/service/webservice/dio_helper.dart';
-import 'package:heraj/features/home/data/models/home_data_model.dart';
+import 'package:heraj_meem/config/api_path.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
+import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
+import 'package:heraj_meem/core/service/webservice/dio_helper.dart';
+import 'package:heraj_meem/features/home/data/models/home_data_model.dart';
 
 abstract class HomeDataSource {
   Future<HomeDataModel> getHomeData();

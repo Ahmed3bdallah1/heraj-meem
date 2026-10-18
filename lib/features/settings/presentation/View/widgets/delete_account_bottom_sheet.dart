@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/core/service/local_data_manager.dart';
-import 'package:heraj/features/auth/domain/use_cases/login_user_use_case.dart';
-import 'package:heraj/features/auth/presentation/view/login_page.dart';
-import 'package:heraj/gen/assets.gen.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
+import 'package:heraj_meem/features/auth/domain/use_cases/login_user_use_case.dart';
+import 'package:heraj_meem/features/auth/presentation/view/login_page.dart';
+import 'package:heraj_meem/gen/assets.gen.dart';
+import 'package:heraj_meem/main.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../config/app_color.dart';
 import '../../../../../helper/responsive.dart';

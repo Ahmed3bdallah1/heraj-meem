@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:heraj/config/app_theme.dart';
-import 'package:heraj/core/service/local_data_manager.dart';
-import 'package:heraj/setup_services.dart';
-import 'package:heraj/ui/ui.dart';
+import 'package:heraj_meem/config/app_theme.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
+import 'package:heraj_meem/setup_services.dart';
+import 'package:heraj_meem/ui/ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

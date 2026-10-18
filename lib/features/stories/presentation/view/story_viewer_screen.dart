@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/ui/shared_widgets/loading_widget.dart';
+import 'package:heraj_meem/ui/shared_widgets/loading_widget.dart';
 import 'package:story_view/story_view.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../core/service/localization_service/localization_service.dart';
 import '../../../../../main.dart';
 import '../../domain/entities/story_entity.dart';
 import '../../domain/use_case/view_story_use_case.dart';
-import 'package:heraj/features/categories/presentation/view/category_screen.dart';
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/features/store/presentation/view/store_category_screen.dart';
-import 'package:heraj/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/categories/presentation/view/category_screen.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/features/store/presentation/view/store_category_screen.dart';
+import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
 
 class StoryViewerScreen extends StatefulWidget {
   final List<StoryEntity> stories;

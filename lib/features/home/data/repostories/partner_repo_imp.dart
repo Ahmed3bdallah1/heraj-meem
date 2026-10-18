@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:heraj/features/home/data/data_source/partners_and_testmonial_data_source.dart';
-import 'package:heraj/features/home/domain/entities/partners.dart';
-import 'package:heraj/features/home/domain/entities/testimonials.dart';
-import 'package:heraj/features/home/domain/repositories/partner_repo.dart';
+import 'package:heraj_meem/features/home/data/data_source/partners_and_testmonial_data_source.dart';
+import 'package:heraj_meem/features/home/domain/entities/partners.dart';
+import 'package:heraj_meem/features/home/domain/entities/testimonials.dart';
+import 'package:heraj_meem/features/home/domain/repositories/partner_repo.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/errors/failure.dart';
 

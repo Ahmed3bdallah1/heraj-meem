@@ -1,6 +1,6 @@
-import 'package:heraj/config/api_path.dart';
-import 'package:heraj/core/service/webservice/dio_helper.dart';
-import 'package:heraj/features/plans/data/models/plans_model.dart';
+import 'package:heraj_meem/config/api_path.dart';
+import 'package:heraj_meem/core/service/webservice/dio_helper.dart';
+import 'package:heraj_meem/features/plans/data/models/plans_model.dart';
 
 abstract class PlansDataSource {
   Future<List<PlanModel>> getPlans();

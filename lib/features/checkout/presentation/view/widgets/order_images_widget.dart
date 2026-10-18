@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/image_picker_cropper.dart';
-import 'package:heraj/main.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/image_picker_cropper.dart';
+import 'package:heraj_meem/main.dart';
 import 'package:extended_image/extended_image.dart';
 
 final orderImagesProvider = StateProvider<List<File>>((ref) => []);

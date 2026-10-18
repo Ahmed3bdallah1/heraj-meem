@@ -1,7 +1,7 @@
-import 'package:heraj/config/api_path.dart';
-import 'package:heraj/core/service/webservice/dio_helper.dart';
-import 'package:heraj/features/location/data/models/city_model.dart';
-import 'package:heraj/features/location/data/models/district_model.dart';
+import 'package:heraj_meem/config/api_path.dart';
+import 'package:heraj_meem/core/service/webservice/dio_helper.dart';
+import 'package:heraj_meem/features/location/data/models/city_model.dart';
+import 'package:heraj_meem/features/location/data/models/district_model.dart';
 
 abstract class LocationDataSource {
   Future<CitiesResponse> getCities();

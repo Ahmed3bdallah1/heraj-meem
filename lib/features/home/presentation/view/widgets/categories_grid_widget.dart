@@ -3,16 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/local_data_manager.dart';
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/features/categories/presentation/view/all_categories_screen.dart';
-import 'package:heraj/features/categories/presentation/view/category_screen.dart';
-import 'package:heraj/features/categories/presentation/view/widgets/all_categories/category_icon_helper.dart';
-import 'package:heraj/helper/extensions/adaptive_view.dart';
-import 'package:heraj/helper/riverpod.dart';
-import 'package:heraj/ui/shared_widgets/shimmer_effect.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/features/categories/presentation/view/all_categories_screen.dart';
+import 'package:heraj_meem/features/categories/presentation/view/category_screen.dart';
+import 'package:heraj_meem/features/categories/presentation/view/widgets/all_categories/category_icon_helper.dart';
+import 'package:heraj_meem/helper/extensions/adaptive_view.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
+import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
 import '../../managers/fetch_home_data_provider.dart';
 
 class CategoriesGridWidget extends ConsumerWidget {

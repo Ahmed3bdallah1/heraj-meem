@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:heraj/features/checkout/presentation/managers/payment_type.dart';
-import 'package:heraj/features/search/presentation/managers/search_filter_notifier.dart';
+import 'package:heraj_meem/features/checkout/presentation/managers/payment_type.dart';
+import 'package:heraj_meem/features/search/presentation/managers/search_filter_notifier.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../core/enum/language.dart';
 import '../features/root/view/widgets/country_bottom_sheet.dart';

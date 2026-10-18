@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/ui/shared_widgets/scaffold_back_ground.dart';
-import 'package:heraj/ui/shared_widgets/custom_filled_button.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/ui/shared_widgets/scaffold_back_ground.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HelpSupportScreen extends StatelessWidget {

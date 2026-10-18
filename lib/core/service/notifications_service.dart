@@ -2,7 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
+import 'package:heraj_meem/config/app_color.dart';
 import '../../ui/ui.dart';
 import 'local_data_manager.dart';
 

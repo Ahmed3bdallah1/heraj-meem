@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj/features/settings/data/models/settings_model.dart';
-import 'package:heraj/features/settings/domain/repo/settings_repo.dart';
+import 'package:heraj_meem/features/settings/data/models/settings_model.dart';
+import 'package:heraj_meem/features/settings/domain/repo/settings_repo.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/use_cases/use_case.dart';
 

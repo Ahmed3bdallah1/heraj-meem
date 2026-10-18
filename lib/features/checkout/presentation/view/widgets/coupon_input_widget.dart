@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/core/service/loading_provider.dart';
-import 'package:heraj/ui/shared_widgets/custom_filled_button.dart';
-import 'package:heraj/ui/ui.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/core/service/loading_provider.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
+import 'package:heraj_meem/ui/ui.dart';
 import '../../managers/coupon_provider.dart';
 
 class CouponInputWidget extends ConsumerStatefulWidget {

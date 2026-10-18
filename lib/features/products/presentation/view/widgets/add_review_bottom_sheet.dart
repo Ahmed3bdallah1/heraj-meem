@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/products/domain/repo/product_repo.dart';
-import 'package:heraj/features/profile/domain/use_cases/upload_file_use_case.dart';
-import 'package:heraj/main.dart';
-import 'package:heraj/ui/ui.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/products/domain/repo/product_repo.dart';
+import 'package:heraj_meem/features/profile/domain/use_cases/upload_file_use_case.dart';
+import 'package:heraj_meem/main.dart';
+import 'package:heraj_meem/ui/ui.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddReviewBottomSheet extends ConsumerStatefulWidget {

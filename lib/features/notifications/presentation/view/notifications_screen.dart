@@ -1,8 +1,8 @@
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:flutter/foundation.dart';
-import 'package:heraj/features/notifications/presentation/view/widgets/notification_action_chip.dart';
-import 'package:heraj/features/notifications/presentation/view/widgets/notifications_container.dart';
-import 'package:heraj/helper/riverpod.dart';
+import 'package:heraj_meem/features/notifications/presentation/view/widgets/notification_action_chip.dart';
+import 'package:heraj_meem/features/notifications/presentation/view/widgets/notifications_container.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';

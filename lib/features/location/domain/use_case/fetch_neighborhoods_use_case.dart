@@ -1,8 +1,8 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj/core/errors/failure.dart';
-import 'package:heraj/core/use_cases/use_case.dart';
-import 'package:heraj/features/location/data/models/district_model.dart';
-import 'package:heraj/features/location/domain/repo/location_repo.dart';
+import 'package:heraj_meem/core/errors/failure.dart';
+import 'package:heraj_meem/core/use_cases/use_case.dart';
+import 'package:heraj_meem/features/location/data/models/district_model.dart';
+import 'package:heraj_meem/features/location/domain/repo/location_repo.dart';
 
 class FetchNeighborhoodsParams {
   final String cityCode;

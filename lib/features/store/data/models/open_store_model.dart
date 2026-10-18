@@ -1,4 +1,4 @@
-import 'package:heraj/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
 
 import '../../../categories/data/models/main_category_model.dart';
 import '../../../home/domain/entities/ad_entity.dart';

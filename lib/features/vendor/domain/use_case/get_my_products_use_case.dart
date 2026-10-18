@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj/core/errors/failure.dart';
-import 'package:heraj/core/use_cases/use_case.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/core/errors/failure.dart';
+import 'package:heraj_meem/core/use_cases/use_case.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
 import '../repo/vendor_repo.dart';
 
 class GetMyProductsParams {

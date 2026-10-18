@@ -1,5 +1,5 @@
-import 'package:heraj/features/address/data/model/address_model.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/address/data/model/address_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
 
 
 class OrdersPaginatedModel {

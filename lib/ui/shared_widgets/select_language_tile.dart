@@ -1,9 +1,9 @@
-import 'package:heraj/helper/responsive.dart';
+import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../config/app_font.dart';
 import '../../core/service/localization_service/localization_service.dart';
-import 'package:heraj/ui/shared_widgets/select_language_dialog.dart';
+import 'package:heraj_meem/ui/shared_widgets/select_language_dialog.dart';
 
 class SelectLanguageTile extends StatelessWidget {
   const SelectLanguageTile({

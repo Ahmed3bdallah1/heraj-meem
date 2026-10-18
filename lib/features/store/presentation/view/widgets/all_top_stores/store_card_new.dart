@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/store/data/models/store_model.dart';
-import 'package:heraj/ui/shared_widgets/image_or_svg.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/store/data/models/store_model.dart';
+import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import '../../store_details_screen.dart';
 
 class StoreCardNew extends StatelessWidget {

@@ -1,4 +1,4 @@
-import 'package:heraj/features/products/data/models/product_details_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_details_model.dart';
 
 class ProductPaginatedModel {
   final bool success;

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/features/store/domain/repo/stores_repo.dart';
+import 'package:heraj_meem/features/store/domain/repo/stores_repo.dart';
 import '../../../../main.dart';
 import '../../../products/data/models/product_model.dart';
 import '../../data/models/open_store_model.dart';

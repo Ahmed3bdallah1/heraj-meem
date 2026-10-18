@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:heraj/config/app_color.dart';
-import 'package:heraj/config/app_font.dart';
-import 'package:heraj/features/cart/presentation/view/cart_items_screen.dart';
-import 'package:heraj/ui/shared_widgets/container_button.dart';
+import 'package:heraj_meem/config/app_color.dart';
+import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/cart/presentation/view/cart_items_screen.dart';
+import 'package:heraj_meem/ui/shared_widgets/container_button.dart';
 
 class ProductDetailsHeader extends StatelessWidget {
   final dynamic product;

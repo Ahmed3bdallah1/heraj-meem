@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj/helper/riverpod.dart';
+import 'package:heraj_meem/helper/riverpod.dart';
 import '../../../../../ui/shared_widgets/custom_slider.dart';
 import '../../managers/fetch_home_data_provider.dart';
 import 'silder_item_widget.dart';

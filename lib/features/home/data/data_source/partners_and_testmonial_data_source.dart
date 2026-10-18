@@ -1,5 +1,5 @@
-import 'package:heraj/features/home/domain/entities/partners.dart';
-import 'package:heraj/features/home/domain/entities/testimonials.dart';
+import 'package:heraj_meem/features/home/domain/entities/partners.dart';
+import 'package:heraj_meem/features/home/domain/entities/testimonials.dart';
 import '../../../../core/service/webservice/dio_helper.dart';
 
 abstract class PartnersAndTestimonialDataSource {

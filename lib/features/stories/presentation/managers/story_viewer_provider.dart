@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heraj/config/app_font.dart';
+import 'package:heraj_meem/config/app_font.dart';
 import 'package:story_view/story_view.dart';
 import '../../domain/entities/story_entity.dart';
 

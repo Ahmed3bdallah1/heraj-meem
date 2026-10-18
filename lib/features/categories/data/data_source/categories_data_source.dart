@@ -1,5 +1,5 @@
-import 'package:heraj/features/categories/data/models/main_category_model.dart';
-import 'package:heraj/features/store/data/models/open_store_model.dart';
+import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
+import 'package:heraj_meem/features/store/data/models/open_store_model.dart';
 import '../../../../config/api_path.dart';
 import '../../../../core/service/webservice/dio_helper.dart';
 

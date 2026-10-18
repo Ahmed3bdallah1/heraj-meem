@@ -1,10 +1,10 @@
-import 'package:heraj/helper/responsive.dart';
+import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/root/view/root_view.dart';
+import 'package:heraj_meem/features/root/view/root_view.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../gen/assets.gen.dart';

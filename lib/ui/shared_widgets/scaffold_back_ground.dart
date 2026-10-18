@@ -1,4 +1,4 @@
-import 'package:heraj/config/app_font.dart';
+import 'package:heraj_meem/config/app_font.dart';
 import 'package:flutter/material.dart';
 import 'custom_app_bar.dart';
 

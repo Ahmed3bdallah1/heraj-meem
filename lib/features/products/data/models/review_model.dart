@@ -1,4 +1,4 @@
-import 'package:heraj/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
 
 class ProductReview {
   final String id;

@@ -1,6 +1,6 @@
-import 'package:heraj/core/service/webservice/dio_helper.dart';
-import 'package:heraj/features/products/data/models/product_model.dart';
-import 'package:heraj/features/vendor/data/models/vendor_profile_model.dart';
+import 'package:heraj_meem/core/service/webservice/dio_helper.dart';
+import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/vendor/data/models/vendor_profile_model.dart';
 import '../../../../config/api_path.dart';
 
 abstract class VendorDataSource {

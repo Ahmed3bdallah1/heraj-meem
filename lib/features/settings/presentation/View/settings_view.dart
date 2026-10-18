@@ -1,9 +1,9 @@
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj/features/address/presentation/view/address_screen.dart';
-import 'package:heraj/features/auth/presentation/view/register_page.dart';
-import 'package:heraj/helper/extensions/adaptive_view.dart';
-import 'package:heraj/helper/responsive.dart';
+import 'package:heraj_meem/features/address/presentation/view/address_screen.dart';
+import 'package:heraj_meem/features/auth/presentation/view/register_page.dart';
+import 'package:heraj_meem/helper/extensions/adaptive_view.dart';
+import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
