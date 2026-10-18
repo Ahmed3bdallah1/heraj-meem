@@ -1,87 +1,26 @@
 {
   "project_info": {
-    "project_number": "520930212972",
-    "project_id": "heraj-turkia",
-    "storage_bucket": "heraj-turkia.firebasestorage.app"
+    "project_number": "732467824772",
+    "project_id": "heraj-meem",
+    "storage_bucket": "heraj-meem.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:520930212972:android:5e76702d209ddc8d982c49",
+        "mobilesdk_app_id": "1:732467824772:android:d3722ef0fc98aa17b65ad1",
         "android_client_info": {
-          "package_name": "com.qeema.esyasatgo"
+          "package_name": "com.qeema.heraj.meem"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "520930212972-gipoqiaj6tbt0suhbi0bc9gtoclfl8t3.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAxwmHLFzKaRAvjUCNTl6sltpGn8eQ_D_c"
+          "current_key": "AIzaSyBQ9b4U4-frUmRVjVLEaC6_bT_2kmbmYh4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "520930212972-gipoqiaj6tbt0suhbi0bc9gtoclfl8t3.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "520930212972-co7b9isrre6fsaj99dml5kcqlnv48qt8.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.qeema.heraj"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:520930212972:android:82a42dd12f0a9868982c49",
-        "android_client_info": {
-          "package_name": "com.qeema.heraj"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "520930212972-tvun4k1lqluih1f8bl3es5edas0ihrv7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.qeema.heraj",
-            "certificate_hash": "62b31cd99c3190c5b54d2112d4889691c1d80f0f"
-          }
-        },
-        {
-          "client_id": "520930212972-gipoqiaj6tbt0suhbi0bc9gtoclfl8t3.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAxwmHLFzKaRAvjUCNTl6sltpGn8eQ_D_c"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "520930212972-gipoqiaj6tbt0suhbi0bc9gtoclfl8t3.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "520930212972-co7b9isrre6fsaj99dml5kcqlnv48qt8.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.qeema.heraj"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
