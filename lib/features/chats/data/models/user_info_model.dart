@@ -9,10 +9,11 @@ class UserProfileModel extends UserProfile {
 
   factory UserProfileModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) return UserProfileModel();
+    final parsed = UserProfile.fromJson(json);
     return UserProfileModel(
-      email: json['email']?.toString(),
-      name: json['name']?.toString(),
-      avatar: json['avatar']?.toString(),
+      email: parsed.email,
+      name: parsed.name,
+      avatar: parsed.avatar,
     );
   }
 
@@ -56,17 +57,25 @@ class UserInfoModel extends UserInfoEntity {
     super.vendorInfo,
   });
 
-  factory UserInfoModel.fromJson(Map<String, dynamic> json) {
+  factory UserInfoModel.fromJson(dynamic raw) {
+    final parsed = UserInfoEntity.fromJson(raw);
     return UserInfoModel(
-      id: json['_id']?.toString() ?? '',
-      phone: json['phone']?.toString(),
-      role: json['role']?.toString(),
-      profile: json['profile'] != null
-          ? UserProfileModel.fromJson(json['profile'] as Map<String, dynamic>)
-          : null,
-      vendorInfo: json['vendorInfo'] != null
-          ? VendorInfoModel.fromJson(json['vendorInfo'] as Map<String, dynamic>)
-          : null,
+      id: parsed.id,
+      phone: parsed.phone,
+      role: parsed.role,
+      profile: parsed.profile == null
+          ? null
+          : UserProfileModel(
+              email: parsed.profile!.email,
+              name: parsed.profile!.name,
+              avatar: parsed.profile!.avatar,
+            ),
+      vendorInfo: parsed.vendorInfo == null
+          ? null
+          : VendorInfoModel(
+              storeName: parsed.vendorInfo!.storeName,
+              logo: parsed.vendorInfo!.logo,
+            ),
     );
   }
 

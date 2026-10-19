@@ -7,6 +7,7 @@ import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/core/service/local_data_manager.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/main.dart';
+import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import 'package:heraj_meem/ui/shared_widgets/not_found_widget.dart';
 import '../../domain/entities/chat_entity.dart';
 import '../../domain/entities/participant_entity.dart';
@@ -23,10 +24,12 @@ class ChatsListScreen extends ConsumerStatefulWidget {
 
 class _ChatsListScreenState extends ConsumerState<ChatsListScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocus = FocusNode();
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocus.dispose();
     super.dispose();
   }
 
@@ -37,32 +40,44 @@ class _ChatsListScreenState extends ConsumerState<ChatsListScreen> {
     final currentUser = getIt<LocalDataManager>().getUser();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: AppColor.primary2,
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: Colors.white,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (value) {
-                    ref.read(chatsSearchQueryProvider.notifier).state =
-                        value.toLowerCase();
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Search".tr,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+            _ChatEntrance(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.primary.withAlpha(24),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    focusNode: _searchFocus,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _searchFocus.unfocus(),
+                    onChanged: (value) {
+                      ref.read(chatsSearchQueryProvider.notifier).state =
+                          value.toLowerCase();
+                    },
+                    style: AppFont.font14W600Black,
+                    decoration: InputDecoration(
+                      hintText: "Search".tr,
+                      hintStyle: AppFont.font14W500Grey2,
+                      prefixIcon: Icon(Icons.search, color: AppColor.grey2),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -131,6 +146,9 @@ class _ChatsListScreenState extends ConsumerState<ChatsListScreen> {
                     }
 
                     return ListView.separated(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).padding.bottom + 100,
+                      ),
                       itemBuilder: (context, index) {
                         final chat = filteredChats[index];
                         final currentUserId = currentUser?.id.toString() ?? '';
@@ -139,18 +157,16 @@ class _ChatsListScreenState extends ConsumerState<ChatsListScreen> {
                         final unreadCount =
                             chat.getUnreadCountForUser(currentUserId);
 
-                        return ChatListItem(
-                          chat: chat,
-                          otherParticipant: otherParticipant,
-                          unreadCount: unreadCount,
+                        return _ChatEntrance(
+                          index: index,
+                          child: ChatListItem(
+                            chat: chat,
+                            otherParticipant: otherParticipant,
+                            unreadCount: unreadCount,
+                          ),
                         );
                       },
-                      separatorBuilder: (context, index) => const Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Color(0xFFE5E5E5),
-                        indent: 88,
-                      ),
+                      separatorBuilder: (context, index) => const Gap(8),
                       itemCount: filteredChats.length,
                     );
                   },
@@ -204,108 +220,95 @@ class ChatListItem extends StatelessWidget {
         formatTime(chat.lastMessage?.createdAt ?? chat.updatedAt);
     final isUnread = unreadCount > 0;
 
-    return GestureDetector(
-      onTap: () {
-        Get.to(() => ChatMessagesScreen(chatId: chat.id));
-      },
+    return _ChatPress(
+      onTap: () => Get.to(() => ChatMessagesScreen(chatId: chat.id)),
       child: Container(
-        decoration: const BoxDecoration(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.zero,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.primary.withAlpha(18),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Stack(
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColor.primary.withAlpha(80)),
+              ),
+              child: ClipOval(
+                child: displayImage.isNotEmpty
+                    ? ImageOrSvg(
+                        displayImage,
+                        height: 56,
+                        width: 56,
+                        fit: BoxFit.cover,
+                      )
+                    : ColoredBox(
+                        color: AppColor.primary.withAlpha(28),
+                        child: const SizedBox(
+                          height: 56,
+                          width: 56,
+                          child: Icon(Icons.person, color: AppColor.primary),
+                        ),
+                      ),
+              ),
+            ),
+            const Gap(12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: displayImage.isNotEmpty
-                        ? Image.network(
-                            displayImage,
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 60,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  color: Colors.grey,
-                                ),
-                              );
-                            },
-                          )
-                        : Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              color: Colors.grey,
-                            ),
-                          ),
+                  Text(
+                    displayName,
+                    style: AppFont.font16W700Black,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Gap(4),
+                  Text(
+                    lastMessage,
+                    style: AppFont.font14W500Grey2.copyWith(
+                      fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
+                      color: isUnread ? AppColor.black : AppColor.grey2,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      displayName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Gap(4),
-                    Text(
-                      lastMessage,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight:
-                            isUnread ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  lastMessageTime,
+                  style:
+                      AppFont.font12w400Black.copyWith(color: AppColor.grey2),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    lastMessageTime,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  if (isUnread) ...[
-                    const Gap(6),
-                    Container(
+                if (isUnread) ...[
+                  const Gap(6),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: 1),
+                    duration: const Duration(milliseconds: 420),
+                    curve: Curves.elasticOut,
+                    builder: (context, value, child) {
+                      return Transform.scale(scale: value, child: child);
+                    },
+                    child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 2,
                       ),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColor.primary,
                         shape: BoxShape.circle,
                       ),
@@ -316,20 +319,88 @@ class ChatListItem extends StatelessWidget {
                       child: Center(
                         child: Text(
                           unreadCount > 99 ? '99+' : unreadCount.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
+                          style: AppFont.font12w400Black.copyWith(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ],
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _ChatEntrance extends StatelessWidget {
+  const _ChatEntrance({required this.child, this.index = 0});
+
+  final Widget child;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final delay = index.clamp(0, 8) * 60;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 420 + delay),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(28 * (1 - value), 0),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+class _ChatPress extends StatefulWidget {
+  const _ChatPress({required this.child, required this.onTap});
+
+  final Widget child;
+  final VoidCallback onTap;
+
+  @override
+  State<_ChatPress> createState() => _ChatPressState();
+}
+
+class _ChatPressState extends State<_ChatPress> {
+  final ValueNotifier<double> _scale = ValueNotifier(1);
+
+  @override
+  void dispose() {
+    _scale.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _scale.value = 0.97,
+      onTapCancel: () => _scale.value = 1,
+      onTapUp: (_) => _scale.value = 1,
+      onTap: widget.onTap,
+      child: ValueListenableBuilder<double>(
+        valueListenable: _scale,
+        builder: (context, scale, child) {
+          return AnimatedScale(
+            scale: scale,
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOut,
+            child: child,
+          );
+        },
+        child: widget.child,
       ),
     );
   }
