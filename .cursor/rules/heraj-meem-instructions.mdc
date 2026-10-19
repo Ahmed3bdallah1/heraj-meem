@@ -107,16 +107,19 @@ Use this file for consistent code style and to apply instructions from the proje
 When a screen file grows large (many private step/section widgets), **split it with Dart `part` / `part of`** instead of one giant file:
 
 - Keep the **library entry** as the screen file under `view/` (e.g. `create_package_shipment_screen.dart`): imports, the public screen widget, and `State` (layout + wiring only).
-- Declare parts next to the screen, usually under `view/widgets/`:
+- **One component per part file.** If the screen has many components, create several part files — one for each step, section, or private widget (progress bar, step title, city step, category tile, photo box, continue button, and so on). Do not gather every private widget from the screen into a single part file.
+- Put that screen’s part files in their own folder under `view/widgets/<screen_name>/` (for example `view/widgets/add_ad/`). Do not leave a screen’s parts loose in `view/widgets/` next to other screens’ widgets.
   ```dart
-  part 'widgets/create_package_shipment_size_step.dart';
+  part 'widgets/add_ad/city_step.dart';
+  part 'widgets/add_ad/category_step.dart';
+  part 'widgets/add_ad/details_step.dart';
   ```
 - Each part file starts with:
   ```dart
-  part of '../create_package_shipment_screen.dart';
+  part of '../../add_ad_screen.dart';
   ```
   and must **not** declare its own imports (it shares the library’s imports).
-- Put one logical UI slice per part (e.g. step indicator, size step, locations step, confirm step, shared private widgets). Private (`_`) widgets in parts stay library-private to the screen.
+- Put one logical UI slice in that part. Private (`_`) widgets in parts stay library-private to the screen.
 - Prefer this over exporting many public widget classes when the pieces are only used by that screen. Standalone reusable UI (sheets used from mixins, cards used elsewhere) still belongs in normal `view/widgets/*.dart` libraries with their own imports (not `part of`).
 
 ---
@@ -131,6 +134,34 @@ When a screen file grows large (many private step/section widgets), **split it w
 
 - **Use `FormGroup` (reactive_forms) for screens with multiple text fields or form inputs.** Define a `FormGroup` with a `FormControl` for each field (e.g. title, description, dates, status). Wrap the screen body in `ReactiveForm(formGroup: formGroup, child: …)` and use `ReactiveTextField` / `CustomTextField(formControlName: '…')` (or `ReactiveDropdownField`) for inputs. Initialize the form in `initState`, dispose it in `dispose()`. This keeps form state and validation in one place and avoids scattered `TextEditingController`s.
 - **Give every text field in a form or bottom sheet its own `FocusNode`.** Create the nodes on the `State`, pass each one through `focusNode`, and dispose them in `dispose()`. Use `TextInputAction.next` on every field except the last, which uses `TextInputAction.done`. On submit, move focus to the next field’s node. The last field unfocuses the keyboard. Search fields in the same sheet take a focus node too, so the keyboard can move into and out of them.
+
+---
+
+## Home screen
+
+The home screen is only a shell. Its body is always a **`const CustomScrollView`** whose `slivers` list is a **`const` list**. Do not build that list at runtime, and do not pass non-const children into it.
+
+- Each sliver is one small, specific component with a **`const` constructor** and no constructor arguments (for example `const HomeHeaderComponent()`, `const HomeCategoriesComponent()`).
+- One component per file, named `home_<thing>_component.dart`.
+- Put the component in the **feature that owns that content**, not in a shared home dump:
+  - header chrome stays in `features/home/presentation/view/components/`
+  - category blocks live in `features/categories/`
+  - ad blocks (featured, filters, grid) live in `features/ads/`
+  - an address or order block would live in `features/address/` or `features/orders/`
+- The screen wires those components in order and nothing else. Refresh, scroll, and other screen actions belong in `features/home/presentation/managers/home_logic_mixin.dart`, applied on the screen state.
+- A component loads its own data. Do not pass lists, providers, or callbacks from `HomeScreen` into the sliver list.
+
+```dart
+child: const CustomScrollView(
+  physics: AlwaysScrollableScrollPhysics(),
+  slivers: [
+    SliverToBoxAdapter(child: HomeHeaderComponent()),
+    SliverToBoxAdapter(child: HomeCategoriesComponent()),
+    SliverToBoxAdapter(child: HomeFeaturedAdsComponent()),
+    SliverGap(24),
+  ],
+),
+```
 
 ---
 
