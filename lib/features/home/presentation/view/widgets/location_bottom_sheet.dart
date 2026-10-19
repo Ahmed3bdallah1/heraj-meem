@@ -1,54 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/core/service/location_service/location_service.dart';
-import 'package:heraj_meem/core/service/location_service/location_provider.dart';
+import 'package:heraj_meem/features/home/data/models/baho_feed.dart';
+import 'package:heraj_meem/features/home/presentation/managers/baho_feed_provider.dart';
 import 'package:heraj_meem/features/location/data/models/city_model.dart';
-import 'package:heraj_meem/features/location/presentation/managers/location_provider.dart';
-import 'package:heraj_meem/main.dart';
-import 'package:location/location.dart';
-import 'package:get/get.dart';
+import 'package:heraj_meem/ui/shared_widgets/loading_widget.dart';
+import 'package:heraj_meem/ui/ui.dart';
 
 final selectedCityProvider = StateProvider.autoDispose<CityModel?>((ref) => null);
 
 final currentDisplayLocationProvider = StateProvider<LocationDetails?>((ref) => null);
 
-Future<LocationDetails?> showLocationBottomSheet({BuildContext? context}) async {
-  return await showModalBottomSheet<LocationDetails?>(
+Future<void> showLocationBottomSheet({BuildContext? context}) async {
+  await showModalBottomSheet<void>(
     context: Get.context ?? context!,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => const CitySelectionSheet(),
+    builder: (_) => const _RegionCitySheet(),
   );
 }
 
-class CitySelectionSheet extends ConsumerStatefulWidget {
-  const CitySelectionSheet({super.key});
+class _RegionCitySheet extends ConsumerStatefulWidget {
+  const _RegionCitySheet();
 
   @override
-  ConsumerState<CitySelectionSheet> createState() => _CitySelectionSheetState();
+  ConsumerState<_RegionCitySheet> createState() => _RegionCitySheetState();
 }
 
-class _CitySelectionSheetState extends ConsumerState<CitySelectionSheet> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-  bool _isLoadingLocation = false;
+class _RegionCitySheetState extends ConsumerState<_RegionCitySheet> {
+  BahoRegion? _region;
+  BahoCity? _city;
+  bool _saving = false;
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  Future<void> _save() async {
+    final region = _region;
+    final city = _city;
+    if (region == null || city == null) return;
+    final place = BahoPlace(
+      regionId: region.id,
+      regionName: region.nameAr,
+      cityId: city.id,
+      cityName: city.nameAr,
+      citySlug: city.slug,
+    );
+    setState(() => _saving = true);
+    try {
+      await saveUserPlace(place);
+    } catch (error) {
+      if (mounted) {
+        UIHelper.showGlobalSnackBar(
+          text: error.toString(),
+          color: AppColor.danger,
+        );
+      }
+    }
+    if (!mounted) return;
+    ref.read(bahoPlaceProvider.notifier).state = place;
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final citiesAsync = ref.watch(fetchCitiesProvider);
-    final size = MediaQuery.of(context).size;
-    final locale = Get.locale?.languageCode ?? 'en';
+    final regionsAsync = ref.watch(bahoRegionsProvider);
+    final districtsAsync = _city == null
+        ? null
+        : ref.watch(bahoDistrictsProvider(_city!.id));
 
     return Container(
-      height: size.height * 0.75,
+      height: MediaQuery.of(context).size.height * 0.78,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -56,240 +78,132 @@ class _CitySelectionSheetState extends ConsumerState<CitySelectionSheet> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
             child: Row(
               children: [
-                Text(
-                  'Select City'.tr,
-                  style: AppFont.font18W700Black,
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppColor.grey1.withAlpha(125),
-                    padding: const EdgeInsets.all(8),
+                if (_region != null)
+                  IconButton(
+                    onPressed: () => setState(() {
+                      if (_city != null) {
+                        _city = null;
+                      } else {
+                        _region = null;
+                      }
+                    }),
+                    icon: const Icon(Icons.arrow_back),
                   ),
+                Expanded(
+                  child: Text(
+                    _city?.nameAr ?? _region?.nameAr ?? 'All regions'.tr,
+                    style: AppFont.font18W700Black,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
                 ),
               ],
             ),
           ),
-          const Gap(8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
+          if (_region == null)
+            ListTile(
+              title: Text('All regions'.tr, style: AppFont.font14W600Black),
+              onTap: () {
+                ref.read(bahoPlaceProvider.notifier).state = null;
+                Navigator.pop(context);
               },
-              decoration: InputDecoration(
-                hintText: 'Search city...'.tr,
-                hintStyle: AppFont.font14W500Grey2,
-                prefixIcon: Icon(Icons.search, color: AppColor.grey2),
-                filled: true,
-                fillColor: AppColor.grey1.withAlpha(75),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
             ),
-          ),
-          const Gap(16),
           Expanded(
-            child: citiesAsync.when(
-              data: (citiesResponse) {
-                final cities = citiesResponse.cities;
-                final filteredCities = _searchQuery.isEmpty
-                    ? cities
-                    : cities.where((city) {
-                        final name =
-                            city.getLocalizedName(locale).toLowerCase();
-                        return name.contains(_searchQuery);
-                      }).toList();
-
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  itemCount: filteredCities.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return _buildCityItem(
-                        context: context,
-                        icon: Icons.location_on,
-                        name: 'All Turkey'.tr,
-                        isAllCountry: true,
-                        onTap: () async {
-                          await _requestCurrentLocation(context);
+            child: regionsAsync.when(
+              loading: () => const LoadingWidget(),
+              error: (error, _) => Center(child: Text(error.toString())),
+              data: (regions) {
+                if (_region == null) {
+                  return ListView.builder(
+                    itemCount: regions.length,
+                    itemBuilder: (context, index) {
+                      final region = regions[index];
+                      return ListTile(
+                        title: Text(region.nameAr, style: AppFont.font14W600Black),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => setState(() => _region = region),
+                      );
+                    },
+                  );
+                }
+                final citiesAsync = ref.watch(bahoCitiesProvider(_region!.id));
+                return citiesAsync.when(
+                  loading: () => const LoadingWidget(),
+                  error: (error, _) => Center(child: Text(error.toString())),
+                  data: (cities) {
+                    final shown = cities.isEmpty ? _region!.cities : cities;
+                    if (_city == null) {
+                      return ListView.builder(
+                        itemCount: shown.length,
+                        itemBuilder: (context, index) {
+                          final city = shown[index];
+                          return ListTile(
+                            title: Text(city.nameAr, style: AppFont.font14W600Black),
+                            onTap: () => setState(() => _city = city),
+                          );
                         },
                       );
                     }
-
-                    final city = filteredCities[index - 1];
-                    return _buildCityItem(
-                      context: context,
-                      icon: Icons.location_city,
-                      name: city.getLocalizedName(locale),
-                      onTap: () async {
-                        ref.read(selectedCityProvider.notifier).state = city;
-
-                        final gpsLocation =
-                            await ref.read(fetchLocationDetailsProvider.future);
-
-                        final locationDetails = LocationDetails(
-                          latitude: gpsLocation?.latitude ?? 0,
-                          longitude: gpsLocation?.longitude ?? 0,
-                          name: city.getLocalizedName(locale),
-                          fullAddress: gpsLocation?.fullAddress ??
-                              city.getLocalizedName(locale),
-                        );
-                        ref
-                            .read(currentDisplayLocationProvider.notifier)
-                            .state = locationDetails;
-                        if (context.mounted) {
-                          Navigator.pop(context, locationDetails);
-                        }
-                      },
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: districtsAsync == null
+                              ? const SizedBox.shrink()
+                              : districtsAsync.when(
+                                  loading: () => const LoadingWidget(),
+                                  error: (error, _) =>
+                                      Center(child: Text(error.toString())),
+                                  data: (districts) {
+                                    if (districts.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                          cityEmptyLabel(_city!),
+                                          style: AppFont.font14W500Grey2,
+                                        ),
+                                      );
+                                    }
+                                    return ListView.builder(
+                                      itemCount: districts.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(
+                                            districts[index].nameAr,
+                                            style: AppFont.font14W500Black,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: FilledButton(
+                              onPressed: _saving ? null : _save,
+                              child: Text(_saving ? '...' : 'Save'.tr),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 );
               },
-              loading: () => Center(
-                child: CircularProgressIndicator(color: AppColor.primary),
-              ),
-              error: (error, _) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 48, color: AppColor.danger),
-                    const Gap(16),
-                    Text(
-                      'Failed to load cities'.tr,
-                      style: AppFont.font14W500Grey2,
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
+          const Gap(8),
         ],
       ),
     );
   }
 
-  Widget _buildCityItem({
-    required BuildContext context,
-    required IconData icon,
-    required String name,
-    bool isAllCountry = false,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: _isLoadingLocation ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        decoration: BoxDecoration(
-          color: isAllCountry
-              ? AppColor.primary.withAlpha(25)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isAllCountry
-                    ? AppColor.primary
-                    : AppColor.grey1.withAlpha(125),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: isAllCountry ? Colors.white : AppColor.grey2,
-              ),
-            ),
-            const Gap(12),
-            Expanded(
-              child: Text(
-                name,
-                style: isAllCountry
-                    ? AppFont.font16W700Black.copyWith(color: AppColor.primary)
-                    : AppFont.font15W500Black,
-              ),
-            ),
-            if (_isLoadingLocation && isAllCountry)
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColor.primary,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _requestCurrentLocation(BuildContext context) async {
-    setState(() {
-      _isLoadingLocation = true;
-    });
-
-    try {
-      Location location = Location();
-
-      bool serviceEnabled = await location.serviceEnabled();
-      if (!serviceEnabled) {
-        serviceEnabled = await location.requestService();
-        if (!serviceEnabled) {
-          Navigator.pop(context, null);
-          return;
-        }
-      }
-
-      PermissionStatus permission = await location.hasPermission();
-
-      if (permission == PermissionStatus.denied) {
-        permission = await location.requestPermission();
-        if (permission != PermissionStatus.granted &&
-            permission != PermissionStatus.grantedLimited) {
-          Navigator.pop(context, null);
-          return;
-        }
-      }
-
-      if (permission == PermissionStatus.deniedForever) {
-        Navigator.pop(context, null);
-        return;
-      }
-
-      if (permission != PermissionStatus.granted &&
-          permission != PermissionStatus.grantedLimited) {
-        Navigator.pop(context, null);
-        return;
-      }
-
-      final details = await getIt<LocationService>().getCurrentLocation();
-      if (mounted) {
-        ref.read(currentDisplayLocationProvider.notifier).state = details;
-        Navigator.pop(context, details);
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingLocation = false;
-        });
-      }
-    }
-  }
+  String cityEmptyLabel(BahoCity city) => city.nameAr;
 }

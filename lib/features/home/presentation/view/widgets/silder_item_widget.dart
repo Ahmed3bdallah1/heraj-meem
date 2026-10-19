@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_color.dart';
-import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/ads/presentation/view/ad_details_screen.dart';
 import 'package:heraj_meem/features/categories/presentation/view/category_screen.dart';
 import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
 import 'package:heraj_meem/helper/responsive.dart';
@@ -25,7 +25,7 @@ class SliderItem extends StatelessWidget {
 
     switch (item.linkType.toLowerCase()) {
       case 'product':
-        Get.to(() => ProductDetailsScreen(productId: item.linkId!));
+        Get.to(() => AdDetailsScreen(productId: item.linkId!));
         break;
       case 'category':
         final category = CategoryModel(
@@ -99,7 +99,7 @@ class SliderProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      // onTap: () => Get.to(()=>ProductDetailsScreen(productId: id)),
+      // onTap: () => Get.to(()=>AdDetailsScreen(productId: id)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Container(

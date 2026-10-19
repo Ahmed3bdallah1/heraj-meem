@@ -1,48 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:heraj_meem/core/service/location_service/location_provider.dart';
-import 'package:heraj_meem/features/home/presentation/managers/fetch_home_data_provider.dart';
-import 'components/new_products_widget.dart';
-import 'widgets/categories_grid_widget.dart';
-import 'widgets/complete_profile_banner.dart';
-import 'widgets/home_header_widget.dart';
-import 'widgets/home_sliders.dart';
-import 'components/real_estate_section.dart';
-import 'widgets/stories_ads_section.dart';
-import 'components/top_stores_section.dart';
+import 'package:heraj_meem/features/ads/presentation/view/components/home_ads_grid_component.dart';
+import 'package:heraj_meem/features/ads/presentation/view/components/home_featured_ads_component.dart';
+import 'package:heraj_meem/features/ads/presentation/view/components/home_photos_filter_component.dart';
+import 'package:heraj_meem/features/categories/presentation/view/components/home_categories_component.dart';
+import 'package:heraj_meem/features/home/presentation/managers/home_logic_mixin.dart';
 
-class HomeScreen extends ConsumerWidget {
+import 'components/home_header_component.dart';
+
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> with HomeLogicMixin {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(fetchHomeDataProvider);
-          ref.invalidate(fetchLocationDetailsProvider);
-        },
+        onRefresh: onRefresh,
         child: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          child: CustomScrollView(
-            slivers: const [
-              SliverToBoxAdapter(child: HomeHeaderWidget(isHome: true,)),
-              SliverToBoxAdapter(child: CompleteProfileBanner()),
-              SliverToBoxAdapter(child: StoriesAdsSection()),
-              SliverToBoxAdapter(child: HomeSliders()),
-              SliverToBoxAdapter(child: CategoriesGridWidget()),
-              SliverToBoxAdapter(child: RealEstateSection()),
-              SliverGap(10),
-              SliverToBoxAdapter(child: HotDealsProductsSection()),
-              SliverGap(10),
-              SliverToBoxAdapter(child: AdminProductsSection()),
-              SliverGap(10),
-              SliverToBoxAdapter(child: NewProductsWidget()),
-              SliverGap(10),
-              SliverToBoxAdapter(child: TopStoresSection()),
-              SliverGap(100),
+          child: const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(child: HomeHeaderComponent()),
+              SliverToBoxAdapter(child: HomeFeaturedAdsComponent()),
+              SliverToBoxAdapter(child: HomeCategoriesComponent()),
+              SliverToBoxAdapter(child: HomePhotosFilterComponent()),
+              SliverToBoxAdapter(child: HomeAdsGridComponent()),
+              SliverGap(24),
             ],
           ),
         ),
