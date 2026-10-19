@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import '../../../../core/errors/failure.dart';
 import '../../../../core/use_cases/use_case.dart';
 import '../repo/favorites_repo.dart';
@@ -12,6 +12,17 @@ class FetchFavoritesUseCase extends UseCaseNoParam<List<ProductModel>> {
   @override
   Future<Either<Failure, List<ProductModel>>> call() {
     return favoritesRepo.getFavorites();
+  }
+}
+
+class RemoveFavoriteUseCase extends UseCaseParam<bool, String> {
+  final FavoritesRepo favoritesRepo;
+
+  RemoveFavoriteUseCase(this.favoritesRepo);
+
+  @override
+  Future<Either<Failure, bool>> call([String? param]) {
+    return favoritesRepo.removeFavorite(productId: param ?? '');
   }
 }
 

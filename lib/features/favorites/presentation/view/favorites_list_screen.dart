@@ -40,121 +40,114 @@ class _FavoritesListScreenState extends ConsumerState<FavoritesListScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          AnimatedBackground(
-            animation: _backgroundAnimationController,
-          ),
-          CustomScrollView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              // Animated AppBar
-              SliverAppBar(
-                expandedHeight: 120,
-                floating: true,
-                pinned: true,
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                leading: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColor.white.withAlpha(230),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(10),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+      body: CustomScrollView(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          // Animated AppBar
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: true,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            leading: Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColor.white.withAlpha(230),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(10),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      color: AppColor.black,
-                    ),
-                    onPressed: () => Get.back(),
-                  ),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  titlePadding:
-                      const EdgeInsets.only(left: 56, bottom: 16, right: 16),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Favorites".tr,
-                        style: AppFont.font18W700Black,
-                      ),
-                      const Gap(8),
-                      TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: const Duration(seconds: 2),
-                        curve: Curves.elasticOut,
-                        builder: (context, value, child) {
-                          return Transform.scale(
-                            scale: 0.9 + (value * 0.1),
-                            child: Transform.rotate(
-                              angle: (1 - value) * 0.3,
-                              child: Icon(
-                                Icons.favorite_rounded,
-                                color: AppColor.danger,
-                                size: 24,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  centerTitle: false,
-                ),
+                ],
               ),
-              // Content
-              SliverToBoxAdapter(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    ref.invalidate(favoritesProvider);
-                  },
-                  child: Consumer(
-                    builder: (context, ref, _) {
-                      final provider = ref.watch(favoritesProvider);
-                      return provider.customWhen(
-                        ref: ref,
-                        refreshable: favoritesProvider.future,
-                        skipLoadingOnRefresh: true,
-                        skipLoadingOnReload: true,
-                        data: (data) {
-                          if (data.isEmpty) {
-                            return _EmptyFavoritesState();
-                          }
-                          return Column(
-                            children: [
-                              const Gap(16),
-                              ...data.asMap().entries.map((entry) {
-                                return AnimatedFavoriteCard(
-                                  key: ValueKey(entry.value.id),
-                                  index: entry.key,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: FavoriteWidget(
-                                      favoritesModel: entry.value,
-                                    ),
-                                  ),
-                                );
-                              }),
-                              Gap(MediaQuery.of(context).padding.bottom + 16),
-                            ],
-                          );
-                        },
+              child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColor.black,
+                ),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding:
+                  const EdgeInsets.only(left: 56, bottom: 16, right: 16),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Favorites".tr,
+                    style: AppFont.font18W700Black,
+                  ),
+                  const Gap(8),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(seconds: 2),
+                    curve: Curves.elasticOut,
+                    builder: (context, value, child) {
+                      return Transform.scale(
+                        scale: 0.9 + (value * 0.1),
+                        child: Transform.rotate(
+                          angle: (1 - value) * 0.3,
+                          child: Icon(
+                            Icons.favorite_rounded,
+                            color: AppColor.danger,
+                            size: 24,
+                          ),
+                        ),
                       );
                     },
                   ),
-                ),
+                ],
               ),
-            ],
+              centerTitle: false,
+            ),
+          ),
+          // Content
+          SliverToBoxAdapter(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(favoritesProvider);
+              },
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final provider = ref.watch(favoritesProvider);
+                  return provider.customWhen(
+                    ref: ref,
+                    refreshable: favoritesProvider.future,
+                    skipLoadingOnRefresh: true,
+                    skipLoadingOnReload: true,
+                    data: (data) {
+                      if (data.isEmpty) {
+                        return _EmptyFavoritesState();
+                      }
+                      return Column(
+                        children: [
+                          const Gap(16),
+                          ...data.asMap().entries.map((entry) {
+                            return AnimatedFavoriteCard(
+                              key: ValueKey(entry.value.id),
+                              index: entry.key,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16),
+                                child: FavoriteWidget(
+                                  favoritesModel: entry.value,
+                                ),
+                              ),
+                            );
+                          }),
+                          Gap(MediaQuery.of(context).padding.bottom + 16),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
           ),
         ],
       ),

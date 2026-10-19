@@ -6,7 +6,7 @@ import '../../../../../main.dart';
 import '../../../../../ui/ui.dart';
 import '../../../../favorites/domain/use_case/favorites_use_case.dart';
 import '../../../../favorites/presentation/managers/favorites.dart';
-import '../../../../products/data/models/product_model.dart';
+import '../../../../ads/data/models/product_model.dart';
 
 class FavoriteButton extends StatelessWidget {
   const FavoriteButton({

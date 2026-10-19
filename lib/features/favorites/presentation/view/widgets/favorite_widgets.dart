@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../main.dart';
 import '../../../../../ui/shared_widgets/image_or_svg.dart';
 import '../../../../../ui/shared_widgets/price_widget.dart';
 import '../../../../../ui/ui.dart';
-import '../../../../products/presentation/view/product_details_screen.dart';
+import '../../../../ads/presentation/view/ad_details_screen.dart';
 import '../../../domain/use_case/favorites_use_case.dart';
 import '../../managers/favorites.dart';
 
@@ -76,7 +76,7 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
   }
 
   Future<void> _removeItem() async {
-    final res = await getIt<AddOrDeleteFavoritesUseCase>().call(
+    final res = await getIt<RemoveFavoriteUseCase>().call(
       widget.favoritesModel.id.toString(),
     );
     res.fold(
@@ -127,7 +127,7 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
 
     return GestureDetector(
         onTap: () => Get.to(
-          () => ProductDetailsScreen(
+          () => AdDetailsScreen(
             productId: widget.favoritesModel.id,
           ),
         ),
@@ -267,14 +267,20 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            PriceWidget(
-                              price: _getPrice(),
-                              style: AppFont.font18W700Black.copyWith(
-                                fontSize: 16,
+                            if (widget.favoritesModel.hasListedPrice)
+                              PriceWidget(
+                                price: _getPrice(),
+                                style: AppFont.font18W700Black.copyWith(
+                                  fontSize: 16,
+                                ),
+                                textColor: AppColor.primary,
+                                currencySize: 16,
+                              )
+                            else
+                              Text(
+                                'Contact the publisher'.tr,
+                                style: AppFont.font14W600Primary,
                               ),
-                              textColor: AppColor.primary,
-                              currencySize: 16,
-                            ),
                             if (comparePrice != null) ...[
                               const Gap(8),
                               PriceWidget(
