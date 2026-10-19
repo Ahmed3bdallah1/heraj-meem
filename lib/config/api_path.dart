@@ -79,9 +79,19 @@ abstract class ApiPath {
   static const getVendors = 'vendors';
   static const getVendorProfile = 'vendors/me/profile';
   static const getMyProducts = 'products/my-products';
+  static const getRegions = 'locations/regions';
   static const getCities = 'locations/cities';
+  static String getCityDistricts(String cityId) =>
+      'locations/cities/$cityId/districts';
   static String getDistricts(String cityCode) =>
-      'locations/districts/$cityCode';
+      'locations/cities/$cityCode/districts';
+  static const updateUserMe = 'users/me';
+  static String getPublicProfile(String userId) => 'users/$userId';
+  static const getAds = 'ads';
+  static const getMyAds = 'ads/mine';
+  static String getAd(String adId) => 'ads/$adId';
+  static String getMyAd(String adId) => 'ads/mine/$adId';
+  static const searchSuggestions = 'search/suggestions';
   static String getNeighborhoods(String cityCode, String districtName) =>
       'locations/neighborhoods/$cityCode/${Uri.encodeComponent(districtName)}';
   static const checkoutOrder = 'orders/checkout';
@@ -98,11 +108,13 @@ abstract class ApiPath {
   static const getMyPayments = 'payments/my-payments';
   static String viewStory(String storyId) => 'stories/$storyId/view';
   static const createStory = 'stories';
-  static const getChats = 'chat';
-  static String getChatMessages(String chatId) => 'chat/$chatId/messages';
-  static String sendMessage(String chatId) => 'chat/$chatId/messages';
+  static const getChats = 'chat/conversations';
+  static String getChatMessages(String chatId) =>
+      'chat/conversations/$chatId/messages';
+  static String sendMessage(String chatId) =>
+      'chat/conversations/$chatId/messages';
   static String markChatAsRead(String chatId) => 'chat/$chatId/read';
-  static const createChat = 'chat/create';
+  static const createChat = 'chat/conversations';
   static String reverseGeocode(double lat, double lng) =>
       'geocode/reverse?lat=$lat&lng=$lng';
   static const shippingCompanies = 'shipping/companies';

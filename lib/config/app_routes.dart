@@ -13,7 +13,7 @@ import '../features/onboarding/view/get_started_screen.dart';
 import '../features/onboarding/view/onboard_screen.dart';
 import '../features/orders/presentation/view/order_details_screen.dart';
 import '../features/orders/presentation/view/orders_screen.dart';
-import '../features/products/presentation/view/product_details_screen.dart';
+import '../features/ads/presentation/view/ad_details_screen.dart';
 import '../features/root/view/root_view.dart';
 import '../features/splash/views/splash_view.dart';
 import '../features/store/presentation/view/open_store_page.dart';
@@ -21,9 +21,6 @@ import '../features/store/presentation/view/store_category_screen.dart';
 import '../features/store/presentation/view/store_details_screen.dart';
 import '../features/store/presentation/view/stores_list_screen.dart';
 import '../features/stories/presentation/view/story_viewer_screen.dart';
-import '../features/vendor/presentation/view/my_ads_screen.dart';
-import '../features/vendor/presentation/view/vendor_dashboard_screen.dart';
-import '../features/vendor/presentation/view/vendor_profile_screen.dart';
 import '../features/categories/data/models/main_category_model.dart';
 import '../features/orders/data/models/order_model.dart';
 import '../features/stories/domain/entities/story_entity.dart';
@@ -65,7 +62,7 @@ final List<GetPage> appRoutes = [
       if (productId == null) {
         throw ArgumentError('productId is required for product details screen');
       }
-      return ProductDetailsScreen(productId: productId);
+      return AdDetailsScreen(productId: productId);
     },
   ),
 
@@ -149,20 +146,6 @@ final List<GetPage> appRoutes = [
   GetPage(
     name: '/addresses',
     page: () => const AddressScreen(),
-  ),
-
-  // Vendor
-  GetPage(
-    name: '/vendor-dashboard',
-    page: () => const VendorDashboardScreen(),
-  ),
-  GetPage(
-    name: '/vendor-profile',
-    page: () => const VendorProfileScreen(),
-  ),
-  GetPage(
-    name: '/my-ads',
-    page: () => const MyAdsScreen(),
   ),
 
   // Other Features
