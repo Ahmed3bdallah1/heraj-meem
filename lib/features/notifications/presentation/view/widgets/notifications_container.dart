@@ -7,7 +7,7 @@ import '../../../../../../config/app_font.dart';
 import '../../../../../../core/service/loading_provider.dart';
 import '../../../../../../main.dart';
 import '../../../../../../ui/ui.dart';
-import '../../../../products/presentation/view/product_details_screen.dart';
+import '../../../../ads/presentation/view/ad_details_screen.dart';
 import '../../../domain/entities/notification_entity.dart';
 import '../../../domain/use_case/fetch_seen_use_case.dart';
 import '../../managers/fetch_notificatons_provider.dart';
@@ -40,7 +40,7 @@ class NotificationContainer extends ConsumerWidget {
     if (type == 'order' || link.contains('order')) {
       Get.toNamed('/orders', arguments: {'openOrderId': relatedId});
     } else if (type == 'product' || link.contains('product')) {
-      Get.to(() => ProductDetailsScreen(productId: relatedId));
+      Get.to(() => AdDetailsScreen(productId: relatedId));
     }
   }
 

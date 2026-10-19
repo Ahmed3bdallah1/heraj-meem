@@ -12,7 +12,7 @@ import '../../../../../main.dart';
 import '../../../../../ui/shared_widgets/hide_nav_bar_widget.dart';
 import '../../../../../ui/shared_widgets/not_found_widget.dart';
 import '../../../../config/app_font.dart';
-import '../../../products/presentation/view/widgets/sell_all_products/animated_background.dart';
+import '../../../ads/presentation/view/widgets/sell_all_products/animated_background.dart';
 import '../../domain/use_case/mark_all_as_read_use_case.dart';
 import '../managers/fetch_notificatons_provider.dart';
 import '../managers/notifications_filter.dart';
