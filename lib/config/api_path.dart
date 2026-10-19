@@ -41,6 +41,8 @@ abstract class ApiPath {
   static const getCartItems = 'cart';
   static const applyCoupon = 'cart/apply-coupon';
   static const getFavorites = 'favorites';
+  static String toggleFavorite(String adId) => 'favorites/$adId/toggle';
+  static String removeFavorite(String adId) => 'favorites/$adId';
   static const getAddresses = 'auth/addresses';
   static const addAddress = 'auth/add-address';
   static const updateAddress = 'auth/update-address';
@@ -49,8 +51,6 @@ abstract class ApiPath {
   static const updateCartItem = 'cart/update';
   static const cartActions = 'cart/add';
   static String deleteFromCart(String id) => 'cart/remove/$id';
-
-  static const toggleFavorite = 'favorites/toggle';
 
   static String getProductReviews(String productId) =>
       'reviews/product/$productId';
@@ -88,6 +88,10 @@ abstract class ApiPath {
   static const updateUserMe = 'users/me';
   static String getPublicProfile(String userId) => 'users/$userId';
   static const getAds = 'ads';
+  static const createAd = 'ads';
+  static const createMedia = 'media';
+  static String promoteAdMedia(String adId) => 'media/ads/$adId/promote';
+  static String deleteMedia(String mediaId) => 'media/$mediaId';
   static const getMyAds = 'ads/mine';
   static String getAd(String adId) => 'ads/$adId';
   static String getMyAd(String adId) => 'ads/mine/$adId';

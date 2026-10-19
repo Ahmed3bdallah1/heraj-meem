@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:heraj_meem/features/checkout/presentation/managers/payment_type.dart';
 import 'package:heraj_meem/features/search/presentation/managers/search_filter_notifier.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../core/enum/language.dart';
@@ -43,6 +42,9 @@ class Translation extends Translations {
           "Products": "Products",
           "Featured Products": "Featured Products",
           "Featured Ads": "Featured Ads",
+          "Ads with photos only": "Ads with photos only",
+          "Search in Baho...": "Search in Baho...",
+          "All regions": "All regions",
           "Contact the publisher": "Contact the publisher",
           "Publisher": "Publisher",
           "Member number": "Member number",
@@ -275,6 +277,16 @@ class Translation extends Translations {
               "Chat directly with sellers, get instant support, and track your orders. Everything you need in one place.",
           // Add Product Screen
           "Add Ad": "Add Ad",
+          "Price": "Price",
+          "Show phone": "Show phone",
+          "Please select a city": "Please select a city",
+          "Please enter a description": "Please enter a description",
+          "Description must be at least 10 characters":
+              "Description must be at least 10 characters",
+          "Uploading images...": "Uploading images...",
+          "Creating ad...": "Creating ad...",
+          "Ad created successfully": "Ad created successfully",
+          "Failed to upload image": "Failed to upload image",
           "Select City": "Select City",
           "Select Category": "Select Category",
           "Ad Details": "Ad Details",
@@ -775,6 +787,9 @@ class Translation extends Translations {
           "50% OFF": "٥٠٪ خصم",
           "Featured Products": "المنتجات المميزة",
           "Featured Ads": "إعلانات مميزة",
+          "Ads with photos only": "إعلانات بصور فقط",
+          "Search in Baho...": "ابحث في بهو...",
+          "All regions": "كل المناطق",
           "Contact the publisher": "تواصل مع المعلن",
           "Publisher": "المعلن",
           "Member number": "رقم العضوية",
@@ -966,8 +981,6 @@ class Translation extends Translations {
           "code": "الكود",
           OrderByTypes.Oldest.name: "الاقدم",
           OrderByTypes.Newest.name: "الاحدث",
-          PaymentType.Visa.name: "الدفع بالبطاقة الائتمانية",
-          PaymentType.Cash.name: "الدفع عند الاستلام",
           "Coupon Code": "رمز الكوبون",
           "Enter coupon code": "أدخل رمز الكوبون",
           "Apply": "تطبيق",
@@ -977,8 +990,6 @@ class Translation extends Translations {
           "Please select an address": "يرجى اختيار عنوان",
           "Order Images": "صور الطلب",
           "Add Image": "إضافة صورة",
-          PaymentType.Cash.name: "الدفع عند الاستلام",
-          PaymentType.Visa.name: "الدفع ببطاقة الائتمان",
           // Checkout Screen
           "No addresses found. Please add an address.":
               "لم يتم العثور على عناوين. يرجى إضافة عنوان.",
@@ -1062,6 +1073,15 @@ class Translation extends Translations {
               "تحدث مباشرة مع البائعين، احصل على الدعم الفوري، وتتبع طلباتك. كل ما تحتاجه في مكان واحد.",
           // Add Product Screen
           "Add Ad": "إضافة إعلان",
+          "Show phone": "إظهار رقم الهاتف",
+          "Please select a city": "يرجى اختيار المدينة",
+          "Please enter a description": "يرجى إدخال الوصف",
+          "Description must be at least 10 characters":
+              "يجب أن يكون الوصف 10 أحرف على الأقل",
+          "Uploading images...": "جارٍ رفع الصور...",
+          "Creating ad...": "جارٍ إنشاء الإعلان...",
+          "Ad created successfully": "تم إنشاء الإعلان بنجاح",
+          "Failed to upload image": "فشل رفع الصورة",
           "Select City": "اختر المدينة",
           "Select Category": "اختر الفئة",
           "Ad Details": "تفاصيل الإعلان",
