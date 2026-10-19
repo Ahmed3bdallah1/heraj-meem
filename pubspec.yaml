@@ -78,12 +78,13 @@ dependencies:
   dio: ^5.8.0+1
   toggle_switch: 2.3.0
   pin_code_fields: 8.0.1
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^11.0.0
   get_storage: 2.1.1
   shimmer: 3.0.0
+  skeletonizer: ^3.0.0
   lottie: ^3.3.1
   intl: ^0.20.2
-  google_fonts: 6.3.0
+  google_fonts: ^6.3.3
   flutter_svg: ^2.2.0
   flex_color_scheme: ^8.3.0
   photo_view: ^0.15.0
@@ -106,6 +107,7 @@ dependencies:
   share_plus: ^11.1.0
   country_picker: ^2.0.20
   story_view: ^0.16.6
+  substring_highlight: ^1.0.33
   flutter_typeahead: ^5.0.0
   html_editor_enhanced: ^2.3.0
 dev_dependencies:
@@ -139,12 +141,6 @@ flutter:
   assets:
     - assets/base/
     - assets/social_media/
-    - assets/shaders/
-
-  # Runtime fragment shaders
-  shaders:
-    - assets/shaders/disintegration.frag
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

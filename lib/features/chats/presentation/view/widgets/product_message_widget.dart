@@ -5,7 +5,7 @@ import 'package:heraj_meem/config/app_color.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/ui/shared_widgets/price_widget.dart';
 import '../../../domain/entities/message_entity.dart';
-import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/ads/presentation/view/ad_details_screen.dart';
 import 'package:intl/intl.dart';
 
 class ProductMessageWidget extends StatelessWidget {
@@ -61,7 +61,7 @@ class ProductMessageWidget extends StatelessWidget {
                     ),
                   GestureDetector(
                     onTap: () {
-                      Get.to(() => ProductDetailsScreen(productId: product.id));
+                      Get.to(() => AdDetailsScreen(productId: product.id));
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),

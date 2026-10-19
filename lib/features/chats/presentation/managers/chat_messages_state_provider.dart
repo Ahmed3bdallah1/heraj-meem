@@ -7,6 +7,7 @@ class ChatMessagesState {
   final int currentPage;
   final bool hasMore;
   final bool isLoadingMore;
+  final bool isInitialLoading;
   final bool isSending;
   final List<File> selectedImages;
   final bool isTextFieldFocused;
@@ -16,6 +17,7 @@ class ChatMessagesState {
     this.currentPage = 1,
     this.hasMore = true,
     this.isLoadingMore = false,
+    this.isInitialLoading = true,
     this.isSending = false,
     this.selectedImages = const [],
     this.isTextFieldFocused = false,
@@ -26,6 +28,7 @@ class ChatMessagesState {
     int? currentPage,
     bool? hasMore,
     bool? isLoadingMore,
+    bool? isInitialLoading,
     bool? isSending,
     List<File>? selectedImages,
     bool? isTextFieldFocused,
@@ -35,6 +38,7 @@ class ChatMessagesState {
       currentPage: currentPage ?? this.currentPage,
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      isInitialLoading: isInitialLoading ?? this.isInitialLoading,
       isSending: isSending ?? this.isSending,
       selectedImages: selectedImages ?? this.selectedImages,
       isTextFieldFocused: isTextFieldFocused ?? this.isTextFieldFocused,
@@ -56,6 +60,7 @@ class ChatMessagesStateNotifier extends StateNotifier<ChatMessagesState> {
       messages: messages,
       hasMore: hasMore,
       isLoadingMore: false,
+      isInitialLoading: false,
     );
   }
 
@@ -97,7 +102,11 @@ class ChatMessagesStateNotifier extends StateNotifier<ChatMessagesState> {
   }
 
   void reset() {
-    state = ChatMessagesState(messages: []);
+    state = ChatMessagesState(messages: [], isInitialLoading: true);
+  }
+
+  void finishLoading() {
+    state = state.copyWith(isLoadingMore: false, isInitialLoading: false);
   }
 }
 

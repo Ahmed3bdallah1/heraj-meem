@@ -98,7 +98,7 @@ class EditProfileImageWidget extends StatelessWidget {
                     color: AppColor.primary,
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColor.primary, width: 2)),
-                child: const Icon(
+                child: const FaIcon(
                   FontAwesomeIcons.pen,
                   color: Colors.white,
                   size: 14,

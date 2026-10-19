@@ -25,11 +25,15 @@ import 'widgets/product_message_widget.dart';
 class ChatMessagesScreen extends ConsumerStatefulWidget {
   final String chatId;
   final bool isNewChat;
+  final String? peerName;
+  final String? peerImage;
 
   const ChatMessagesScreen({
     super.key,
     required this.chatId,
     this.isNewChat = false,
+    this.peerName,
+    this.peerImage,
   });
 
   @override
@@ -130,7 +134,7 @@ class _ChatMessagesScreenState extends ConsumerState<ChatMessagesScreen> {
         }
       }).catchError((error) {
         if (mounted) {
-          stateNotifier.setLoadingMore(false);
+          stateNotifier.finishLoading();
         }
       });
     });
@@ -245,40 +249,52 @@ class _ChatMessagesScreenState extends ConsumerState<ChatMessagesScreen> {
     }
     final otherParticipant = chat?.getOtherParticipant(currentUserId);
     final otherUserInfo = otherParticipant?.userId;
-    final displayName = otherUserInfo?.displayName ?? 'Chat'.tr;
-    final displayImage = otherUserInfo?.displayImage ?? '';
+    final chatName = otherUserInfo?.displayName ?? '';
+    final chatImage = otherUserInfo?.displayImage ?? '';
+    final fallbackName = widget.peerName?.trim() ?? '';
+    final fallbackImage = widget.peerImage?.trim() ?? '';
+    final displayName = chatName.isNotEmpty && chatName != 'Unknown User'
+        ? chatName
+        : (fallbackName.isNotEmpty ? fallbackName : 'Chat'.tr);
+    final displayImage = chatImage.isNotEmpty ? chatImage : fallbackImage;
 
     return Scaffold(
+      backgroundColor: AppColor.primary2,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leadingWidth: 50,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomImageCircle(
-              image: displayImage,
-              radius: 14,
-            ),
-            const Gap(10),
-            Expanded(
-              child: Text(
-                displayName,
-                style: AppFont.font15W500Black,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+        title: _MessageEntrance(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomImageCircle(
+                image: displayImage,
+                radius: 14,
               ),
-            ),
-          ],
+              const Gap(10),
+              Expanded(
+                child: Text(
+                  displayName,
+                  style: AppFont.font15W500Black,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
         centerTitle: false,
       ),
       body: Column(
         children: [
           Expanded(
-            child: state.messages.isEmpty
+            child: state.isInitialLoading && state.messages.isEmpty
                 ? const Center(child: LoadingWidget())
-                : RefreshIndicator(
+                : state.messages.isEmpty
+                    ? const _MessageEntrance(child: _EmptyChatPlaceholder())
+                    : RefreshIndicator(
                     onRefresh: () async {
                       _loadMessages();
                     },
@@ -331,23 +347,31 @@ class _ChatMessagesScreenState extends ConsumerState<ChatMessagesScreen> {
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
-                          child: message.type == MessageType.product
-                              ? ProductMessageWidget(
-                                  message: message,
-                                  isMe: isMe,
-                                  showTime: showTime,
-                                )
-                              : MessageBubble(
-                                  message: message,
-                                  isMe: isMe,
-                                  showTime: showTime,
-                                ),
+                          child: _MessageEntrance(
+                            key: ValueKey(message.id),
+                            index: messageIndex,
+                            fromEnd: isMe,
+                            child: message.type == MessageType.product
+                                ? ProductMessageWidget(
+                                    message: message,
+                                    isMe: isMe,
+                                    showTime: showTime,
+                                  )
+                                : MessageBubble(
+                                    message: message,
+                                    isMe: isMe,
+                                    showTime: showTime,
+                                  ),
+                          ),
                         );
                       },
                     ),
                   ),
           ),
-          _buildMessageInput(state),
+          _MessageEntrance(
+            slide: 24,
+            child: _buildMessageInput(state),
+          ),
         ],
       ),
     );
@@ -483,19 +507,141 @@ class _ChatMessagesScreenState extends ConsumerState<ChatMessagesScreen> {
                   ),
                 ),
                 const Gap(8),
-                IconButton(
-                  icon: state.isSending
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                _SendPress(
+                  onTap: state.isSending ? null : _sendMessage,
+                  child: state.isSending
+                      ? const LoadingWidget(size: 20)
                       : Icon(Icons.send, color: AppColor.primary),
-                  onPressed: state.isSending ? null : _sendMessage,
                 ),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyChatPlaceholder extends StatelessWidget {
+  const _EmptyChatPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.85, end: 1),
+        duration: const Duration(milliseconds: 480),
+        curve: Curves.easeOutBack,
+        builder: (context, value, child) =>
+            Transform.scale(scale: value < 0.85 ? 0.85 : value, child: child),
+        child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.chat_bubble_outline,
+              size: 56,
+              color: AppColor.grey2,
+            ),
+            const Gap(12),
+            Text(
+              'No messages yet'.tr,
+              style: AppFont.font16W700Black,
+              textAlign: TextAlign.center,
+            ),
+            const Gap(6),
+            Text(
+              'Send a message to start the conversation'.tr,
+              style: AppFont.font14W600Primary.copyWith(
+                color: AppColor.grey2,
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MessageEntrance extends StatelessWidget {
+  const _MessageEntrance({
+    super.key,
+    required this.child,
+    this.index = 0,
+    this.fromEnd = false,
+    this.slide = 18,
+  });
+
+  final Widget child;
+  final int index;
+  final bool fromEnd;
+  final double slide;
+
+  @override
+  Widget build(BuildContext context) {
+    final delay = index.clamp(0, 6) * 45;
+    final towardEnd = fromEnd ? 1.0 : -1.0;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 380 + delay),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(slide * towardEnd * (1 - value), 10 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+class _SendPress extends StatefulWidget {
+  const _SendPress({required this.child, required this.onTap});
+
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<_SendPress> createState() => _SendPressState();
+}
+
+class _SendPressState extends State<_SendPress> {
+  final ValueNotifier<double> _scale = ValueNotifier(1);
+
+  @override
+  void dispose() {
+    _scale.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: widget.onTap == null ? null : (_) => _scale.value = 0.9,
+      onTapCancel: () => _scale.value = 1,
+      onTapUp: (_) => _scale.value = 1,
+      onTap: widget.onTap,
+      child: ValueListenableBuilder<double>(
+        valueListenable: _scale,
+        builder: (context, scale, child) {
+          return AnimatedScale(
+            scale: scale,
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOut,
+            child: child,
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: widget.child,
         ),
       ),
     );

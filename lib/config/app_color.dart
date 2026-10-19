@@ -28,13 +28,12 @@ abstract class AppColor {
   static Color danger2 = Get.isDarkMode ? Colors.red.shade900 : Colors.red;
   static Color orange = Colors.orange;
   static Color gold = Color(0xffFFFF00);
-  static const Color primary = Color(0xffF39200);
+  static const Color primary = Color(0xff004DF3);
   static final Color primaryWhite2 = primary.withAlpha(40);
-  static Color primaryWhite =
-      Get.isDarkMode ? const Color(0xff161d31) : const Color(0xffF0EBEB);
-  static const Color primary2 = Color(0xffF5F0E8);
+  static Color primaryWhite = Color(0xffE6EDFE);
+  static const Color primary2 = Color(0xffE6EDFE);
   static const Color primary3 = Color(0xffE9E1E1);
-  static const Color primary4 = Color(0xff241180);
+  static const Color primary4 = Color(0xff0C41B0);
   static const Color primary5 = Color(0xffB9C3CF);
   static const Color mineShaft = Color(0xff222222);
 

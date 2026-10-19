@@ -17,12 +17,19 @@ class MessagesPagination {
   });
 
   factory MessagesPagination.fromJson(Map<String, dynamic> json) {
+    final page = (json['page'] as num?)?.toInt() ?? 1;
+    final limit = (json['limit'] as num?)?.toInt() ?? 50;
+    final total = (json['total'] as num?)?.toInt() ?? 0;
+    final totalPages = (json['totalPages'] as num?)?.toInt() ??
+        (limit == 0 ? 1 : (total / limit).ceil().clamp(1, 1 << 30));
     return MessagesPagination(
-      page: json['page'] ?? 1,
-      limit: json['limit'] ?? 50,
-      total: json['total'] ?? 0,
-      totalPages: json['totalPages'] ?? 1,
-      hasMore: json['hasMore'] ?? false,
+      page: page,
+      limit: limit,
+      total: total,
+      totalPages: totalPages,
+      hasMore: json.containsKey('hasMore')
+          ? json['hasMore'] == true
+          : page < totalPages && total > 0,
     );
   }
 
@@ -47,14 +54,29 @@ class MessagesPaginatedModel {
   });
 
   factory MessagesPaginatedModel.fromJson(Map<String, dynamic> json) {
+    final data = json['data'];
+    final Map<String, dynamic> payload = data is Map
+        ? Map<String, dynamic>.from(data)
+        : json;
+    final rawMessages = data is List
+        ? data
+        : payload['items'] ??
+            payload['messages'] ??
+            (payload['data'] is List ? payload['data'] : null);
+    final paginationRaw = payload['pagination'] ?? json['pagination'];
     return MessagesPaginatedModel(
-      messages: (json['data'] as List<dynamic>?)
-              ?.map((item) =>
-                  MessageModel.fromJson(item as Map<String, dynamic>))
-              .toList() ??
-          [],
+      messages: rawMessages is List
+          ? rawMessages
+              .whereType<Map>()
+              .map((item) =>
+                  MessageModel.fromJson(Map<String, dynamic>.from(item)))
+              .toList()
+          : [],
       pagination: MessagesPagination.fromJson(
-          json['pagination'] as Map<String, dynamic>? ?? {}),
+        paginationRaw is Map
+            ? Map<String, dynamic>.from(paginationRaw)
+            : payload,
+      ),
     );
   }
 

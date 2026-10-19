@@ -1,0 +1,198 @@
+---
+alwaysApply: true
+---
+
+# Heraj meem project – code and instructions
+
+Use this file for consistent code style and to apply instructions from the project owner. Keep it updated when new conventions are given.
+
+## Domain entities and data models
+
+- **Where to put types**
+  - Put **larger, top-level models** (full API responses, screen/feature aggregates, DTOs with many fields) in **`data/models/`** (and their domain counterparts in **`domain/entities/`** when the feature uses clean architecture entities).
+  - Put **smaller nested types** that belong inside a bigger model (e.g. `User`, `TaskAssignee`, `BoardColumn` inside a workspace or task-board payload) in **`domain/entities/`** as separate entity files, then reference them from the parent model/entity. Do not inline large nested object graphs in one file—split sub-objects into `entities/` and compose the parent in `models/`.
+
+- **Include `fromJson` and `toJson`** in both **domain entities** (`domain/entities/`) and **data models** (`data/models/`). Use `factory X.fromJson(Map<String, dynamic> json)` and `Map<String, dynamic> toJson()` so entities and models can be serialized from the API/data layer and passed around consistently. Prefer snake_case for JSON keys (e.g. `avatar_url`) when matching backend or DTOs.
+
+---
+
+## Navigation bar
+
+- Floating pill bar: background `#F9F6F3`, height 70, fully rounded, horizontal padding 10. Shadow `0, 8` blur 12 at about 20% `#959DA5`.
+- Five icon tabs, no labels. Selected tab is a 48 circle in `#B59779` with a `#F9F6F3` icon. Unselected icons are `#8F8F91` at 24×24.
+- Sit the pill above the bottom safe area with a small gap. Do not draw a full-width bar into the safe area.
+
+---
+
+## Lists and viewports
+
+- **Custom scroll view** for the **entire screen** and for **vertical lists** (e.g. main page scroll, vertical list sections).
+- **SingleChildScrollView** for **horizontal scroll** (e.g. horizontal lists of cards). When `ListView` causes viewport/layout issues (e.g. `geometry: null`, `size: MISSING` during paint), use `SingleChildScrollView` + `Row` for horizontal lists. Use **SizedBox** for item size and **ClipRect** when content can overflow the cell.
+- **Masonry grids** for any grid-style product/item lists: use **`SliverMasonryGrid`** / **`MasonryGridView`** from `flutter_staggered_grid_view` instead of `SliverGrid` / `GridView`. Prefer `SliverMasonryGrid.count` inside a `CustomScrollView`. Grid item cards must size to their content (`mainAxisSize: MainAxisSize.min`)—do not rely on `Spacer` or fixed `childAspectRatio` for vertical fill.
+
+---
+
+## Layout and spacing
+
+- **Do not use ScreenUtil** (`flutter_screenutil`) in UI code. Avoid `.w`, `.h`, `.sp`, `.r`, `ScreenUtil`, and `responsiveInit()` for sizing or spacing.
+- **Use Flutter layout widgets instead**:
+  - **`Expanded`** / **`Flexible`** — fill or share remaining space in `Row` / `Column`.
+  - **`BoxConstraints`** — constrain min/max width or height when a fixed bound is needed.
+  - **`Gap`** (from `gap` package) — spacing between widgets instead of `SizedBox` chains where appropriate.
+  - **`SizedBox`**, **`Padding`**, and **`EdgeInsets`** — fixed spacing when a layout widget is not enough.
+- Prefer **relative, constraint-based layouts** over screen-percentage scaling so UI adapts naturally across screen sizes.
+- **Do not add a static `Directionality`** to any screen. Let text direction come from the app/locale (e.g. GetX locale or inherited `Directionality`) so LTR and RTL layouts work correctly without hardcoding `TextDirection.ltr` or `TextDirection.rtl`.
+
+---
+
+## AsyncValue, loading, and images
+
+- **Use `customWhen`** (from `helper/riverpod.dart`) instead of `when` on `AsyncValue`. Pass `ref`, `refreshable` (e.g. `someProvider.future`), and `data`; use optional `loading` and `error` when needed. This gives consistent error/retry UI and refresh support.
+- **Partial updates**: When a tap changes one item (quantity, favorite, and similar) and then calls `ref.invalidate` on the list provider, pass **`skipLoadingOnRefresh: true`** to that screen’s `customWhen`. Keep the current list on screen. Replace only the tapped control with **`LoadingWidget`** until `ref.read(provider.future)` completes, then clear that loading state. Do not replace the whole list with the loading or shimmer state for that refresh.
+- **Loading indicators**: Use **`LoadingWidget`** (from `ui/shared_widgets/loading_widget.dart`) for spinners and in-progress states. Do not use `CircularProgressIndicator` or other Material circle loading indicators in UI code.
+- **Loading shimmers**: Use **`ShimmerEffect`** (from `ui/shared_widgets/shimmer_effect.dart`) for any loading placeholder/shimmer. Pass `enable: true` and a `child` that matches the layout of the loaded content (e.g. row of circles for avatars).
+- **Images**: Use **`ImageOrSvg`** (from `ui/shared_widgets/image_or_svg.dart`) for all image/avatar display (network, asset, or SVG URLs).
+
+---
+
+## Typography
+
+- **Use `AppFont`** (from `config/app_font.dart`) for all text styles instead of raw `TextStyle`. Use the existing getters (e.g. `AppFont.font14W600White`, `AppFont.font10w400Green`) and override when needed with `.copyWith()` (e.g. `AppFont.font12W600White.copyWith(fontWeight: FontWeight.w500)`). Do not use inline `TextStyle(fontSize: …, fontWeight: …, color: …)` in UI code.
+
+---
+
+## Colors
+
+- **Primary** is Figma gold-600 `#B59779` (`AppColor.primary`). Light surfaces use gold-50 `#F9F6F3` (`AppColor.primary2`). Icon grey is `#8F8F91` (`AppColor.grey2`).
+- **Use `withAlpha(int)`** instead of `withOpacity(double)` when adjusting color opacity. Alpha is 0–255 (e.g. `color.withAlpha(26)` for ~10% opacity, `withAlpha(128)` for ~50%). Do not use `withOpacity()` in UI code.
+
+---
+
+## Buttons
+
+- **Use `CustomFilledButton`** (from `ui/shared_widgets/custom_filled_button.dart`) for primary/filled actions. Do not use `ElevatedButton`, `FilledButton`, or other Material filled buttons in UI code.
+- **Use `CustomOutlinedButton`** (from `ui/shared_widgets/custom_outlined_button.dart`) for secondary/outlined actions. Do not use `OutlinedButton` or other Material outlined buttons in UI code.
+
+---
+
+## Translations (i18n)
+
+- **Add all user-facing strings to `app_translation`** whenever you create or change a **screen** or **UI component**. For every new or modified screen/widget:
+  1. Collect every string shown to the user (labels, titles, buttons, hints, messages, placeholders).
+  2. Add each string as a key in `lib/config/app_translation.dart` in both the **`en`** and **`ar`** (and any other supported locale) maps. Use the **exact** string as the key when using GetX `.tr` (e.g. `'Save'.tr` → key `'Save'`).
+  3. In the UI, use **`.tr`** on those strings (e.g. `Text('Save'.tr)`, `labelText: 'Name'.tr`). For parameterized strings use **`.trParams()`** and add the key with a placeholder (e.g. `'Resend in %ss'`).
+- Do not leave hard-coded user-visible text in screens or shared components without a corresponding entry in `app_translation`.
+
+---
+
+## Consts and separation of concerns
+
+- **Use `const`** wherever possible: `const` widgets, `const` constructors, `const` values (e.g. padding, sizes, durations) to avoid unnecessary rebuilds and keep intent clear.
+- **Separation of concerns**: Keep UI, business logic, and data access clearly separated. Don't put repo/API calls or use-case logic inside widgets; use managers/providers and use cases instead.
+
+---
+
+## Screen actions
+
+- When a screen has **many actions** (tap handlers, navigation, sheets/dialogs, form submit, provider calls, etc.), **do not define them all inline in the screen `State` class**. Extract them into a **mixin** and apply it on the state (e.g. `class _MyScreenState extends State<MyScreen> with MyScreenActionsMixin`).
+- Place the mixin in the same feature, e.g. `lib/features/<feature>/presentation/managers/<screen>_actions_mixin.dart`. **Do not** put managers under `view/` — they belong directly under `presentation/managers/` alongside providers.
+- Keep the screen focused on **layout and wiring**; the mixin holds action methods and UI-flow logic. Repo/API and heavy business logic still belong in use cases/providers—not in the mixin when it belongs in the domain layer.
+- **Do not put screen-flow logic in standalone view/widget files** as top-level helpers (e.g. `appointmentNeedsPayment`, `appointmentPaymentAmount`, `showAppointmentPaymentSheet`). Helpers that decide when to act, compute display values for a flow, open sheets/dialogs, invalidate providers, and chain follow-up navigation/result UI belong in the screen’s **actions mixin**, not in `view/widgets/` files.
+- **Widget files** (`view/widgets/`) should only hold the **UI** for sheets, dialogs, and similar components (the widget tree). The screen mixin calls `showModalBottomSheet` / `showDialog` and passes callbacks; it owns the orchestration (open → submit → refresh → navigate/show result).
+
+---
+
+## Large screens (`part` / `part of`)
+
+When a screen file grows large (many private step/section widgets), **split it with Dart `part` / `part of`** instead of one giant file:
+
+- Keep the **library entry** as the screen file under `view/` (e.g. `create_package_shipment_screen.dart`): imports, the public screen widget, and `State` (layout + wiring only).
+- **One component per part file.** If the screen has many components, create several part files — one for each step, section, or private widget (progress bar, step title, city step, category tile, photo box, continue button, and so on). Do not gather every private widget from the screen into a single part file.
+- Put that screen’s part files in their own folder under `view/widgets/<screen_name>/` (for example `view/widgets/add_ad/`). Do not leave a screen’s parts loose in `view/widgets/` next to other screens’ widgets.
+  ```dart
+  part 'widgets/add_ad/city_step.dart';
+  part 'widgets/add_ad/category_step.dart';
+  part 'widgets/add_ad/details_step.dart';
+  ```
+- Each part file starts with:
+  ```dart
+  part of '../../add_ad_screen.dart';
+  ```
+  and must **not** declare its own imports (it shares the library’s imports).
+- Put one logical UI slice in that part. Private (`_`) widgets in parts stay library-private to the screen.
+- Prefer this over exporting many public widget classes when the pieces are only used by that screen. Standalone reusable UI (sheets used from mixins, cards used elsewhere) still belongs in normal `view/widgets/*.dart` libraries with their own imports (not `part of`).
+
+---
+
+## State in widgets
+
+- **Prefer `ValueNotifier` + `ValueListenableBuilder` instead of `setState`** when a widget needs local UI state (e.g. toggling between button and text field, expanded/collapsed). Use a `ValueNotifier<T>` in the state and wrap the part of the tree that depends on it in `ValueListenableBuilder` so only that subtree rebuilds. Remember to dispose the notifier in `dispose()`. Avoid `setState` for this kind of local, reactive UI state.
+
+---
+
+## Forms (FormGroup for text fields)
+
+- **Use `FormGroup` (reactive_forms) for screens with multiple text fields or form inputs.** Define a `FormGroup` with a `FormControl` for each field (e.g. title, description, dates, status). Wrap the screen body in `ReactiveForm(formGroup: formGroup, child: …)` and use `ReactiveTextField` / `CustomTextField(formControlName: '…')` (or `ReactiveDropdownField`) for inputs. Initialize the form in `initState`, dispose it in `dispose()`. This keeps form state and validation in one place and avoids scattered `TextEditingController`s.
+- **Give every text field in a form or bottom sheet its own `FocusNode`.** Create the nodes on the `State`, pass each one through `focusNode`, and dispose them in `dispose()`. Use `TextInputAction.next` on every field except the last, which uses `TextInputAction.done`. On submit, move focus to the next field’s node. The last field unfocuses the keyboard. Search fields in the same sheet take a focus node too, so the keyboard can move into and out of them.
+
+---
+
+## Home screen
+
+The home screen is only a shell. Its body is always a **`const CustomScrollView`** whose `slivers` list is a **`const` list**. Do not build that list at runtime, and do not pass non-const children into it.
+
+- Each sliver is one small, specific component with a **`const` constructor** and no constructor arguments (for example `const HomeHeaderComponent()`, `const HomeCategoriesComponent()`).
+- One component per file, named `home_<thing>_component.dart`.
+- Put the component in the **feature that owns that content**, not in a shared home dump:
+  - header chrome stays in `features/home/presentation/view/components/`
+  - category blocks live in `features/categories/`
+  - ad blocks (featured, filters, grid) live in `features/ads/`
+  - an address or order block would live in `features/address/` or `features/orders/`
+- The screen wires those components in order and nothing else. Refresh, scroll, and other screen actions belong in `features/home/presentation/managers/home_logic_mixin.dart`, applied on the screen state.
+- A component loads its own data. Do not pass lists, providers, or callbacks from `HomeScreen` into the sliver list.
+
+```dart
+child: const CustomScrollView(
+  physics: AlwaysScrollableScrollPhysics(),
+  slivers: [
+    SliverToBoxAdapter(child: HomeHeaderComponent()),
+    SliverToBoxAdapter(child: HomeCategoriesComponent()),
+    SliverToBoxAdapter(child: HomeFeaturedAdsComponent()),
+    SliverGap(24),
+  ],
+),
+```
+
+---
+
+## Feature structure (same as settings)
+
+Every new feature MUST follow the same structure as the **settings** feature:
+
+```
+lib/features/<feature_name>/
+├── data/
+│   ├── data_source/     # Remote/local data sources (API, DB)
+│   ├── repo/            # Repository implementations (*_repo_imp.dart)
+│   └── models/          # DTOs / data models
+├── domain/
+│   ├── entities/        # Domain entities
+│   ├── repo/            # Repository interfaces (abstract)
+│   └── use_case/        # Use cases (business logic)
+└── presentation/
+    ├── view/            # Screens / main views (*_view.dart, *_screen.dart)
+    │   └── widgets/     # Feature-specific widgets
+    └── managers/        # Providers, action mixins, screen-flow state (e.g. *_provider.dart, *_actions_mixin.dart)
+```
+
+- **data**: data sources, repo implementations, models.
+- **domain**: entities, repo contracts, use cases (no Flutter/UI).
+- **presentation**: `view/` (screens), `view/widgets/` (UI components), `managers/` (Riverpod providers, action mixins — **not** under `view/`).
+
+---
+
+## General
+
+- Prefer **cleaner, minimal APIs**: one `task` (or similar) argument instead of many separate fields when the widget is “one item” of that type.
+- **Mini-games** live in the local package **`packages/kingo_games`**. Add new games under `lib/src/<game_name>/`, export them from `lib/kingo_games.dart`, and keep a thin app screen in `lib/features/games/` that wires translations/navigation.
+- Add new conventions or instructions to this file so future changes stay consistent.

@@ -117,7 +117,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage>
                   end: 0,
                   start: 0,
                   child: Image.asset(
-                    Assets.base.logo.path,
+                    Assets.base.logoWhite.path,
                     height: 100,
                     width: 100,
                   ),

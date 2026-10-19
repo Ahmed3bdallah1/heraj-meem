@@ -2,11 +2,6 @@ import 'package:heraj_meem/core/service/theme_service/theme_service.dart';
 import 'package:heraj_meem/features/address/data/data_source/address_data_source.dart';
 import 'package:heraj_meem/features/address/data/repo/address_repo_imp.dart';
 import 'package:heraj_meem/features/address/domain/repo/address_repo.dart';
-import 'package:heraj_meem/features/checkout/data/data_source/check_out_data_source.dart';
-import 'package:heraj_meem/features/cart/data/data_source/cart_data_source.dart';
-import 'package:heraj_meem/features/cart/data/repo/cart_repo_imp.dart';
-import 'package:heraj_meem/features/cart/domain/repo/cart_repo.dart';
-import 'package:heraj_meem/features/cart/domain/use_cases/cart_use_case.dart';
 import 'package:heraj_meem/features/categories/data/data_source/categories_data_source.dart';
 import 'package:heraj_meem/features/favorites/data/data_source/favorites_data_source.dart';
 import 'package:heraj_meem/features/favorites/data/repo/favorites_repo_imp.dart';
@@ -21,14 +16,13 @@ import 'package:heraj_meem/features/home/domain/use_case/fetch_partner_use_case.
 import 'package:heraj_meem/features/plans/data/data_source/plans_data_source.dart';
 import 'package:heraj_meem/features/plans/data/repo/plans_repo_imp.dart';
 import 'package:heraj_meem/features/plans/domain/repo/plans_repo.dart';
-import 'package:heraj_meem/features/products/data/data_source/products_data_source.dart';
-import 'package:heraj_meem/features/products/data/repo/product_repo_imp.dart';
-import 'package:heraj_meem/features/products/domain/repo/product_repo.dart';
-import 'package:heraj_meem/features/products/domain/use_case/create_product_use_case.dart';
-import 'package:heraj_meem/features/products/domain/use_case/update_product_use_case.dart';
-import 'package:heraj_meem/features/bundles/data/data_source/bundles_data_source.dart';
-import 'package:heraj_meem/features/bundles/data/repo/bundles_repo_imp.dart';
-import 'package:heraj_meem/features/bundles/domain/repo/bundles_repo.dart';
+import 'package:heraj_meem/features/ads/data/data_source/create_ad_data_source.dart';
+import 'package:heraj_meem/features/ads/data/data_source/products_data_source.dart';
+import 'package:heraj_meem/features/ads/data/repo/create_ad_repo_imp.dart';
+import 'package:heraj_meem/features/ads/domain/repo/create_ad_repo.dart';
+import 'package:heraj_meem/features/ads/domain/use_case/create_ad_use_case.dart';
+import 'package:heraj_meem/features/ads/data/repo/product_repo_imp.dart';
+import 'package:heraj_meem/features/ads/domain/repo/product_repo.dart';
 import 'package:heraj_meem/features/settings/data/data_source/policy_data_source.dart';
 import 'package:heraj_meem/features/settings/data/repo/policy_repo_imp.dart';
 import 'package:heraj_meem/features/settings/domain/repo/policy_repo.dart';
@@ -67,10 +61,6 @@ import 'features/home/data/data_source/ads_data_source.dart';
 import 'features/home/data/repostories/ads_repo_imp.dart';
 import 'features/home/domain/repositories/ads_repo.dart';
 import 'features/home/domain/use_case/fetch_ads_use_case.dart';
-import 'features/home/data/data_source/home_data_source.dart';
-import 'features/home/data/repostories/home_repo_imp.dart';
-import 'features/home/domain/repositories/home_repo.dart';
-import 'features/home/domain/use_case/fetch_home_data_use_case.dart';
 import 'features/notifications/domain/use_case/fetch_seen_use_case.dart';
 import 'features/notifications/domain/use_case/get_unread_count_use_case.dart';
 import 'features/notifications/domain/use_case/mark_all_as_read_use_case.dart';
@@ -82,41 +72,16 @@ import 'features/profile/domain/repositories/update_profile_repo.dart';
 import 'features/profile/domain/repositories/upload_file_repo.dart';
 import 'features/profile/domain/use_cases/update_profile_use_case.dart';
 import 'features/profile/domain/use_cases/upload_file_use_case.dart';
-import 'features/orders/data/data_source/orders_data_source.dart';
-import 'features/orders/data/repo/orders_repo_imp.dart';
-import 'features/orders/domain/repo/orders_repo.dart';
-import 'features/orders/domain/use_case/fetch_orders_use_case.dart';
-import 'features/orders/domain/use_case/cancel_order_use_case.dart';
-import 'features/shipping/data/data_source/shipping_data_source.dart';
-import 'features/loyalty_points/data/data_source/loyalty_points_data_source.dart';
-import 'features/loyalty_points/data/repo/loyalty_points_repo_imp.dart';
-import 'features/loyalty_points/domain/repo/loyalty_points_repo.dart';
-import 'features/loyalty_points/domain/use_case/loyalty_points_use_case.dart';
-import 'features/stories/data/data_source/stories_data_source.dart';
-import 'features/stories/data/repo/stories_repo_imp.dart';
-import 'features/stories/domain/repositories/stories_repo.dart';
-import 'features/stories/domain/use_case/fetch_stories_use_case.dart';
-import 'features/stories/domain/use_case/view_story_use_case.dart';
-import 'features/stories/domain/use_case/create_story_use_case.dart';
 import 'features/store/data/data_source/stores_data_source.dart';
 import 'features/store/data/repo/stores_repo_imp.dart';
 import 'features/store/domain/repo/stores_repo.dart';
 import 'features/store/domain/use_case/fetch_stores_use_case.dart';
-import 'features/vendor/data/data_source/vendor_data_source.dart';
-import 'features/vendor/data/repo/vendor_repo_imp.dart';
-import 'features/vendor/domain/repo/vendor_repo.dart';
-import 'features/vendor/domain/use_case/get_vendor_profile_use_case.dart';
-import 'features/vendor/domain/use_case/get_my_products_use_case.dart';
 import 'features/location/data/data_source/location_data_source.dart';
 import 'features/location/data/repo/location_repo_imp.dart';
 import 'features/location/domain/repo/location_repo.dart';
 import 'features/location/domain/use_case/fetch_cities_use_case.dart';
 import 'features/location/domain/use_case/fetch_districts_use_case.dart';
 import 'features/location/domain/use_case/fetch_neighborhoods_use_case.dart';
-import 'features/payments/data/data_source/payments_data_source.dart';
-import 'features/payments/data/repo/payments_repo_imp.dart';
-import 'features/payments/domain/repo/payments_repo.dart';
-import 'features/payments/domain/use_case/fetch_payments_use_case.dart';
 import 'features/chats/data/data_source/chats_data_source.dart';
 import 'features/chats/data/repo/chats_repo_imp.dart';
 import 'features/chats/domain/repo/chats_repo.dart';
@@ -193,16 +158,18 @@ Future setupLocator() async {
       () => ProductsDataSourceImpl(apiService: getIt<ApiService>()));
   getIt.registerLazySingleton<ProductRepo>(
       () => ProductRepoImp(productsDataSource: getIt<ProductsDataSource>()));
-  getIt.registerLazySingleton<CreateProductUseCase>(
-      () => CreateProductUseCase(getIt<ProductRepo>()));
-  getIt.registerLazySingleton<UpdateProductUseCase>(
-      () => UpdateProductUseCase(getIt<ProductRepo>()));
-
-  /// Bundles entity
-  getIt.registerLazySingleton<BundlesDataSource>(
-      () => BundlesDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<BundlesRepo>(
-      () => BundlesRepoImp(bundlesDataSource: getIt<BundlesDataSource>()));
+  getIt.registerLazySingleton<CreateAdDataSource>(
+      () => CreateAdDataSourceImpl(apiClient: getIt<ApiService>()));
+  getIt.registerLazySingleton<CreateAdRepo>(
+      () => CreateAdRepoImp(dataSource: getIt<CreateAdDataSource>()));
+  getIt.registerLazySingleton<UploadAdMediaUseCase>(
+      () => UploadAdMediaUseCase(getIt<CreateAdRepo>()));
+  getIt.registerLazySingleton<CreateAdUseCase>(
+      () => CreateAdUseCase(getIt<CreateAdRepo>()));
+  getIt.registerLazySingleton<PromoteAdMediaUseCase>(
+      () => PromoteAdMediaUseCase(getIt<CreateAdRepo>()));
+  getIt.registerLazySingleton<DeleteAdMediaUseCase>(
+      () => DeleteAdMediaUseCase(getIt<CreateAdRepo>()));
 
   /// ads entity
   getIt.registerLazySingleton<AdsDataSource>(
@@ -211,17 +178,6 @@ Future setupLocator() async {
       () => AdsRepoImp(adsDataSource: getIt<AdsDataSource>()));
   getIt.registerLazySingleton<FetchAdsUseCase>(
       () => FetchAdsUseCase(adsRepo: getIt<AdsRepo>()));
-
-  /// Home data entity
-  getIt.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImp(
-        apiService: getIt<ApiService>(),
-        localDataManager: getIt<LocalDataManager>(),
-        localeService: getIt<LocaleService>(),
-      ));
-  getIt.registerLazySingleton<HomeRepo>(
-      () => HomeRepoImp(homeDataSource: getIt<HomeDataSource>()));
-  getIt.registerLazySingleton<FetchHomeDataUseCase>(
-      () => FetchHomeDataUseCase(homeRepo: getIt<HomeRepo>()));
 
   /// plans entity
   getIt.registerLazySingleton<PlansDataSource>(
@@ -239,20 +195,6 @@ Future setupLocator() async {
   getIt.registerLazySingleton<FetchTestimonialsUseCase>(
       () => FetchTestimonialsUseCase(partnerRepo: getIt<PartnerRepo>()));
 
-  /// Cart entity
-  getIt.registerLazySingleton<CartDataSource>(
-      () => CartDataSourceImp(getIt<ApiService>()));
-  getIt.registerLazySingleton<CartRepo>(
-      () => CartRepoImp(getIt<CartDataSource>()));
-  getIt.registerLazySingleton<FetchCartUseCase>(
-      () => FetchCartUseCase(getIt<CartRepo>()));
-  getIt.registerLazySingleton<AddToCartItemsUseCase>(
-      () => AddToCartItemsUseCase(getIt<CartRepo>()));
-  getIt.registerLazySingleton<DeleteFromCartItemsUseCase>(
-      () => DeleteFromCartItemsUseCase(getIt<CartRepo>()));
-  getIt.registerLazySingleton<UpdateQuantityItemsUseCase>(
-      () => UpdateQuantityItemsUseCase(getIt<CartRepo>()));
-
   /// Favorites entity
   getIt.registerLazySingleton<FavoritesDataSource>(
       () => FavoritesDataSourceImpl(apiClient: getIt<ApiService>()));
@@ -262,6 +204,8 @@ Future setupLocator() async {
       () => FetchFavoritesUseCase(getIt<FavoritesRepo>()));
   getIt.registerLazySingleton<AddOrDeleteFavoritesUseCase>(
       () => AddOrDeleteFavoritesUseCase(getIt<FavoritesRepo>()));
+  getIt.registerLazySingleton<RemoveFavoriteUseCase>(
+      () => RemoveFavoriteUseCase(getIt<FavoritesRepo>()));
 
   /// Address entity
   getIt.registerLazySingleton<AddressDataSource>(
@@ -278,10 +222,6 @@ Future setupLocator() async {
       () => DeleteAddressUseCase(getIt<AddressRepo>()));
   getIt.registerLazySingleton<ReverseGeocodeUseCase>(
       () => ReverseGeocodeUseCase(getIt<AddressRepo>()));
-
-  /// Checkout entity
-  getIt.registerLazySingleton<CheckOutDataSource>(
-      () => CheckOutDataSourceImpl(apiService: getIt<ApiService>()));
 
   /// Verification
   getIt.registerLazySingleton<VerificationDataSource>(
@@ -355,40 +295,6 @@ Future setupLocator() async {
             sendTo: param2!,
           ));
 
-  /// Orders
-  getIt.registerLazySingleton<OrdersDataSource>(
-      () => OrdersDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<OrdersRepo>(
-      () => OrdersRepoImpl(dataSource: getIt<OrdersDataSource>()));
-  getIt.registerLazySingleton<ShippingDataSource>(
-      () => ShippingDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<FetchOrdersUseCase>(
-      () => FetchOrdersUseCase(getIt<OrdersRepo>()));
-  getIt.registerLazySingleton<CancelOrderUseCase>(
-      () => CancelOrderUseCase(ordersRepo: getIt<OrdersRepo>()));
-  getIt.registerLazySingleton<CheckoutUseCase>(
-      () => CheckoutUseCase(getIt<OrdersRepo>()));
-
-  /// Loyalty Points entity
-  getIt.registerLazySingleton<LoyaltyPointsDataSource>(
-      () => LoyaltyPointsDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<LoyaltyPointsRepo>(() => LoyaltyPointsRepoImp(
-      loyaltyPointsDataSource: getIt<LoyaltyPointsDataSource>()));
-  getIt.registerLazySingleton<FetchLoyaltyPointsUseCase>(
-      () => FetchLoyaltyPointsUseCase(getIt<LoyaltyPointsRepo>()));
-
-  /// Stories entity
-  getIt.registerLazySingleton<StoriesDataSource>(
-      () => StoriesDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<StoriesRepo>(
-      () => StoriesRepoImp(storiesDataSource: getIt<StoriesDataSource>()));
-  getIt.registerLazySingleton<FetchStoriesUseCase>(
-      () => FetchStoriesUseCase(storiesRepo: getIt<StoriesRepo>()));
-  getIt.registerLazySingleton<ViewStoryUseCase>(
-      () => ViewStoryUseCase(getIt<StoriesRepo>()));
-  getIt.registerLazySingleton<CreateStoryUseCase>(
-      () => CreateStoryUseCase(storiesRepo: getIt<StoriesRepo>()));
-
   /// Stores entity
   getIt.registerLazySingleton<StoresDataSource>(
       () => StoresDataSourceImpl(apiService: getIt<ApiService>()));
@@ -401,16 +307,6 @@ Future setupLocator() async {
   getIt.registerLazySingleton<FetchStorePageUseCase>(
       () => FetchStorePageUseCase(getIt<StoresRepo>()));
 
-  /// Vendor entity
-  getIt.registerLazySingleton<VendorDataSource>(
-      () => VendorDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<VendorRepo>(
-      () => VendorRepoImp(vendorDataSource: getIt<VendorDataSource>()));
-  getIt.registerLazySingleton<GetVendorProfileUseCase>(
-      () => GetVendorProfileUseCase(getIt<VendorRepo>()));
-  getIt.registerLazySingleton<GetMyProductsUseCase>(
-      () => GetMyProductsUseCase(getIt<VendorRepo>()));
-
   /// Location entity
   getIt.registerLazySingleton<LocationDataSource>(
       () => LocationDataSourceImpl(apiService: getIt<ApiService>()));
@@ -422,14 +318,6 @@ Future setupLocator() async {
       () => FetchDistrictsUseCase(getIt<LocationRepo>()));
   getIt.registerLazySingleton<FetchNeighborhoodsUseCase>(
       () => FetchNeighborhoodsUseCase(getIt<LocationRepo>()));
-
-  /// Payments entity
-  getIt.registerLazySingleton<PaymentsDataSource>(
-      () => PaymentsDataSourceImpl(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<PaymentsRepo>(
-      () => PaymentsRepoImp(paymentsDataSource: getIt<PaymentsDataSource>()));
-  getIt.registerLazySingleton<FetchPaymentsUseCase>(
-      () => FetchPaymentsUseCase(getIt<PaymentsRepo>()));
 
   /// Chats entity
   getIt.registerLazySingleton<ChatsDataSource>(

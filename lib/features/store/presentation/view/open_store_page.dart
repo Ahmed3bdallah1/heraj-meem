@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/features/categories/presentation/view/categories_layout.dart';
-import 'package:heraj_meem/features/products/presentation/view/widgets/product_tile.dart';
+import 'package:heraj_meem/features/ads/presentation/view/widgets/product_tile.dart';
 import 'package:heraj_meem/features/store/data/models/open_store_model.dart';
 import 'package:heraj_meem/helper/extensions/adaptive_view.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
@@ -21,7 +21,7 @@ import '../../../categories/presentation/view/category_screen.dart';
 import '../../../categories/data/models/main_category_model.dart';
 import '../../../home/presentation/view/widgets/home_header_widget.dart';
 import '../../../home/presentation/view/widgets/silder_item_widget.dart';
-import '../../../products/presentation/view/product_details_screen.dart';
+import '../../../ads/presentation/view/ad_details_screen.dart';
 import 'store_category_screen.dart';
 import '../managers/store_page_provider.dart';
 
@@ -607,7 +607,7 @@ void _handleBannerNavigation(BannerItem banner) {
 
   switch (banner.linkType.toLowerCase()) {
     case 'product':
-      Get.to(() => ProductDetailsScreen(productId: banner.linkId!));
+      Get.to(() => AdDetailsScreen(productId: banner.linkId!));
       break;
     case 'category':
       final category = CategoryModel(

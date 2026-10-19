@@ -9,11 +9,23 @@ class ParticipantModel extends ParticipantEntity {
   });
 
   factory ParticipantModel.fromJson(Map<String, dynamic> json) {
+    final parsed = ParticipantEntity.fromJson(json);
     return ParticipantModel(
-      id: json['_id']?.toString() ?? '',
-      userId: UserInfoModel.fromJson(
-          json['userId'] as Map<String, dynamic>? ?? {}),
-      role: json['role']?.toString() ?? '',
+      id: parsed.id,
+      userId: parsed.userId == null
+          ? UserInfoModel(id: '')
+          : UserInfoModel.fromJson({
+              'id': parsed.userId!.id,
+              'phone': parsed.userId!.phone,
+              'role': parsed.userId!.role,
+              if (parsed.userId!.profile != null)
+                'profile': {
+                  'name': parsed.userId!.profile!.name,
+                  'email': parsed.userId!.profile!.email,
+                  'avatar': parsed.userId!.profile!.avatar,
+                },
+            }),
+      role: parsed.role,
     );
   }
 

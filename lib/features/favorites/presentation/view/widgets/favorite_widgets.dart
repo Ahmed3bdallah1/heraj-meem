@@ -1,16 +1,14 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj_meem/features/products/data/models/product_model.dart';
-import 'package:heraj_meem/widgets/disintegration_effect.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../main.dart';
 import '../../../../../ui/shared_widgets/image_or_svg.dart';
 import '../../../../../ui/shared_widgets/price_widget.dart';
 import '../../../../../ui/ui.dart';
-import '../../../../products/presentation/view/product_details_screen.dart';
+import '../../../../ads/presentation/view/ad_details_screen.dart';
 import '../../../domain/use_case/favorites_use_case.dart';
 import '../../managers/favorites.dart';
 
@@ -32,15 +30,10 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
   late AnimationController _heartController;
   late Animation<double> _heartScaleAnimation;
   late Animation<double> _heartRotationAnimation;
-  final GlobalKey _globalKey = GlobalKey();
-  late ui.FragmentProgram _disintegrationProgram;
-
-  bool _isDisintegrating = false;
 
   @override
   void initState() {
     super.initState();
-    _loadShader();
 
     _heartController = AnimationController(
       vsync: this,
@@ -75,38 +68,15 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
     super.dispose();
   }
 
-  Future<void> _loadShader() async {
-    _disintegrationProgram = await ui.FragmentProgram.fromAsset(
-      'assets/shaders/disintegration.frag',
-    );
-  }
-
   void _handleHeartTap() async {
-    if (_isDisintegrating) return;
-
     _heartController.forward().then((_) {
       _heartController.reverse();
     });
     await _removeItem();
-
-    // setState(() {
-    //   _isDisintegrating = true;
-    // });
-    //
-    // DisintegrationEffect.run(
-    //   context: context,
-    //   key: _globalKey,
-    //   program: _disintegrationProgram,
-    //   onComplete: _removeItem,
-    //   strength: 1.0,
-    //   edgeBias: 1.0,
-    //   windDirection: const Offset(1, -0.3),
-    //   duration: const Duration(milliseconds: 800),
-    // );
   }
 
   Future<void> _removeItem() async {
-    final res = await getIt<AddOrDeleteFavoritesUseCase>().call(
+    final res = await getIt<RemoveFavoriteUseCase>().call(
       widget.favoritesModel.id.toString(),
     );
     res.fold(
@@ -153,17 +123,11 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (_isDisintegrating) {
-      return const SizedBox.shrink();
-    }
-
     final comparePrice = _getComparePrice();
 
-    return RepaintBoundary(
-      key: _globalKey,
-      child: GestureDetector(
+    return GestureDetector(
         onTap: () => Get.to(
-          () => ProductDetailsScreen(
+          () => AdDetailsScreen(
             productId: widget.favoritesModel.id,
           ),
         ),
@@ -303,14 +267,20 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            PriceWidget(
-                              price: _getPrice(),
-                              style: AppFont.font18W700Black.copyWith(
-                                fontSize: 16,
+                            if (widget.favoritesModel.hasListedPrice)
+                              PriceWidget(
+                                price: _getPrice(),
+                                style: AppFont.font18W700Black.copyWith(
+                                  fontSize: 16,
+                                ),
+                                textColor: AppColor.primary,
+                                currencySize: 16,
+                              )
+                            else
+                              Text(
+                                'Contact the publisher'.tr,
+                                style: AppFont.font14W600Primary,
                               ),
-                              textColor: AppColor.primary,
-                              currencySize: 16,
-                            ),
                             if (comparePrice != null) ...[
                               const Gap(8),
                               PriceWidget(
@@ -394,7 +364,6 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

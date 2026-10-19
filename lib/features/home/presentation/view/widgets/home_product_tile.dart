@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj_meem/config/app_color.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
-import 'package:heraj_meem/features/cart/domain/use_cases/cart_use_case.dart';
-import 'package:heraj_meem/features/cart/presentation/manager/fetch_cart_provider.dart';
-import 'package:heraj_meem/features/cart/presentation/view/cart_items_screen.dart';
 import 'package:heraj_meem/features/favorites/presentation/managers/favorites.dart';
 import 'package:heraj_meem/features/favorites/presentation/view/widgets/favorite_button.dart';
-import 'package:heraj_meem/features/products/presentation/view/product_details_screen.dart';
+import 'package:heraj_meem/features/ads/presentation/view/ad_details_screen.dart';
 import 'package:heraj_meem/main.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import 'package:heraj_meem/ui/shared_widgets/price_widget.dart';
-import 'package:heraj_meem/ui/ui.dart';
-import '../../../../products/data/models/product_model.dart';
+import '../../../../ads/data/models/product_model.dart';
 
 enum ProductStatus {
   sellingFast,
@@ -101,7 +96,7 @@ class _HomeProductTileState extends ConsumerState<HomeProductTile> {
       ),
       child: InkWell(
         onTap: () => Get.to(
-          () => ProductDetailsScreen(productId: widget.product.id),
+          () => AdDetailsScreen(productId: widget.product.id),
           preventDuplicates: false,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -268,7 +263,8 @@ class _HomeProductTileState extends ConsumerState<HomeProductTile> {
                     ],
                   ),
                   const Gap(8),
-                  Row(
+                  widget.product.hasListedPrice
+                      ? Row(
                     children: [
                       if (widget.product.afterPrice != null)
                         PriceWidget(
@@ -293,7 +289,11 @@ class _HomeProductTileState extends ConsumerState<HomeProductTile> {
                         ),
                       ],
                     ],
-                  ),
+                  )
+                      : Text(
+                          'Contact the publisher'.tr,
+                          style: AppFont.font14W600Primary,
+                        ),
                 ],
               ),
             ),

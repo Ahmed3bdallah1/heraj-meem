@@ -10,7 +10,7 @@ class ReloadButton extends StatelessWidget {
 
   final Function()? onTap;
   final double size;
-  final IconData icon;
+  final FaIconData icon;
   final Color color;
 
   @override
@@ -20,7 +20,7 @@ class ReloadButton extends StatelessWidget {
       mini: true,
       onPressed: onTap,
       child: Center(
-        child: Icon(
+        child: FaIcon(
           icon,
           size: size.h,
           color: color,

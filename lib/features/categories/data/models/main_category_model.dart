@@ -55,13 +55,15 @@ class CategoryModel {
 
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    final slug = json['slug']?.toString() ?? '';
+    final rawId = json['_id']?.toString() ?? json['id']?.toString() ?? '';
     return CategoryModel(
-      id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
-      nameTr: json['nameTr']?.toString() ?? '',
+      id: slug.isNotEmpty ? slug : rawId,
+      name: json['name']?.toString() ?? json['nameEn']?.toString() ?? '',
+      nameTr: json['nameTr']?.toString() ?? json['nameEn']?.toString() ?? '',
       nameAr: json['nameAr']?.toString() ?? '',
-      slug: json['slug']?.toString() ?? '',
-      image: json['image']?.toString(),
+      slug: slug,
+      image: json['image']?.toString() ?? json['imageUrl']?.toString(),
       icon: json['icon']?.toString(),
       parentId:
           json['parentId'] != null && json['parentId'] is Map<String, dynamic>

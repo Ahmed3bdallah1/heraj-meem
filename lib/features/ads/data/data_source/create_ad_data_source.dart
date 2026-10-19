@@ -1,0 +1,112 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+
+import '../../../../config/api_path.dart';
+import '../../../../core/service/local_data_manager.dart';
+import '../../../../core/service/localization_service/localization_service.dart';
+import '../../../../core/service/webservice/dio_helper.dart';
+import '../../../../main.dart';
+import '../../domain/entities/create_ad_request.dart';
+
+abstract class CreateAdDataSource {
+  Future<String> uploadMedia(File file);
+
+  Future<String> createAd(CreateAdRequest request);
+
+  Future<void> promoteMedia({
+    required String adId,
+    required List<String> mediaIds,
+  });
+
+  Future<void> deleteMedia(String mediaId);
+}
+
+class CreateAdDataSourceImpl implements CreateAdDataSource {
+  final ApiService apiClient;
+
+  CreateAdDataSourceImpl({required this.apiClient});
+
+  @override
+  Future<String> uploadMedia(File file) async {
+    final token = getIt<LocalDataManager>().getToken();
+    final response = await apiClient.post(
+      url: ApiPath.createMedia,
+      returnDataOnly: true,
+      receiveTimeout: null,
+      sendTimeOut: null,
+      header: {
+        'Accept-Language':
+            getIt<LocaleService>().handleLocaleInMain.languageCode,
+        'Accept': Headers.jsonContentType,
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      requestBody: FormData.fromMap({
+        'file': await MultipartFile.fromFile(file.path),
+      }),
+    );
+    final id = _mediaId(response);
+    if (id == null || id.isEmpty) {
+      throw Exception('Failed to upload image');
+    }
+    return id;
+  }
+
+  @override
+  Future<String> createAd(CreateAdRequest request) async {
+    final response = await apiClient.post(
+      url: ApiPath.createAd,
+      returnDataOnly: true,
+      requestBody: request.toJson(),
+    );
+    return _adId(response);
+  }
+
+  @override
+  Future<void> promoteMedia({
+    required String adId,
+    required List<String> mediaIds,
+  }) async {
+    await apiClient.post(
+      url: ApiPath.promoteAdMedia(adId),
+      requestBody: {'mediaIds': mediaIds},
+    );
+  }
+
+  @override
+  Future<void> deleteMedia(String mediaId) async {
+    await apiClient.delete(url: ApiPath.deleteMedia(mediaId));
+  }
+}
+
+String? _mediaId(dynamic data) {
+  if (data is Map) {
+    for (final key in ['id', 'mediaId', '_id']) {
+      final value = data[key]?.toString() ?? '';
+      if (value.isNotEmpty && !value.startsWith('http') && !value.startsWith('/')) {
+        return value;
+      }
+    }
+    for (final key in ['images', 'media', 'items']) {
+      final nested = _mediaId(data[key]);
+      if (nested != null) return nested;
+    }
+  }
+  if (data is List && data.isNotEmpty) return _mediaId(data.first);
+  if (data is String &&
+      data.isNotEmpty &&
+      !data.startsWith('http') &&
+      !data.contains('/')) {
+    return data;
+  }
+  return null;
+}
+
+String _adId(dynamic data) {
+  if (data is Map) {
+    final id = data['id'] ?? data['adId'];
+    if (id != null && id.toString().isNotEmpty) return id.toString();
+    if (data['ad'] is Map) return _adId(data['ad']);
+  }
+  return '';
+}

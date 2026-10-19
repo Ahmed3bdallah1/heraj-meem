@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:heraj_meem/features/ads/presentation/view/add_ad_screen.dart';
 import 'package:heraj_meem/features/home/presentation/view/home_screen.dart';
-import 'package:heraj_meem/features/products/presentation/view/add_product_screen.dart';
 import 'package:heraj_meem/features/settings/presentation/View/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,17 +9,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj_meem/features/vendor/presentation/view/my_ads_screen.dart';
-import 'package:heraj_meem/features/vendor/presentation/view/vendor_dashboard_screen.dart';
-import 'package:heraj_meem/features/vendor/presentation/view/vendor_profile_screen.dart';
 import 'package:heraj_meem/features/chats/presentation/view/chats_list_screen.dart';
 import '../../../../config/app_font.dart';
 import '../../../../core/service/auth_service.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../helper/responsive.dart';
 import '../../../../packages/flutter_close_app.dart';
-import '../../../core/service/local_data_manager.dart';
-import '../../store/presentation/view/open_store_page.dart';
+import '../../categories/presentation/view/all_categories_screen.dart';
 import '../controller/root_controller.dart';
 
 final hideNavBarProvider = StateProvider.autoDispose<bool>((ref) {
@@ -30,20 +26,6 @@ final rootViewProvider = StateProvider.autoDispose<int>((ref) {
   return 1;
 });
 
-final isVendorFlowProvider = StateProvider.autoDispose<bool>((ref) {
-  final user = ref.watch(userProvider);
-  final hasVendorRole = (user?.role ?? "user") == "vendor";
-
-  if (hasVendorRole) {
-    if (dataManager.hasVendorFlowPreference()) {
-      return dataManager.getVendorFlow();
-    } else {
-      return true;
-    }
-  }
-
-  return false;
-});
 
 class RootView extends ConsumerStatefulWidget {
   const RootView({super.key});
@@ -56,13 +38,10 @@ class _RootViewState extends ConsumerState<RootView> {
   // this is const instances to avoid rebuilding the screens every time
   // reduced the loading time when switching between tabs by 260%
   final Widget _homeScreen = const HomeScreen();
-  final Widget _vendorDashboardScreen = const VendorDashboardScreen();
-  final Widget _openStoreView = const OpenStoreView();
-  final Widget _myAdsScreen = const MyAdsScreen();
-  final Widget _addProductScreen = const AddProductScreen();
+  final Widget _categoriesView = const AllCategoriesScreen(isRootTab: true);
+  final Widget _addProductScreen = const SizedBox.shrink();
   final Widget _chatsListScreen = const ChatsListScreen();
   final Widget _settingsView = const SettingsView();
-  final Widget _vendorProfileScreen = const VendorProfileScreen();
 
   @override
   void initState() {
@@ -78,7 +57,6 @@ class _RootViewState extends ConsumerState<RootView> {
     responsiveInit(context);
     final selectedIndex = ref.watch(rootIndex);
     final controller = ref.read(rootIndex.notifier);
-    final isVendorFlow = ref.watch(isVendorFlowProvider);
 
     return FlutterCloseAppPage(
       condition: selectedIndex == 0,
@@ -99,7 +77,7 @@ class _RootViewState extends ConsumerState<RootView> {
           children: [
             IndexedStack(
               index: selectedIndex,
-              children: _buildScreens(isVendorFlow),
+              children: _buildScreens(),
             ),
             Positioned(
               bottom: MediaQuery.of(context).padding.bottom,
@@ -123,7 +101,7 @@ class _RootViewState extends ConsumerState<RootView> {
                         ),
                       ],
                     ),
-                    child: buildNavBar(selectedIndex, controller, isVendorFlow),
+                    child: buildNavBar(selectedIndex, controller),
                   ),
                 ),
               ),
@@ -132,7 +110,7 @@ class _RootViewState extends ConsumerState<RootView> {
               bottom: MediaQuery.of(context).padding.bottom + 25,
               left: MediaQuery.of(context).size.width / 2 - 35,
               child: GestureDetector(
-                onTap: () => Get.to(() => const AddProductScreen()),
+                onTap: () => Get.to(() => const AddAdScreen()),
                 child: Container(
                   width: 60,
                   height: 60,
@@ -162,17 +140,17 @@ class _RootViewState extends ConsumerState<RootView> {
     );
   }
 
-  List<Widget> _buildScreens(bool isVendor) {
+  List<Widget> _buildScreens() {
     return [
-      isVendor ? _vendorDashboardScreen : _homeScreen,
-      isVendor ? _myAdsScreen : _openStoreView,
+      _homeScreen,
+      _categoriesView,
       _addProductScreen,
       _chatsListScreen,
-      isVendor ? _vendorProfileScreen : _settingsView,
+      _settingsView,
     ];
   }
 
-  Widget buildNavBar(int selectedIndex, dynamic controller, bool isVendor) {
+  Widget buildNavBar(int selectedIndex, dynamic controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -184,8 +162,8 @@ class _RootViewState extends ConsumerState<RootView> {
           onTap: () => controller.setSelectedIndex(0),
         ),
         _buildNavItem(
-          icon: const Icon(Icons.store, size: 28),
-          label: "Store".tr,
+          icon: const Icon(Icons.grid_view_rounded, size: 28),
+          label: "Categories".tr,
           index: 1,
           isSelected: selectedIndex == 1,
           onTap: () => controller.setSelectedIndex(1),

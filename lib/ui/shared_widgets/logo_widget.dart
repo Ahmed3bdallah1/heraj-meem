@@ -19,7 +19,7 @@ class LogoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     responsiveInit(context);
     return Image.asset(
-      Assets.base.logo.path,
+      Assets.base.logoSplash.path,
       height: 150,
     );
   }

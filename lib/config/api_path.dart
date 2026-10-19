@@ -1,7 +1,9 @@
 abstract class ApiPath {
-  static const baseurl = "https://api.esyasatgo.com/api/";
-  static const uploadPath = 'https://esyasatgo.com/storage/';
-  static const sharePath = 'https://esyasatgo.com/';
+  /// Matches heraj_environment.json (`server_url`, `base_url`).
+  static const serverUrl = 'https://api.baho.com.sa';
+  static const baseurl = '$serverUrl/api/';
+  static const uploadPath = '$serverUrl/';
+  static const sharePath = '$serverUrl/';
   static const refresh = 'auth/v1/token?grant_type=refresh_token';
   static const userPreRegister = 'auth/register';
   static const vendorRegister = 'vendors/register';
@@ -23,8 +25,9 @@ abstract class ApiPath {
   static const getUser = 'auth/me';
   static const googleLogin = 'auth/google/mobile';
   static const selectRole = 'auth/select-role';
-  static const sendOTP = 'auth/send-otp';
-  static const verifyOTP = 'auth/verify-otp';
+  static const sendOTP = 'auth/otp/request';
+  static const verifyOTP = 'auth/otp/verify';
+  static const refreshSession = 'auth/refresh';
   static const userRegister = 'auth/verify';
   static const logOut = 'auth/logout';
   static const deleteAccount = 'auth/delete-account';
@@ -38,6 +41,8 @@ abstract class ApiPath {
   static const getCartItems = 'cart';
   static const applyCoupon = 'cart/apply-coupon';
   static const getFavorites = 'favorites';
+  static String toggleFavorite(String adId) => 'favorites/$adId/toggle';
+  static String removeFavorite(String adId) => 'favorites/$adId';
   static const getAddresses = 'auth/addresses';
   static const addAddress = 'auth/add-address';
   static const updateAddress = 'auth/update-address';
@@ -46,8 +51,6 @@ abstract class ApiPath {
   static const updateCartItem = 'cart/update';
   static const cartActions = 'cart/add';
   static String deleteFromCart(String id) => 'cart/remove/$id';
-
-  static const toggleFavorite = 'favorites/toggle';
 
   static String getProductReviews(String productId) =>
       'reviews/product/$productId';
@@ -76,9 +79,23 @@ abstract class ApiPath {
   static const getVendors = 'vendors';
   static const getVendorProfile = 'vendors/me/profile';
   static const getMyProducts = 'products/my-products';
+  static const getRegions = 'locations/regions';
   static const getCities = 'locations/cities';
+  static String getCityDistricts(String cityId) =>
+      'locations/cities/$cityId/districts';
   static String getDistricts(String cityCode) =>
-      'locations/districts/$cityCode';
+      'locations/cities/$cityCode/districts';
+  static const updateUserMe = 'users/me';
+  static String getPublicProfile(String userId) => 'users/$userId';
+  static const getAds = 'ads';
+  static const createAd = 'ads';
+  static const createMedia = 'media';
+  static String promoteAdMedia(String adId) => 'media/ads/$adId/promote';
+  static String deleteMedia(String mediaId) => 'media/$mediaId';
+  static const getMyAds = 'ads/mine';
+  static String getAd(String adId) => 'ads/$adId';
+  static String getMyAd(String adId) => 'ads/mine/$adId';
+  static const searchSuggestions = 'search/suggestions';
   static String getNeighborhoods(String cityCode, String districtName) =>
       'locations/neighborhoods/$cityCode/${Uri.encodeComponent(districtName)}';
   static const checkoutOrder = 'orders/checkout';
@@ -95,11 +112,13 @@ abstract class ApiPath {
   static const getMyPayments = 'payments/my-payments';
   static String viewStory(String storyId) => 'stories/$storyId/view';
   static const createStory = 'stories';
-  static const getChats = 'chat';
-  static String getChatMessages(String chatId) => 'chat/$chatId/messages';
-  static String sendMessage(String chatId) => 'chat/$chatId/messages';
+  static const getChats = 'chat/conversations';
+  static String getChatMessages(String chatId) =>
+      'chat/conversations/$chatId/messages';
+  static String sendMessage(String chatId) =>
+      'chat/conversations/$chatId/messages';
   static String markChatAsRead(String chatId) => 'chat/$chatId/read';
-  static const createChat = 'chat/create';
+  static const createChat = 'chat/conversations';
   static String reverseGeocode(double lat, double lng) =>
       'geocode/reverse?lat=$lat&lng=$lng';
   static const shippingCompanies = 'shipping/companies';

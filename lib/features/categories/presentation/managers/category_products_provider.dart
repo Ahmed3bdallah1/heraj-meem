@@ -3,8 +3,8 @@ import 'package:heraj_meem/features/categories/domain/repo/categories_repo.dart'
 import 'package:heraj_meem/features/store/data/models/open_store_model.dart';
 import 'package:heraj_meem/features/store/domain/repo/stores_repo.dart';
 import '../../../../main.dart';
-import '../../../products/data/models/product_model.dart';
-import '../../../products/domain/repo/product_repo.dart';
+import '../../../ads/data/models/product_model.dart';
+import '../../../ads/domain/repo/product_repo.dart';
 
 // final fetchCategoryProductsProvider = FutureProvider.family
 //     .autoDispose<ProductPaginatedModel, String>((ref, id) async {

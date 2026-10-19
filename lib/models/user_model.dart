@@ -64,11 +64,15 @@ class PreLoginData {
   final String phone;
   final String countryCode;
   final bool isNewUser;
+  final int? expiresInMinutes;
+  final String? devCode;
 
   PreLoginData({
     required this.phone,
     required this.countryCode,
     required this.isNewUser,
+    this.expiresInMinutes,
+    this.devCode,
   });
 
   factory PreLoginData.fromJson(Map<String, dynamic> json) {
@@ -76,6 +80,10 @@ class PreLoginData {
       phone: json['phone'] ?? '',
       countryCode: json['countryCode'] ?? '',
       isNewUser: json['isNewUser'] ?? false,
+      expiresInMinutes: json['expiresInMinutes'] is int
+          ? json['expiresInMinutes'] as int
+          : int.tryParse('${json['expiresInMinutes']}'),
+      devCode: json['devCode']?.toString(),
     );
   }
 
@@ -182,24 +190,35 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     String userId = '';
     final idValue = json['id'] ?? json['_id'];
-    if (idValue is int) {
+    if (idValue != null) {
       userId = idValue.toString();
-    } else {
-      userId = idValue;
     }
-    final imageValue = json['image'] ?? json['avatar'] ?? json['image_url'] ?? '';
+    final profile = json['profile'] is Map
+        ? Map<String, dynamic>.from(json['profile'] as Map)
+        : null;
+    final imageValue = profile?['avatarUrl'] ??
+        json['image'] ??
+        json['avatar'] ??
+        json['avatarUrl'] ??
+        json['image_url'] ??
+        '';
+    var role = (json['role'] ?? json['userType'] ?? 'customer').toString();
+    if (role == 'BUYER') role = 'customer';
+    if (role == 'SELLER' || role == 'VENDOR') role = 'vendor';
 
     return UserModel(
       id: userId,
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      phone: json['phone'],
+      name: profile?['displayName'] ?? json['displayName'] ?? json['name'] ?? '',
+      email: json['email']?.toString() ?? '',
+      phone: json['phone']?.toString(),
       countryCode: json['countryCode'] ?? json['country_code'],
-      image: imageValue,
-      role: json['role'] ?? 'customer',
+      image: imageValue?.toString() ?? '',
+      role: role,
       hasPassword: json['hasPassword'] ?? false,
       isRoleSelected: json['isRoleSelected'] ?? true,
-      isVerified: json['isVerified'] ?? json['is_verified'] ?? false,
+      isVerified: json['status'] == 'ACTIVE' ||
+          json['isVerified'] == true ||
+          json['is_verified'] == true,
       isProfileComplete: json['isProfileComplete'] ?? json['is_profile_complete'],
     );
   }

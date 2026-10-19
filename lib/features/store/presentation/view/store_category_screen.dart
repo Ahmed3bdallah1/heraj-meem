@@ -4,7 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
-import 'package:heraj_meem/features/products/presentation/view/widgets/product_tile.dart';
+import 'package:heraj_meem/features/ads/presentation/view/widgets/product_tile.dart';
 import 'package:heraj_meem/features/store/presentation/managers/store_page_provider.dart';
 import 'package:heraj_meem/features/store/presentation/view/widgets/filter_drawer.dart';
 import 'package:heraj_meem/helper/riverpod.dart';

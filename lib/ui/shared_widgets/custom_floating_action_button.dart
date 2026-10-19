@@ -9,7 +9,7 @@ class CustomFloatingActionButton extends StatelessWidget {
       {super.key, required this.onPressed, this.iconData});
 
   final void Function() onPressed;
-  final IconData? iconData;
+  final FaIconData? iconData;
 
   @override
   Widget build(BuildContext context) {

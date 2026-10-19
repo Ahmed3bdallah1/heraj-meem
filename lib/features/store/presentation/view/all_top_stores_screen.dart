@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/features/store/presentation/view/widgets/all_top_stores/store_card.dart';
 import '../../../../config/app_font.dart';
+import '../../../../ui/shared_widgets/loading_widget.dart';
 import '../managers/stores_provider.dart';
 
 class AllTopStoresScreen extends ConsumerStatefulWidget {
@@ -353,9 +354,7 @@ class _AllTopStoresScreenState extends ConsumerState<AllTopStoresScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const CircularProgressIndicator(
-                            color: Color(0xFFFF9800),
-                          ),
+                          const LoadingWidget(),
                           const Gap(16),
                           Text(
                             'Loading stores...'.tr,

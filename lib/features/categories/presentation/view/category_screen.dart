@@ -11,7 +11,7 @@ import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/main.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
-import '../../../products/presentation/view/widgets/product_tile.dart';
+import '../../../ads/presentation/view/widgets/product_tile.dart';
 import '../managers/category_products_provider.dart';
 
 class CategoryScreen extends ConsumerStatefulWidget {

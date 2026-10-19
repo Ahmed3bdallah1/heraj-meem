@@ -1,23 +1,33 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
-import 'package:heraj_meem/features/booking/presentation/view/booking_screen.dart';
 import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
 import 'package:heraj_meem/features/categories/presentation/managers/categories_provider.dart';
 import 'package:heraj_meem/features/categories/presentation/view/category_screen.dart';
+import 'package:heraj_meem/features/home/presentation/managers/baho_feed_provider.dart';
 import 'package:heraj_meem/features/store/presentation/view/store_category_screen.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
+import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 import '../../../../core/service/localization_service/localization_service.dart';
 import '../../../../main.dart';
 
 class AllCategoriesScreen extends ConsumerStatefulWidget {
   final bool isOpenStore;
   final bool isFromDrawer;
+  final bool isRootTab;
 
-  const AllCategoriesScreen({super.key, this.isOpenStore = false, this.isFromDrawer = false});
+  const AllCategoriesScreen({
+    super.key,
+    this.isOpenStore = false,
+    this.isFromDrawer = false,
+    this.isRootTab = false,
+  });
 
   @override
   ConsumerState<AllCategoriesScreen> createState() =>
@@ -25,25 +35,29 @@ class AllCategoriesScreen extends ConsumerStatefulWidget {
 }
 
 class _AllCategoriesScreenState extends ConsumerState<AllCategoriesScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-  late AnimationController _backgroundAnimationController;
-  final Set<String> _expandedCategories = {};
+  final FocusNode _searchFocus = FocusNode();
+  final ValueNotifier<String> _query = ValueNotifier('');
+  final ValueNotifier<Set<String>> _expanded = ValueNotifier({});
+  late final AnimationController _glow;
 
   @override
   void initState() {
     super.initState();
-    _backgroundAnimationController = AnimationController(
+    _glow = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 6),
     )..repeat();
   }
 
   @override
   void dispose() {
-    _backgroundAnimationController.dispose();
+    _glow.dispose();
     _searchController.dispose();
+    _searchFocus.dispose();
+    _query.dispose();
+    _expanded.dispose();
     super.dispose();
   }
 
@@ -52,327 +66,625 @@ class _AllCategoriesScreenState extends ConsumerState<AllCategoriesScreen>
     String query,
   ) {
     if (query.isEmpty) return categories;
-
     final lowerQuery = query.toLowerCase();
     return categories.where((category) {
-      return category.name.toLowerCase().contains(lowerQuery) ||
+      final own = category.name.toLowerCase().contains(lowerQuery) ||
           category.nameTr.toLowerCase().contains(lowerQuery) ||
           category.nameAr.contains(lowerQuery) ||
           category.slug.toLowerCase().contains(lowerQuery);
+      if (own) return true;
+      return category.children.any((child) =>
+          child.name.toLowerCase().contains(lowerQuery) ||
+          child.nameTr.toLowerCase().contains(lowerQuery) ||
+          child.nameAr.contains(lowerQuery) ||
+          child.slug.toLowerCase().contains(lowerQuery));
     }).toList();
   }
 
   void _toggleCategory(String categoryId) {
-    setState(() {
-      if (_expandedCategories.contains(categoryId)) {
-        _expandedCategories.remove(categoryId);
-      } else {
-        _expandedCategories.add(categoryId);
-      }
-    });
+    final next = {..._expanded.value};
+    if (!next.add(categoryId)) next.remove(categoryId);
+    _expanded.value = next;
+  }
+
+  void _openCategory(CategoryModel category) {
+    if (widget.isOpenStore) {
+      Get.to(() => StoreCategoryScreen(category));
+    } else {
+      Get.to(() => CategoryScreen(category: category));
+    }
+  }
+
+  String _name(CategoryModel category, String langCode) {
+    if (langCode == 'ar') return category.nameAr;
+    if (langCode == 'en') return category.name;
+    return category.nameTr;
   }
 
   @override
   Widget build(BuildContext context) {
     final langCode = getIt<LocaleService>().getLocale().locale.languageCode;
-    final provider = widget.isOpenStore
-        ? ref.watch(fetchAdminCategoriesTreeProvider)
-        : ref.watch(fetchCategoriesTreeProvider);
+    final provider = widget.isRootTab
+        ? ref.watch(bahoCategoryModelsProvider)
+        : widget.isOpenStore
+            ? ref.watch(fetchAdminCategoriesTreeProvider)
+            : ref.watch(fetchCategoriesTreeProvider);
+    final refreshable = widget.isRootTab
+        ? bahoCategoryModelsProvider.future
+        : widget.isOpenStore
+            ? fetchAdminCategoriesTreeProvider.future
+            : fetchCategoriesTreeProvider.future;
+    final bottomInset = MediaQuery.of(context).padding.bottom +
+        (widget.isRootTab ? 110 : 20);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(12),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Row(
-                children: [
-                  Text(
-                    'Categories'.tr,
-                    style: AppFont.font20W700Black,
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 24),
-                    onPressed: () => Get.back(),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-            ),
+          _CategoriesHeader(
+            glow: _glow,
+            showClose: !widget.isRootTab,
+            searchController: _searchController,
+            searchFocus: _searchFocus,
+            onQuery: (value) => _query.value = value.trim().toLowerCase(),
           ),
-
           Expanded(
             child: provider.customWhen(
               ref: ref,
-              refreshable: widget.isOpenStore
-                  ? fetchAdminCategoriesTreeProvider.future
-                  : fetchCategoriesTreeProvider.future,
+              refreshable: refreshable,
+              loading: () => _CategoriesLoading(bottomInset: bottomInset),
               data: (categories) {
-                final filteredCategories = _filterCategories(
-                  categories,
-                  _searchQuery,
-                );
-
-                if (filteredCategories.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 80,
-                          color: Colors.grey[300],
-                        ),
-                        const Gap(24),
-                        Text(
-                          _searchQuery.isEmpty
-                              ? "No Categories".tr
-                              : "No Results Found".tr,
-                          style: AppFont.font18W700Black,
-                          textAlign: TextAlign.center,
-                        ),
-                        const Gap(8),
-                        Text(
-                          _searchQuery.isEmpty
-                              ? "There are no categories available.".tr
-                              : "Try a different search term.".tr,
-                          style: AppFont.font14W500Black.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return ListView.separated(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom+20),
-                  itemCount:
-                      _buildCategoryList(filteredCategories, langCode).length +
-                          1,
-                  separatorBuilder: (context, index) => DottedDivider(),
-                  itemBuilder: (context, index) {
-                    // "All" item
-                    if (index == 0) {
-                      return _CategoryListItem(
-                        icon: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: AppColor.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.layers,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        title: 'All'.tr,
-                        onTap: () {
-                          Get.back();
-                        },
-                        showArrow: false,
-                      );
+                return ValueListenableBuilder<String>(
+                  valueListenable: _query,
+                  builder: (context, query, _) {
+                    final filtered = _filterCategories(categories, query);
+                    if (filtered.isEmpty) {
+                      return _EmptyCategories(hasQuery: query.isNotEmpty);
                     }
-
-                    final items =
-                        _buildCategoryList(filteredCategories, langCode);
-                    final item = items[index - 1];
-
-                    return item;
+                    return ValueListenableBuilder<Set<String>>(
+                      valueListenable: _expanded,
+                      builder: (context, expanded, _) {
+                        return ListView.builder(
+                          padding: EdgeInsets.fromLTRB(16, 8, 16, bottomInset),
+                          itemCount: filtered.length + (widget.isRootTab ? 0 : 1),
+                          itemBuilder: (context, index) {
+                            if (!widget.isRootTab && index == 0) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: _Reveal(
+                                  index: 0,
+                                  child: _AllCategoriesTile(
+                                    onTap: () => Get.back(),
+                                  ),
+                                ),
+                              );
+                            }
+                            final category = filtered[
+                                widget.isRootTab ? index : index - 1];
+                            final open = query.isNotEmpty ||
+                                expanded.contains(category.id);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _Reveal(
+                                index: index,
+                                  child: _CategoryCard(
+                                  category: category,
+                                  name: _name(category, langCode),
+                                  term: query,
+                                  expanded: open && category.children.isNotEmpty,
+                                  onTap: () {
+                                    if (category.children.isNotEmpty) {
+                                      _toggleCategory(category.id);
+                                    } else {
+                                      _openCategory(category);
+                                    }
+                                  },
+                                  onChildTap: _openCategory,
+                                  childName: (child) => _name(child, langCode),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
                   },
                 );
               },
             ),
           ),
-          if(widget.isFromDrawer)
-            Gap(context.mediaQueryPadding.bottom)
+          if (widget.isFromDrawer) Gap(context.mediaQueryPadding.bottom),
         ],
       ),
     );
   }
-
-  List<Widget> _buildCategoryList(
-      List<CategoryModel> categories, String langCode) {
-    final List<Widget> items = [];
-
-    for (final category in categories) {
-      final isExpanded = _expandedCategories.contains(category.id);
-      final hasChildren = category.children.isNotEmpty;
-      final categoryName = langCode == "ar"
-          ? category.nameAr
-          : langCode == "en"
-              ? category.name
-              : category.nameTr;
-
-      // Parent category
-      items.add(
-        _CategoryListItem(
-          icon: category.image != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: ImageOrSvg(
-                    category.image!,
-                    width: 44,
-                    height: 44,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: AppColor.primary.withAlpha(25),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      category.icon ?? '📦',
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                  ),
-                ),
-          title: categoryName,
-          onTap: () {
-            if (hasChildren) {
-              _toggleCategory(category.id);
-            } else {
-              if (widget.isOpenStore) {
-                Get.to(() => StoreCategoryScreen(category));
-              } else {
-                Get.to(() => CategoryScreen(category: category));
-              }
-            }
-          },
-          showArrow: hasChildren,
-          isExpanded: isExpanded,
-        ),
-      );
-
-      // Subcategories (if expanded)
-      if (isExpanded && hasChildren) {
-        for (final child in category.children) {
-          final childName = langCode == "ar"
-              ? child.nameAr
-              : langCode == "en"
-                  ? child.name
-                  : child.nameTr;
-
-          items.add(
-            _CategoryListItem(
-              icon: child.image != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: ImageOrSvg(
-                        child.image!,
-                        width: 36,
-                        height: 36,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColor.primary.withAlpha(25),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Center(
-                        child: Text(
-                          child.icon ?? '📦',
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ),
-              title: childName,
-              onTap: () {
-                if (widget.isOpenStore) {
-                  Get.to(() => StoreCategoryScreen(child));
-                } else {
-                  Get.to(() => CategoryScreen(category: child));
-                }
-              },
-              isSubcategory: true,
-              showArrow: true,
-            ),
-          );
-        }
-      }
-    }
-
-    return items;
-  }
 }
 
-class _CategoryListItem extends StatelessWidget {
-  final Widget icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool showArrow;
-  final bool isExpanded;
-  final bool isSubcategory;
-
-  const _CategoryListItem({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.showArrow = true,
-    this.isExpanded = false,
-    this.isSubcategory = false,
+class _CategoriesHeader extends StatelessWidget {
+  const _CategoriesHeader({
+    required this.glow,
+    required this.showClose,
+    required this.searchController,
+    required this.searchFocus,
+    required this.onQuery,
   });
+
+  final Animation<double> glow;
+  final bool showClose;
+  final TextEditingController searchController;
+  final FocusNode searchFocus;
+  final ValueChanged<String> onQuery;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: isSubcategory ? 32 : 16,
-          right: 16,
-          top: 12,
-          bottom: 12,
-        ),
-        color: isSubcategory ? Colors.grey[50] : Colors.white,
-        child: Row(
-          children: [
-            icon,
-            Gap(isSubcategory ? 12 : 16),
-            Expanded(
-              child: Text(
-                title,
-                style: isSubcategory
-                    ? AppFont.font14W600Black.copyWith(
-                        color: Colors.grey[700],
-                      )
-                    : AppFont.font16W600Black,
-              ),
+    return AnimatedBuilder(
+      animation: glow,
+      builder: (context, child) {
+        final drift = math.sin(glow.value * math.pi * 2);
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(28),
             ),
-            if (showArrow)
-              Icon(
-                isExpanded ? Icons.keyboard_arrow_down : Icons.chevron_right,
-                color: Colors.grey[400],
-                size: 24,
+            boxShadow: [
+              BoxShadow(
+                color: AppColor.primary.withAlpha(28),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
               ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: -36,
+                right: -20 + (18 * drift),
+                child: Container(
+                  width: 140,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.primary.withAlpha(28),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 48,
+                left: -30 - (12 * drift),
+                child: Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.primary2.withAlpha(180),
+                  ),
+                ),
+              ),
+              child!,
+            ],
+          ),
+        );
+      },
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 12, 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text('Categories'.tr, style: AppFont.font20W700Black),
+                  ),
+                  if (showClose)
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 24),
+                      onPressed: () => Get.back(),
+                    ),
+                ],
+              ),
+              const Gap(14),
+              TextField(
+                controller: searchController,
+                focusNode: searchFocus,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => searchFocus.unfocus(),
+                onChanged: onQuery,
+                style: AppFont.font14W500Black,
+                decoration: InputDecoration(
+                  hintText: 'Search'.tr,
+                  hintStyle: AppFont.font14W500Grey2,
+                  prefixIcon: Icon(Icons.search, color: AppColor.grey2),
+                  filled: true,
+                  fillColor: AppColor.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: AppColor.primary.withAlpha(28)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: AppColor.primary),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Reveal extends StatelessWidget {
+  const _Reveal({required this.index, required this.child});
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final delay = (index.clamp(0, 8)) * 60;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 380 + delay),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, 18 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+class _CategoryCard extends StatelessWidget {
+  const _CategoryCard({
+    required this.category,
+    required this.name,
+    required this.term,
+    required this.expanded,
+    required this.onTap,
+    required this.onChildTap,
+    required this.childName,
+  });
+
+  final CategoryModel category;
+  final String name;
+  final String term;
+  final bool expanded;
+  final VoidCallback onTap;
+  final ValueChanged<CategoryModel> onChildTap;
+  final String Function(CategoryModel child) childName;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasChildren = category.children.isNotEmpty;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.primary.withAlpha(22),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: const Color(0xffF0EBE4)),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    _CategoryAvatar(image: category.image, label: name, size: 58),
+                    const Gap(12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _HighlightedName(
+                            text: name,
+                            term: term,
+                            maxLines: 1,
+                            style: AppFont.font16W700Black,
+                          ),
+                          if (hasChildren) ...[
+                            const Gap(4),
+                            Text(
+                              '${category.children.length}',
+                              style: AppFont.font12W600Primary,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: expanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 240),
+                      curve: Curves.easeOutCubic,
+                      child: Icon(
+                        hasChildren
+                            ? Icons.keyboard_arrow_down
+                            : Icons.chevron_right,
+                        size: hasChildren ? 22 : 18,
+                        color: AppColor.grey2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 280),
+                curve: Curves.easeOutCubic,
+                alignment: Alignment.topCenter,
+                child: expanded
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for (var i = 0; i < category.children.length; i++)
+                                Padding(
+                                  padding: EdgeInsetsDirectional.only(
+                                    end: i == category.children.length - 1
+                                        ? 0
+                                        : 10,
+                                  ),
+                                  child: _ChildTile(
+                                    category: category.children[i],
+                                    name: childName(category.children[i]),
+                                    term: term,
+                                    onTap: () =>
+                                        onChildTap(category.children[i]),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : const SizedBox(width: double.infinity),
+              ),
+            ],
+          ),
+        ),
+      ),
+      ),
+    );
+  }
+}
+
+class _ChildTile extends StatelessWidget {
+  const _ChildTile({
+    required this.category,
+    required this.name,
+    required this.term,
+    required this.onTap,
+  });
+
+  final CategoryModel category;
+  final String name;
+  final String term;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 84,
+      child: Material(
+        color: AppColor.primary2,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CategoryAvatar(image: category.image, label: name, size: 44),
+                const Gap(8),
+                _HighlightedName(
+                  text: name,
+                  term: term,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: AppFont.font10w400Black,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HighlightedName extends StatelessWidget {
+  const _HighlightedName({
+    required this.text,
+    required this.term,
+    required this.style,
+    this.maxLines = 1,
+    this.textAlign,
+  });
+
+  final String text;
+  final String term;
+  final TextStyle style;
+  final int maxLines;
+  final TextAlign? textAlign;
+
+  @override
+  Widget build(BuildContext context) {
+    return SubstringHighlight(
+      text: text,
+      term: term,
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
+      textAlign: textAlign?? TextAlign.center,
+      textStyle: style,
+      textStyleHighlight: style.copyWith(
+        color: AppColor.primary,
+        fontWeight: FontWeight.w700,
+        backgroundColor: const Color(0xffFFF3C4),
+      ),
+    );
+  }
+}
+
+class _CategoryAvatar extends StatelessWidget {
+  const _CategoryAvatar({
+    required this.image,
+    required this.label,
+    required this.size,
+  });
+
+  final String? image;
+  final String label;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final letter = label.trim().isEmpty ? '' : label.trim().characters.first;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: image != null && image!.isNotEmpty
+            ? ImageOrSvg(image!, width: size, height: size, fit: BoxFit.cover)
+            : ColoredBox(
+                color: AppColor.primary.withAlpha(28),
+                child: Center(
+                  child: Text(
+                    letter,
+                    style: AppFont.font16W700Black.copyWith(
+                      color: AppColor.primary,
+                    ),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+}
+
+class _AllCategoriesTile extends StatelessWidget {
+  const _AllCategoriesTile({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColor.primary,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: Colors.white.withAlpha(36),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Icons.layers, color: Colors.white),
+              ),
+              const Gap(12),
+              Expanded(
+                child: Text(
+                  'All'.tr,
+                  style: AppFont.font16W700Black.copyWith(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyCategories extends StatelessWidget {
+  const _EmptyCategories({required this.hasQuery});
+
+  final bool hasQuery;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.search_off, size: 64, color: AppColor.grey2),
+            const Gap(16),
+            Text(
+              hasQuery ? 'No Results Found'.tr : 'No Categories'.tr,
+              style: AppFont.font18W700Black,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CategoriesLoading extends StatelessWidget {
+  const _CategoriesLoading({required this.bottomInset});
+
+  final double bottomInset;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16, 8, 16, bottomInset),
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ShimmerEffect(
+            enable: true,
+            child: Container(
+              height: 84,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

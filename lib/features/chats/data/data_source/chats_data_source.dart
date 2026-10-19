@@ -24,25 +24,23 @@ class ChatsDataSourceImpl implements ChatsDataSource {
 
   @override
   Future<List<ChatEntity>> getChats() async {
-    final res = await apiService.get<Map<String, dynamic>?>(
+    final res = await apiService.get<dynamic>(
       url: ApiPath.getChats,
       returnDataOnly: true,
     );
-    final rawChats = res?['chats'];
-    if (rawChats == null || rawChats is! List) {
-      return [];
-    }
-    final validChats = rawChats.where((e) {
-      if (e == null || e is! Map<String, dynamic>) return false;
-      final participants = (e['participants'] as List<dynamic>?);
-      if (participants == null) return false;
-      final hasNullUserId =
-          participants.any((p) => p is Map && p['userId'] == null);
-      return !hasNullUserId;
-    });
-    return List<ChatEntity>.from(
-      validChats.map((e) => ChatEntity.fromJson(e as Map<String, dynamic>)),
-    );
+    final rawChats = _conversationList(res);
+    return rawChats
+        .whereType<Map>()
+        .map((item) => ChatEntity.fromJson(Map<String, dynamic>.from(item)))
+        .where((chat) => chat.id.isNotEmpty)
+        .toList();
+  }
+
+  List<dynamic> _conversationList(dynamic res) {
+    if (res is List) return res;
+    if (res is! Map) return [];
+    final raw = res['items'] ?? res['conversations'] ?? res['chats'];
+    return raw is List ? raw : [];
   }
 
   @override
@@ -61,10 +59,10 @@ class ChatsDataSourceImpl implements ChatsDataSource {
     await apiService.post(
       url: ApiPath.sendMessage(chatId),
       requestBody: {
-        'content': content,
+        'body': content,
         if (attachments != null && attachments.isNotEmpty)
           'attachments': attachments,
-        if (productId != null) 'productId': productId,
+        if (productId != null) 'adId': productId,
       },
       returnDataOnly: false,
     );
@@ -84,20 +82,22 @@ class ChatsDataSourceImpl implements ChatsDataSource {
     required String participantId,
     String? productId,
   }) async {
-    final formData = <String, dynamic>{
-      // 'userId': userId,
-      'participantId': participantId,
-      if (productId != null) 'productId': productId,
-    };
-
-    final res = await apiService.post<Map<String, dynamic>>(
+    final res = await apiService.post<dynamic>(
       url: ApiPath.createChat,
-      requestBody: formData,
+      requestBody: {
+        'recipientId': participantId,
+        if (productId != null) 'adId': productId,
+      },
       returnDataOnly: true,
     );
 
-    // The response structure is { "chat": {...} }
-    final chatData = res['chat'] as Map<String, dynamic>;
-    return ChatEntity.fromJson(chatData);
+    return ChatEntity.fromJson(_conversationMap(res));
+  }
+
+  Map<String, dynamic> _conversationMap(dynamic res) {
+    if (res is! Map) return {};
+    final nested = res['conversation'] ?? res['chat'];
+    if (nested is Map) return Map<String, dynamic>.from(nested);
+    return Map<String, dynamic>.from(res);
   }
 }

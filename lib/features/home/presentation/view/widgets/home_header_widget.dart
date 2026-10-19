@@ -4,20 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj_meem/core/service/location_service/location_provider.dart';
+import 'package:heraj_meem/features/home/presentation/managers/baho_feed_provider.dart';
 import 'package:heraj_meem/features/favorites/presentation/managers/favorites.dart';
 import 'package:heraj_meem/features/favorites/presentation/view/favorites_list_screen.dart';
 import 'package:heraj_meem/features/notifications/presentation/managers/fetch_notificatons_provider.dart';
 import 'package:heraj_meem/features/notifications/presentation/view/notifications_screen.dart';
-import 'package:heraj_meem/ui/shared_widgets/loading_widget.dart';
-import 'package:heraj_meem/ui/shared_widgets/price_widget.dart';
-import '../../../../cart/presentation/manager/fetch_cart_provider.dart';
 import 'location_bottom_sheet.dart';
 import '../../../../../config/app_font.dart';
-import '../../../../cart/presentation/view/cart_items_screen.dart';
-import '../../../../products/data/models/product_model.dart';
-import '../../../../products/presentation/managers/products_managers.dart';
-import '../../../../products/presentation/view/product_details_screen.dart';
+import '../../../../../ui/shared_widgets/loading_widget.dart';
 import '../../../../search/presentation/view/search_screen.dart';
 
 class HomeHeaderWidget extends ConsumerWidget {
@@ -32,8 +26,7 @@ class HomeHeaderWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locationAsync = ref.watch(fetchLocationDetailsProvider);
-    final currentDisplayLocation = ref.watch(currentDisplayLocationProvider);
+    final place = ref.watch(bahoPlaceProvider);
 
     return Container(
       color: Colors.white,
@@ -56,88 +49,34 @@ class HomeHeaderWidget extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColor.primary.withAlpha(40),
+                                color: AppColor.primary.withAlpha(18),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.location_on,
                                 color: AppColor.primary,
-                                size: 25,
+                                size: 22,
                               ),
                             ),
                             const Gap(6),
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  final displayLocation =
-                                      currentDisplayLocation ??
-                                          locationAsync.value;
-
-                                  if (displayLocation != null) {
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          displayLocation.fullAddress,
-                                          style: AppFont.font11W400Grey2,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                displayLocation.name,
-                                                style: AppFont.font14W600Black,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            const Gap(4),
-                                            Icon(
-                                              Icons.keyboard_arrow_down,
-                                              color: AppColor.black,
-                                              size: 18,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    );
-                                  }
-
-                                  // Loading state
-                                  if (locationAsync.isLoading) {
-                                    return Row(
-                                      children: [
-                                        Text(
-                                          'Loading...'.tr,
-                                          style: AppFont.font14W500Grey2,
-                                        ),
-                                        const Gap(4),
-                                        SizedBox(
-                                            width: 14,
-                                            height: 14,
-                                            child: LoadingWidget(size: 14,)),
-                                      ],
-                                    );
-                                  }
-
-                                  return Row(
-                                    children: [
-                                      Text(
-                                        'All Turkey'.tr,
-                                        style: AppFont.font14W600Black,
-                                      ),
-                                      const Gap(4),
-                                      Icon(
-                                        Icons.keyboard_arrow_down,
-                                        color: AppColor.black,
-                                        size: 18,
-                                      ),
-                                    ],
-                                  );
-                                },
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      place?.cityName ?? 'All regions'.tr,
+                                      style: AppFont.font14W600Black,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const Gap(4),
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: AppColor.black,
+                                    size: 18,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -177,46 +116,6 @@ class HomeHeaderWidget extends ConsumerWidget {
                           ),
                           onPressed: () {
                             Get.to(() => const FavoritesListScreen());
-                          },
-                        ),
-                      ],
-                    ] else ...[
-                      if (!(ref
-                              .watch(fetchCartProvider)
-                              .valueOrNull
-                              ?.items
-                              .isEmpty ??
-                          true)) ...[
-                        Stack(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                CupertinoIcons.shopping_cart,
-                                color: AppColor.black,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                Get.to(() => const CartItemsScreen2());
-                              },
-                            ),
-                            PositionedDirectional(
-                                end: 8,
-                                top: 8,
-                                child: CircleAvatar(
-                                  radius: 6,
-                                  backgroundColor: AppColor.danger,
-                                )),
-                          ],
-                        ),
-                      ] else ...[
-                        IconButton(
-                          icon: Icon(
-                            CupertinoIcons.shopping_cart,
-                            color: AppColor.black,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            Get.to(() => const CartItemsScreen2());
                           },
                         ),
                       ],
@@ -315,29 +214,18 @@ class HomeHeaderWidget extends ConsumerWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: TypeAheadField<ProductModel>(
+                      child: TypeAheadField<String>(
                         builder: (context, controller, focusNode) {
                           return Container(
                             decoration: BoxDecoration(
-                              color: AppColor.primary2,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColor.primary.withAlpha(75),
-                                width: 1,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColor.primary.withAlpha(30),
-                                  blurRadius: 10,
-                                  spreadRadius: 5,
-                                ),
-                              ],
+                              color: const Color(0xffF3F4F6),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             child: TextField(
                               controller: controller,
                               focusNode: focusNode,
                               decoration: InputDecoration(
-                                hintText: 'Search'.tr,
+                                hintText: 'Search in Baho...'.tr,
                                 hintStyle: AppFont.font14W500Grey2,
                                 prefixIcon: Icon(
                                   CupertinoIcons.search,
@@ -371,87 +259,25 @@ class HomeHeaderWidget extends ConsumerWidget {
                           );
                         },
                         suggestionsCallback: (pattern) async {
-                          if (pattern.isEmpty) return [];
                           try {
-                            final products = await ref
-                                .read(searchProductsProvider(pattern).future);
-                            return products.take(6).toList();
-                          } catch (e) {
-                            return <ProductModel>[];
+                            return await fetchSearchSuggestions(pattern);
+                          } catch (_) {
+                            return <String>[];
                           }
                         },
-                        itemBuilder: (context, ProductModel product) {
+                        itemBuilder: (context, String suggestion) {
                           return ListTile(
-                            leading: (product.thumbImage?.isNotEmpty ?? false)
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: AppColor.primary
-                                                  .withAlpha(120),
-                                              spreadRadius: 2,
-                                              blurRadius: 8)
-                                        ]),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.network(
-                                        product.thumbImage ?? '',
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Container(
-                                            width: 50,
-                                            height: 50,
-                                            color: AppColor.grey1,
-                                            child: Icon(
-                                              Icons.image_not_supported,
-                                              color: AppColor.grey2,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                : Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: AppColor.grey1,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      Icons.image_not_supported,
-                                      color: AppColor.grey2,
-                                    ),
-                                  ),
                             title: Text(
-                              product.name,
+                              suggestion,
                               style: AppFont.font14W600Black,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            subtitle: Row(
-                              spacing: 6,
-                              children: [
-                                PriceWidget(
-                                  price: product.afterPrice.toString(),
-                                  textColor: AppColor.primary,
-                                ),
-                                PriceWidget(
-                                  price: product.beforePrice.toString(),
-                                  style: AppFont.font10w400Black.copyWith(
-                                      decoration: TextDecoration.lineThrough),
-                                ),
-                              ],
-                            ),
                           );
                         },
-                        onSelected: (ProductModel product) {
-                          Get.to(() =>
-                              ProductDetailsScreen(productId: product.id));
+                        onSelected: (String suggestion) {
+                          ref.read(homeSearchQueryProvider.notifier).state =
+                              suggestion;
                         },
                         emptyBuilder: (context) => Padding(
                           padding: const EdgeInsets.all(16),
@@ -462,11 +288,7 @@ class HomeHeaderWidget extends ConsumerWidget {
                         ),
                         loadingBuilder: (context) => Padding(
                           padding: const EdgeInsets.all(16),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: AppColor.primary,
-                            ),
-                          ),
+                          child: const LoadingWidget(),
                         ),
                         errorBuilder: (context, error) => Padding(
                           padding: const EdgeInsets.all(16),

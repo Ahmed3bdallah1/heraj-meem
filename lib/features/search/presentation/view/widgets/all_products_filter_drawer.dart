@@ -8,7 +8,7 @@ import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
 import 'package:heraj_meem/features/categories/presentation/managers/categories_provider.dart';
 import 'package:heraj_meem/features/location/presentation/managers/location_provider.dart';
-import 'package:heraj_meem/features/products/presentation/managers/all_products_provider.dart';
+import 'package:heraj_meem/features/ads/presentation/managers/all_products_provider.dart';
 import 'package:heraj_meem/features/search/presentation/managers/search_filter_notifier.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';

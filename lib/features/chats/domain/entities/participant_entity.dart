@@ -12,9 +12,13 @@ class ParticipantEntity {
   });
 
   factory ParticipantEntity.fromJson(Map<String, dynamic> json) {
+    final rawUser = json['user'] ?? json['userId'] ?? json['participant'];
+    final bool isUser =
+        json['profile'] != null || json['phone'] != null || json['displayName'] != null;
+    final user = rawUser ?? (isUser ? json : null);
     return ParticipantEntity(
-      id: json['_id']?.toString() ?? '',
-      userId: UserInfoEntity.fromJson(json['userId'] ?? {}),
+      id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
+      userId: user == null ? null : UserInfoEntity.fromJson(user),
       role: json['role']?.toString() ?? '',
     );
   }

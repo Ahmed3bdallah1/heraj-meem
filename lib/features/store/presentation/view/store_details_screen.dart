@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/core/service/auth_service.dart';
-import 'package:heraj_meem/features/products/presentation/view/widgets/product_tile.dart';
+import 'package:heraj_meem/features/ads/presentation/view/widgets/product_tile.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/ui/shared_widgets/container_button.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
