@@ -81,6 +81,7 @@ dependencies:
   font_awesome_flutter: ^11.0.0
   get_storage: 2.1.1
   shimmer: 3.0.0
+  skeletonizer: ^3.0.0
   lottie: ^3.3.1
   intl: ^0.20.2
   google_fonts: ^6.3.3
@@ -106,6 +107,7 @@ dependencies:
   share_plus: ^11.1.0
   country_picker: ^2.0.20
   story_view: ^0.16.6
+  substring_highlight: ^1.0.33
   flutter_typeahead: ^5.0.0
   html_editor_enhanced: ^2.3.0
 dev_dependencies:

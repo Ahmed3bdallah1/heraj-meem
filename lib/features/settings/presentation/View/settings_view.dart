@@ -18,13 +18,12 @@ import '../../../../models/user_model.dart';
 import '../../../../ui/shared_widgets/custom_image_circle.dart';
 import '../../../auth/domain/use_cases/login_user_use_case.dart';
 import '../../../auth/presentation/view/login_page.dart';
+import '../../../ads/presentation/view/my_ads_screen.dart';
 import '../../../favorites/presentation/view/favorites_list_screen.dart';
-import '../../../orders/presentation/view/orders_screen.dart';
 import '../../../root/view/root_view.dart';
 import '../../../root/controller/root_controller.dart';
 import '../../../plans/presentation/view/plans_screen.dart';
 import '../../../profile/presentation/view/update_profile_view.dart';
-import '../../../payments/presentation/view/payments_list_screen.dart';
 import 'help_support_screen.dart';
 import 'languages_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -143,9 +142,9 @@ class _MyProfileSectionContent extends StatelessWidget {
           ),
           const _SettingsDivider(),
           SettingsItem(
-            onTap: () => Get.to(() => const OrdersScreen()),
-            icon: Icons.shopping_cart_outlined,
-            title: 'My Orders'.tr,
+            onTap: () => Get.to(() => const MyAdsScreen()),
+            icon: Icons.campaign_outlined,
+            title: 'My Ads'.tr,
           ),
         ],
       ),
@@ -175,53 +174,6 @@ class _SettingsSectionContent extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Builder(
-            builder: (context) {
-              final user = ref.watch(userProvider) ?? dataManager.getUser();
-              final hasVendorRole = (user?.role ?? "user") == "vendor";
-              final isVendorFlow = ref.watch(isVendorFlowProvider);
-
-              if (hasVendorRole) {
-                return Column(
-                  children: [
-                    SettingsItem(
-                      onTap: null,
-                      icon: Icons.store,
-                      title: 'Vendor Mode'.tr,
-                      trailing: SizedBox(
-                        child: CupertinoSwitch(
-                          value: isVendorFlow,
-                          onChanged: (value) {
-                            ref.read(isVendorFlowProvider.notifier).state =
-                                value;
-                            dataManager.setVendorFlow(value);
-                            ref.read(rootIndex.notifier).reset();
-                          },
-                          activeTrackColor: AppColor.primary,
-                        ),
-                      ),
-                      showArrow: false,
-                    ),
-                    const _SettingsDivider(),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    SettingsItem(
-                      onTap: () {
-                        Get.to(() => const RegisterPage());
-                      },
-                      icon: Icons.store,
-                      title: 'Register As New Vendor'.tr,
-                      showArrow: true,
-                    ),
-                    const _SettingsDivider(),
-                  ],
-                );
-              }
-            },
-          ),
           SettingsItem(
             onTap: null,
             icon: Icons.notifications_outlined,
@@ -290,12 +242,6 @@ class _SettingsSectionContent extends ConsumerWidget {
             onTap: () => Get.to(() => const PlansScreen()),
             icon: Icons.account_balance_wallet_outlined,
             title: 'Pricing Plan'.tr,
-          ),
-          const _SettingsDivider(),
-          SettingsItem(
-            onTap: () => Get.to(() => const PaymentsListScreen()),
-            icon: Icons.payment_outlined,
-            title: 'My Payments'.tr,
           ),
           const _SettingsDivider(),
           SettingsItem(
@@ -480,12 +426,6 @@ class _MyProfileSection extends StatelessWidget {
               icon: CupertinoIcons.heart,
               title: 'Favorites'.tr,
             ),
-            const _SettingsDivider(),
-            SettingsItem(
-              onTap: () => Get.to(() => const OrdersScreen()),
-              icon: Icons.shopping_cart_outlined,
-              title: 'My Orders'.tr,
-            ),
           ],
         ),
       ),
@@ -516,53 +456,6 @@ class _SettingsSection extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Builder(
-              builder: (context) {
-                final user = ref.watch(userProvider) ?? dataManager.getUser();
-                final hasVendorRole = (user?.role ?? "user") == "vendor";
-                final isVendorFlow = ref.watch(isVendorFlowProvider);
-
-                if (hasVendorRole) {
-                  return Column(
-                    children: [
-                      SettingsItem(
-                        onTap: null,
-                        icon: Icons.store,
-                        title: 'Vendor Mode'.tr,
-                        trailing: SizedBox(
-                          child: CupertinoSwitch(
-                            value: isVendorFlow,
-                            onChanged: (value) {
-                              ref.read(isVendorFlowProvider.notifier).state =
-                                  value;
-                              dataManager.setVendorFlow(value);
-                              ref.read(rootIndex.notifier).reset();
-                            },
-                            activeTrackColor: AppColor.primary,
-                          ),
-                        ),
-                        showArrow: false,
-                      ),
-                      const _SettingsDivider(),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      SettingsItem(
-                        onTap: () {
-                          Get.to(() => const RegisterPage());
-                        },
-                        icon: Icons.store,
-                        title: 'Register As New Vendor'.tr,
-                        showArrow: true,
-                      ),
-                      const _SettingsDivider(),
-                    ],
-                  );
-                }
-              },
-            ),
             SettingsItem(
               onTap: null,
               icon: Icons.notifications_outlined,
@@ -631,12 +524,6 @@ class _SettingsSection extends ConsumerWidget {
               onTap: () => Get.to(() => const PlansScreen()),
               icon: Icons.account_balance_wallet_outlined,
               title: 'Pricing Plan'.tr,
-            ),
-            const _SettingsDivider(),
-            SettingsItem(
-              onTap: () => Get.to(() => const PaymentsListScreen()),
-              icon: Icons.payment_outlined,
-              title: 'My Payments'.tr,
             ),
             const _SettingsDivider(),
             SettingsItem(

@@ -1,4 +1,4 @@
-import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 
 import '../../../categories/data/models/main_category_model.dart';
 import '../../../home/domain/entities/ad_entity.dart';
@@ -390,18 +390,40 @@ class StoreCategoryDetailsModel {
   });
 
   factory StoreCategoryDetailsModel.fromJson(Map<String, dynamic> json) {
+    final wrapped = json['category'] is Map;
+    final categoryJson = wrapped
+        ? Map<String, dynamic>.from(json['category'] as Map)
+        : json;
+    final category = CategoryModel.fromJson(categoryJson);
+    final childrenSource =
+        wrapped && json['children'] is List ? json['children'] : categoryJson['children'];
+    final children = childrenSource is List
+        ? childrenSource
+            .whereType<Map>()
+            .map((item) =>
+                CategoryModel.fromJson(Map<String, dynamic>.from(item)))
+            .toList()
+        : category.children;
+    final breadcrumb = (json['breadcrumb'] as List?)
+            ?.whereType<Map>()
+            .map((item) =>
+                BreadcrumbItem.fromJson(Map<String, dynamic>.from(item)))
+            .toList() ??
+        <BreadcrumbItem>[];
     return StoreCategoryDetailsModel(
-      category: CategoryModel.fromJson(
-          json['category'] is Map<String, dynamic> ? json['category'] : {}),
-      children: (json['children'] as List?)
-              ?.map((item) => CategoryModel.fromJson(item))
-              .toList() ??
-          [],
-      breadcrumb: (json['breadcrumb'] as List?)
-              ?.map((item) => BreadcrumbItem.fromJson(
-                  item is Map<String, dynamic> ? item : {}))
-              .toList() ??
-          [],
+      category: category,
+      children: children,
+      breadcrumb: breadcrumb.isEmpty
+          ? [
+              BreadcrumbItem(
+                id: category.id,
+                name: category.name,
+                nameAr: category.nameAr,
+                nameTr: category.nameTr,
+                slug: category.slug,
+              ),
+            ]
+          : breadcrumb,
     );
   }
 

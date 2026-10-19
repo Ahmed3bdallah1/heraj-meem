@@ -122,6 +122,8 @@ class _ImageOrSvgState extends State<ImageOrSvg>
               height: widget.height,
               fit: widget.fit,
               color: widget.color,
+              placeholderBuilder: (_) => _imagePlaceholder(),
+              errorBuilder: (_, __, ___) => _imagePlaceholder(),
             );
       return RepaintBoundary(child: svg);
     }
@@ -157,6 +159,20 @@ class _ImageOrSvgState extends State<ImageOrSvg>
     return RepaintBoundary(child: image);
   }
 
+  Widget _imagePlaceholder() {
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      color: AppColor.grey_3,
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.image_outlined,
+        color: AppColor.grey2,
+        size: 28,
+      ),
+    );
+  }
+
   Widget _handleLoadStateChange(ExtendedImageState ff) {
     switch (ff.extendedImageLoadState) {
       case LoadState.loading:
@@ -174,9 +190,7 @@ class _ImageOrSvgState extends State<ImageOrSvg>
           opacity: _controller,
           child: InkWell(
             onTap: () => ff.reLoadImage(),
-            child: const RepaintBoundary(
-              child: Icon(Icons.error, color: Colors.red),
-            ),
+            child: _imagePlaceholder(),
           ),
         );
       case LoadState.completed:

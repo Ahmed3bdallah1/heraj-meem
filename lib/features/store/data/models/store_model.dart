@@ -1,4 +1,4 @@
-import 'package:heraj_meem/features/products/data/models/product_model.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 
 class StoreUserId {
   final String id;

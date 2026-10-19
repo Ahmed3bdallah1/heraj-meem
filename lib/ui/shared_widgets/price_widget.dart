@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
+import 'package:get/get.dart';
 import '../../config/app_font.dart';
 
 class PriceWidget extends StatelessWidget {
@@ -38,15 +38,4 @@ class PriceWidget extends StatelessWidget {
   }
 }
 
-String _getCurrencySymbol() {
-  switch (localeService.getLocale().locale.languageCode) {
-    // case 'tr':
-    //   return '₺';
-    // case 'en':
-    //   return '\$';
-    // case 'ar':
-    //   return '€';
-    default:
-      return '₺';
-  }
-}
+String _getCurrencySymbol() => 'SAR'.tr;
