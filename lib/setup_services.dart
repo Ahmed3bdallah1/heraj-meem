@@ -1,7 +1,4 @@
 import 'package:heraj_meem/core/service/theme_service/theme_service.dart';
-import 'package:heraj_meem/features/address/data/data_source/address_data_source.dart';
-import 'package:heraj_meem/features/address/data/repo/address_repo_imp.dart';
-import 'package:heraj_meem/features/address/domain/repo/address_repo.dart';
 import 'package:heraj_meem/features/categories/data/data_source/categories_data_source.dart';
 import 'package:heraj_meem/features/favorites/data/data_source/favorites_data_source.dart';
 import 'package:heraj_meem/features/favorites/data/repo/favorites_repo_imp.dart';
@@ -20,6 +17,10 @@ import 'package:heraj_meem/features/ads/data/data_source/create_ad_data_source.d
 import 'package:heraj_meem/features/ads/data/data_source/products_data_source.dart';
 import 'package:heraj_meem/features/ads/data/repo/create_ad_repo_imp.dart';
 import 'package:heraj_meem/features/ads/domain/repo/create_ad_repo.dart';
+import 'package:heraj_meem/features/ads/data/data_source/rate_vendor_data_source.dart';
+import 'package:heraj_meem/features/ads/data/repo/rate_vendor_repo_imp.dart';
+import 'package:heraj_meem/features/ads/domain/repo/rate_vendor_repo.dart';
+import 'package:heraj_meem/features/ads/domain/use_case/rate_vendor_use_case.dart';
 import 'package:heraj_meem/features/ads/domain/use_case/create_ad_use_case.dart';
 import 'package:heraj_meem/features/ads/data/repo/product_repo_imp.dart';
 import 'package:heraj_meem/features/ads/domain/repo/product_repo.dart';
@@ -39,7 +40,6 @@ import 'core/service/local_data_manager.dart';
 import 'core/service/localization_service/localization_service.dart';
 import 'core/service/webservice/dio_helper.dart';
 import 'core/service/fcm_token_service.dart';
-import 'features/address/domain/use_case/address_use_cases.dart';
 import 'features/auth/data/data_sources/auth_data_source.dart';
 import 'features/auth/data/repositories/auth_repo_impl.dart';
 import 'features/auth/domain/repositories/auth_repo.dart';
@@ -113,9 +113,7 @@ Future setupLocator() async {
 
   getIt.registerLazySingleton<LocalAuthentication>(() => LocalAuthentication());
   getIt.registerLazySingleton<RemoteConfigService>(() => RemoteConfigService());
-  getIt.registerLazySingleton<LocationService>(() => LocationService(
-        reverseGeocodeUseCase: getIt<ReverseGeocodeUseCase>(),
-      ));
+  getIt.registerLazySingleton<LocationService>(() => LocationService());
 
   /// notifications entity
   getIt.registerLazySingleton<NotificationDataSource>(
@@ -166,10 +164,20 @@ Future setupLocator() async {
       () => UploadAdMediaUseCase(getIt<CreateAdRepo>()));
   getIt.registerLazySingleton<CreateAdUseCase>(
       () => CreateAdUseCase(getIt<CreateAdRepo>()));
+  getIt.registerLazySingleton<PublishAdUseCase>(
+      () => PublishAdUseCase(getIt<CreateAdRepo>()));
+  getIt.registerLazySingleton<UpdateAdUseCase>(
+      () => UpdateAdUseCase(getIt<CreateAdRepo>()));
   getIt.registerLazySingleton<PromoteAdMediaUseCase>(
       () => PromoteAdMediaUseCase(getIt<CreateAdRepo>()));
   getIt.registerLazySingleton<DeleteAdMediaUseCase>(
       () => DeleteAdMediaUseCase(getIt<CreateAdRepo>()));
+  getIt.registerLazySingleton<RateVendorDataSource>(
+      () => RateVendorDataSourceImpl(apiClient: getIt<ApiService>()));
+  getIt.registerLazySingleton<RateVendorRepo>(
+      () => RateVendorRepoImp(dataSource: getIt<RateVendorDataSource>()));
+  getIt.registerLazySingleton<RateVendorUseCase>(
+      () => RateVendorUseCase(getIt<RateVendorRepo>()));
 
   /// ads entity
   getIt.registerLazySingleton<AdsDataSource>(
@@ -206,22 +214,6 @@ Future setupLocator() async {
       () => AddOrDeleteFavoritesUseCase(getIt<FavoritesRepo>()));
   getIt.registerLazySingleton<RemoveFavoriteUseCase>(
       () => RemoveFavoriteUseCase(getIt<FavoritesRepo>()));
-
-  /// Address entity
-  getIt.registerLazySingleton<AddressDataSource>(
-      () => AddressDataSourceImp(apiService: getIt<ApiService>()));
-  getIt.registerLazySingleton<AddressRepo>(
-      () => AddressRepoImp(addressDataSource: getIt<AddressDataSource>()));
-  getIt.registerLazySingleton<FetchAddressesUseCase>(
-      () => FetchAddressesUseCase(getIt<AddressRepo>()));
-  getIt.registerLazySingleton<AddAddressUseCase>(
-      () => AddAddressUseCase(getIt<AddressRepo>()));
-  getIt.registerLazySingleton<UpdateAddressUseCase>(
-      () => UpdateAddressUseCase(getIt<AddressRepo>()));
-  getIt.registerLazySingleton<DeleteAddressUseCase>(
-      () => DeleteAddressUseCase(getIt<AddressRepo>()));
-  getIt.registerLazySingleton<ReverseGeocodeUseCase>(
-      () => ReverseGeocodeUseCase(getIt<AddressRepo>()));
 
   /// Verification
   getIt.registerLazySingleton<VerificationDataSource>(

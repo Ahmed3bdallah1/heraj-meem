@@ -111,6 +111,7 @@ class ProductModel {
   final int v;
   final String? sellerId;
   final String? sellerPhone;
+  final String? sellerName;
   final VendorInfo? vendorId;
   final String? condition;
   final Map<String, dynamic>? categorySpecificFields;
@@ -156,6 +157,7 @@ class ProductModel {
     required this.v,
     this.sellerId,
     this.sellerPhone,
+    this.sellerName,
     this.vendorId,
     this.condition,
     this.categorySpecificFields,
@@ -190,6 +192,23 @@ class ProductModel {
       return raw['id']?.toString() ?? raw['_id']?.toString();
     }
     return user?['id']?.toString();
+  }
+
+  static String? _sellerName(Map<String, dynamic>? user) {
+    if (user == null) return null;
+    final profile = user['profile'];
+    if (profile is Map) {
+      final map = Map<String, dynamic>.from(profile);
+      final fromProfile = map['displayName'] ?? map['name'] ?? map['fullName'];
+      if (fromProfile != null && fromProfile.toString().trim().isNotEmpty) {
+        return fromProfile.toString().trim();
+      }
+    }
+    final direct = user['displayName'] ?? user['name'] ?? user['fullName'];
+    if (direct != null && direct.toString().trim().isNotEmpty) {
+      return direct.toString().trim();
+    }
+    return null;
   }
 
   static String? _sellerPhone(
@@ -327,6 +346,7 @@ class ProductModel {
           : (int.tryParse(json['__v']?.toString() ?? '0') ?? 0),
       sellerId: _sellerId(json, user),
       sellerPhone: _sellerPhone(json, user),
+      sellerName: _sellerName(user),
       vendorId: vendorId,
       condition: json['condition']?.toString(),
       categorySpecificFields:
@@ -370,6 +390,7 @@ class ProductModel {
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
       v: model.v,
+      sellerName: model.sellerId?.profile?.name,
     );
   }
 
@@ -418,6 +439,7 @@ class ProductModel {
       "__v": v,
       "sellerId": sellerId,
       "sellerPhone": sellerPhone,
+      "sellerName": sellerName,
       "vendorId": vendorId?.toJson(),
       "condition": condition,
       "categorySpecificFields": categorySpecificFields,

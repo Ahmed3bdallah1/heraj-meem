@@ -29,6 +29,35 @@ class CreateAdUseCase extends UseCaseParam<String, CreateAdRequest> {
   }
 }
 
+class PublishAdUseCase extends UseCaseParam<bool, String> {
+  final CreateAdRepo repo;
+
+  PublishAdUseCase(this.repo);
+
+  @override
+  Future<Either<Failure, bool>> call(String param) {
+    return repo.publishAd(param);
+  }
+}
+
+class UpdateAdParam {
+  final String adId;
+  final CreateAdRequest request;
+
+  const UpdateAdParam({required this.adId, required this.request});
+}
+
+class UpdateAdUseCase extends UseCaseParam<String, UpdateAdParam> {
+  final CreateAdRepo repo;
+
+  UpdateAdUseCase(this.repo);
+
+  @override
+  Future<Either<Failure, String>> call(UpdateAdParam param) {
+    return repo.updateAd(adId: param.adId, request: param.request);
+  }
+}
+
 class PromoteAdMediaUseCase extends UseCaseParam<bool, PromoteAdMediaParam> {
   final CreateAdRepo repo;
 

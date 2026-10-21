@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/ads/data/models/product_details_model.dart';
 import 'package:heraj_meem/features/ads/presentation/managers/add_ad_actions_mixin.dart';
 import 'package:heraj_meem/features/home/data/models/baho_feed.dart';
 import 'package:heraj_meem/features/home/presentation/managers/baho_feed_provider.dart';
@@ -22,6 +23,7 @@ part 'widgets/add_ad/add_ad_category_tile.dart';
 part 'widgets/add_ad/add_ad_check_mark.dart';
 part 'widgets/add_ad/add_ad_city_step.dart';
 part 'widgets/add_ad/add_ad_continue_button.dart';
+part 'widgets/add_ad/add_ad_attributes.dart';
 part 'widgets/add_ad/add_ad_details_step.dart';
 part 'widgets/add_ad/add_ad_pending_step.dart';
 part 'widgets/add_ad/add_ad_photo_box.dart';
@@ -32,7 +34,9 @@ part 'widgets/add_ad/add_ad_step_title.dart';
 part 'widgets/add_ad/add_ad_step_title_item.dart';
 
 class AddAdScreen extends ConsumerStatefulWidget {
-  const AddAdScreen({super.key});
+  const AddAdScreen({super.key, this.ad});
+
+  final ProductDetailsModel? ad;
 
   @override
   ConsumerState<AddAdScreen> createState() => _AddAdScreenState();
@@ -40,6 +44,13 @@ class AddAdScreen extends ConsumerStatefulWidget {
 
 class _AddAdScreenState extends ConsumerState<AddAdScreen>
     with AddAdActionsMixin {
+  @override
+  void initState() {
+    super.initState();
+    final ad = widget.ad;
+    if (ad != null) prefillAd(ad);
+  }
+
   @override
   void dispose() {
     disposeAddAd();
@@ -49,16 +60,25 @@ class _AddAdScreenState extends ConsumerState<AddAdScreen>
   @override
   Widget build(BuildContext context) {
     final step = ref.watch(addAdStepIndexProvider);
-    return Scaffold(
+    final locked = step >= 3;
+    return PopScope(
+      canPop: !locked,
+      child: Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: handleBack,
+        automaticallyImplyLeading: !locked,
+        leading: locked
+            ? const SizedBox.shrink()
+            : IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: handleBack,
+              ),
+        title: Text(
+          (widget.ad == null ? 'Add Ad' : 'Edit Ad').tr,
+          style: AppFont.font16W700Black,
         ),
-        title: Text('Add Ad'.tr, style: AppFont.font16W700Black),
         centerTitle: true,
         actions: [
           IconButton(
@@ -91,11 +111,15 @@ class _AddAdScreenState extends ConsumerState<AddAdScreen>
                     descriptionFocus: descriptionFocus,
                     onPickImages: pickImages,
                     onRemoveImage: removeImage,
+                    attributeFocus: attributeFocus,
+                    onAddAttribute: addAttribute,
+                    onRemoveAttribute: removeAttribute,
                   ),
                   _AddAdPendingStep(
                     createdAdId: createdAdId,
+                    publishing: publishing,
                     onViewAd: viewCreatedAd,
-                    onGoHome: goHome,
+                    onPublish: publishCreatedAd,
                   ),
                 ],
               ),
@@ -104,11 +128,13 @@ class _AddAdScreenState extends ConsumerState<AddAdScreen>
               _AddAdContinueButton(
                 step: step,
                 submitting: submitting,
+                isEditing: widget.ad != null,
                 onPressed: handleContinue,
               ),
           ],
         ),
       ),
+    ),
     );
   }
 }

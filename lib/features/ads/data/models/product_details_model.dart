@@ -43,6 +43,10 @@ class ProductDetailsModel {
 
   /// Category id for vendor/customer products (when adminCategory is null). Parsed from category or categoryId.
   final String? categoryId;
+  final String? cityId;
+  final String? regionId;
+  final bool? showPhone;
+  final List<String>? mediaIds;
 
   ProductDetailsModel({
     required this.id,
@@ -84,6 +88,10 @@ class ProductDetailsModel {
     this.categorySpecificFields,
     this.condition,
     this.categoryId,
+    this.cityId,
+    this.regionId,
+    this.showPhone = true,
+    this.mediaIds = const [],
   });
 
   factory ProductDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -169,28 +177,49 @@ class ProductDetailsModel {
           json['categorySpecificFields'] as Map<String, dynamic>?,
       condition: json['condition']?.toString(),
       categoryId: _parseCategoryId(json),
+      cityId: json['cityId']?.toString(),
+      showPhone: json['showPhone'] != false,
     );
   }
 
   factory ProductDetailsModel.fromAd(Map<String, dynamic> json) {
     final images = <String>[];
+    final mediaIds = <String>[];
+    void addImage(String raw, String mediaId) {
+      if (raw.isEmpty) return;
+      images.add(
+        raw.startsWith('http')
+            ? raw
+            : '${ApiPath.serverUrl}${raw.startsWith('/') ? raw : '/$raw'}',
+      );
+      mediaIds.add(mediaId);
+    }
+
     final media = json['media'];
     if (media is List) {
       for (final item in media.whereType<Map>()) {
         final map = Map<String, dynamic>.from(item);
-        final raw = map['url']?.toString() ?? map['thumbUrl']?.toString() ?? '';
-        if (raw.isEmpty) continue;
-        images.add(
-          raw.startsWith('http')
-              ? raw
-              : '${ApiPath.serverUrl}${raw.startsWith('/') ? raw : '/$raw'}',
+        addImage(
+          map['url']?.toString() ?? map['thumbUrl']?.toString() ?? '',
+          map['id']?.toString() ?? '',
         );
       }
     }
+    if (images.isEmpty && json['images'] is List) {
+      for (final item in json['images'] as List) {
+        if (item is String) {
+          addImage(item, '');
+        } else if (item is Map) {
+          final map = Map<String, dynamic>.from(item);
+          addImage(
+            map['url']?.toString() ?? map['thumbUrl']?.toString() ?? '',
+            map['id']?.toString() ?? '',
+          );
+        }
+      }
+    }
 
-    final attributes = json['attributes'] is Map
-        ? Map<String, dynamic>.from(json['attributes'] as Map)
-        : <String, dynamic>{};
+    final attributes = _attributeMap(json['attributes']);
     final specifications = <Specification>[];
     var index = 0;
     attributes.forEach((key, value) {
@@ -220,9 +249,14 @@ class ProductDetailsModel {
     final region = city?['region'] is Map
         ? Map<String, dynamic>.from(city!['region'] as Map)
         : null;
-    final user = json['user'] is Map
-        ? Map<String, dynamic>.from(json['user'] as Map)
+    final rawUser = json['user'];
+    final user = rawUser is Map
+        ? Map<String, dynamic>.from(rawUser)
         : null;
+    final ownerId = user?['id']?.toString() ??
+        (rawUser is String ? rawUser : null) ??
+        json['userId']?.toString() ??
+        '';
     final profile = user?['profile'] is Map
         ? Map<String, dynamic>.from(user!['profile'] as Map)
         : null;
@@ -319,10 +353,10 @@ class ProductDetailsModel {
       variants: const [],
       variantCombinations: const [],
       specifications: specifications,
-      sellerId: user == null
+      sellerId: ownerId.isEmpty
           ? null
           : SellerInfo(
-              id: user['id']?.toString() ?? '',
+              id: ownerId,
               phone: phone,
               profile: SellerProfile(
                 name: profile?['displayName']?.toString() ??
@@ -335,7 +369,28 @@ class ProductDetailsModel {
       categorySpecificFields: attributes,
       condition: attributes['الحالة']?.toString(),
       categoryId: category?['id']?.toString() ?? json['categoryId']?.toString(),
+      cityId: city?['id']?.toString() ?? json['cityId']?.toString(),
+      regionId: region?['id']?.toString() ?? city?['regionId']?.toString(),
+      showPhone: showPhone,
+      mediaIds: mediaIds,
     );
+  }
+
+  static Map<String, dynamic> _attributeMap(dynamic raw) {
+    if (raw is Map) return Map<String, dynamic>.from(raw);
+    if (raw is! List) return {};
+    final attributes = <String, dynamic>{};
+    for (final item in raw.whereType<Map>()) {
+      final entry = Map<String, dynamic>.from(item);
+      if (entry.length == 1) {
+        final key = entry.keys.first.toString();
+        attributes[key] = entry.values.first;
+        continue;
+      }
+      final name = entry['name'] ?? entry['key'];
+      if (name != null) attributes[name.toString()] = entry['value'];
+    }
+    return attributes;
   }
 
   static String? _mediaUrl(String? raw) {
@@ -395,6 +450,10 @@ class ProductDetailsModel {
       "categorySpecificFields": categorySpecificFields,
       "condition": condition,
       "categoryId": categoryId,
+      "cityId": cityId,
+      "regionId": regionId,
+      "showPhone": showPhone,
+      "mediaIds": mediaIds,
     };
   }
 }

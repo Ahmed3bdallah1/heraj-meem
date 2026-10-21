@@ -52,6 +52,8 @@ abstract class ApiPath {
   static const cartActions = 'cart/add';
   static String deleteFromCart(String id) => 'cart/remove/$id';
 
+  static const createReview = 'reviews';
+
   static String getProductReviews(String productId) =>
       'reviews/product/$productId';
 
@@ -89,6 +91,7 @@ abstract class ApiPath {
   static String getPublicProfile(String userId) => 'users/$userId';
   static const getAds = 'ads';
   static const createAd = 'ads';
+  static String publishAd(String adId) => 'ads/$adId/publish';
   static const createMedia = 'media';
   static String promoteAdMedia(String adId) => 'media/ads/$adId/promote';
   static String deleteMedia(String mediaId) => 'media/$mediaId';

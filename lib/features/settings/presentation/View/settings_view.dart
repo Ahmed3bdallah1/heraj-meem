@@ -1,7 +1,5 @@
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:heraj_meem/features/address/presentation/view/address_screen.dart';
-import 'package:heraj_meem/features/auth/presentation/view/register_page.dart';
 import 'package:heraj_meem/helper/extensions/adaptive_view.dart';
 import 'package:heraj_meem/helper/responsive.dart';
 import 'package:flutter/cupertino.dart';
@@ -127,12 +125,6 @@ class _MyProfileSectionContent extends StatelessWidget {
             onTap: () => Get.to(() => const UpdateProfileView()),
             icon: Icons.person_outline,
             title: 'Personal Information'.tr,
-          ),
-          const _SettingsDivider(),
-          SettingsItem(
-            onTap: () => Get.to(() => const AddressScreen()),
-            icon: Icons.location_city,
-            title: 'Addresses'.tr,
           ),
           const _SettingsDivider(),
           SettingsItem(
@@ -413,12 +405,6 @@ class _MyProfileSection extends StatelessWidget {
               onTap: () => Get.to(() => const UpdateProfileView()),
               icon: Icons.person_outline,
               title: 'Personal Information'.tr,
-            ),
-            const _SettingsDivider(),
-            SettingsItem(
-              onTap: () => Get.to(() => const AddressScreen()),
-              icon: Icons.location_city,
-              title: 'Addresses'.tr,
             ),
             const _SettingsDivider(),
             SettingsItem(

@@ -16,6 +16,7 @@ class FavoriteButton extends StatelessWidget {
     required this.isFavorited,
     this.isOutlined = false,
     this.size, this.color = Colors.white,
+    this.activeColor = AppColor.primary,
   });
 
   final ProductModel product;
@@ -23,6 +24,7 @@ class FavoriteButton extends StatelessWidget {
   final bool isFavorited;
   final bool isOutlined;
   final Color? color;
+  final Color activeColor;
   final double? size;
 
   @override
@@ -47,7 +49,7 @@ class FavoriteButton extends StatelessWidget {
       child: Icon(
         isFavorited ? Icons.favorite : Icons.favorite_border,
         size: size != null ? size! * .5 : 20,
-        color: isFavorited ? AppColor.primary : color,
+        color: isFavorited ? activeColor : color,
       ),
     );
   }

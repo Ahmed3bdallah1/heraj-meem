@@ -12,7 +12,7 @@ import 'package:heraj_meem/features/home/presentation/managers/baho_feed_provide
 import 'package:heraj_meem/features/store/presentation/view/store_category_screen.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
-import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 import '../../../../core/service/localization_service/localization_service.dart';
 import '../../../../main.dart';
@@ -131,7 +131,10 @@ class _AllCategoriesScreenState extends ConsumerState<AllCategoriesScreen>
             child: provider.customWhen(
               ref: ref,
               refreshable: refreshable,
-              loading: () => _CategoriesLoading(bottomInset: bottomInset),
+              loading: () => _CategoriesLoading(
+                bottomInset: bottomInset,
+                showAllTile: !widget.isRootTab,
+              ),
               data: (categories) {
                 return ValueListenableBuilder<String>(
                   valueListenable: _query,
@@ -661,30 +664,85 @@ class _EmptyCategories extends StatelessWidget {
 }
 
 class _CategoriesLoading extends StatelessWidget {
-  const _CategoriesLoading({required this.bottomInset});
+  const _CategoriesLoading({
+    required this.bottomInset,
+    required this.showAllTile,
+  });
 
   final double bottomInset;
+  final bool showAllTile;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, bottomInset),
-      itemCount: 6,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerEffect(
-            enable: true,
-            child: Container(
-              height: 84,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
-              ),
+    final base = Color.lerp(AppColor.primary, Colors.white, 0.72)!;
+    final highlight = Color.lerp(AppColor.primary, Colors.white, 0.9)!;
+    final cards = List.generate(5, (index) => _placeholderCategory(index));
+    return Skeletonizer(
+      enabled: true,
+      ignorePointers: true,
+      containersColor: AppColor.primary.withAlpha(22),
+      effect: ShimmerEffect(
+        baseColor: base,
+        highlightColor: highlight,
+        duration: const Duration(milliseconds: 1200),
+      ),
+      child: ListView.builder(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, bottomInset),
+        itemCount: cards.length + (showAllTile ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (showAllTile && index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _AllCategoriesTile(onTap: () {}),
+            );
+          }
+          final category = cards[showAllTile ? index - 1 : index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _CategoryCard(
+              category: category,
+              name: category.name,
+              term: '',
+              expanded: false,
+              onTap: () {},
+              onChildTap: (_) {},
+              childName: (child) => child.name,
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
+}
+
+CategoryModel _placeholderCategory(int index) {
+  return CategoryModel(
+    id: 'skeleton-$index',
+    name: 'Category name',
+    nameTr: 'Category name',
+    nameAr: 'اسم التصنيف',
+    slug: 'skeleton-$index',
+    level: 0,
+    order: 0,
+    isActive: true,
+    createdAt: '',
+    updatedAt: '',
+    v: 0,
+    children: List.generate(
+      4,
+      (child) => CategoryModel(
+        id: 'skeleton-$index-$child',
+        name: 'Subcategory',
+        nameTr: 'Subcategory',
+        nameAr: 'تصنيف فرعي',
+        slug: 'skeleton-$index-$child',
+        level: 1,
+        order: 0,
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+        v: 0,
+      ),
+    ),
+  );
 }

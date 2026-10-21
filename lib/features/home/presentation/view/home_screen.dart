@@ -23,18 +23,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with HomeLogicMixin {
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: onRefresh,
-        child: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          child: const CustomScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(child: HomeHeaderComponent()),
-              SliverToBoxAdapter(child: HomeFeaturedAdsComponent()),
-              SliverToBoxAdapter(child: HomeCategoriesComponent()),
-              SliverToBoxAdapter(child: HomePhotosFilterComponent()),
-              SliverToBoxAdapter(child: HomeAdsGridComponent()),
-              SliverGap(24),
-            ],
+        child: NotificationListener<ScrollNotification>(
+          onNotification: onAdsScroll,
+          child: Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: const CustomScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(child: HomeHeaderComponent()),
+                SliverToBoxAdapter(child: HomeFeaturedAdsComponent()),
+                SliverToBoxAdapter(child: HomeCategoriesComponent()),
+                SliverToBoxAdapter(child: HomePhotosFilterComponent()),
+                SliverToBoxAdapter(child: HomeAdsGridComponent()),
+                SliverGap(50),
+              ],
+            ),
           ),
         ),
       ),

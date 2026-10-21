@@ -259,7 +259,6 @@ class _ChatMessagesScreenState extends ConsumerState<ChatMessagesScreen> {
     final displayImage = chatImage.isNotEmpty ? chatImage : fallbackImage;
 
     return Scaffold(
-      backgroundColor: AppColor.primary2,
       appBar: AppBar(
         backgroundColor: Colors.white,
         leadingWidth: 50,
@@ -379,8 +378,9 @@ class _ChatMessagesScreenState extends ConsumerState<ChatMessagesScreen> {
 
   Widget _buildMessageInput(ChatMessagesState state) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         color: Colors.white,
         boxShadow: [
           BoxShadow(

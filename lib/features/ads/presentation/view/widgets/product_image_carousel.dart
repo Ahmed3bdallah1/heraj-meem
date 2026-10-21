@@ -17,12 +17,14 @@ class ProductImageCarousel extends ConsumerStatefulWidget {
   final ProductModel productModel;
   final List<dynamic> images;
   final List<BadgeModel>? badges;
+  final bool isMine;
 
   const ProductImageCarousel({
     super.key,
     required this.images,
     this.badges,
     required this.productModel,
+    this.isMine = false,
   });
 
   @override
@@ -165,35 +167,36 @@ class _ProductImageCarouselState extends ConsumerState<ProductImageCarousel> {
                   ),
                 ),
               ),
-              PositionedDirectional(
-                start: 10,
-                bottom: 15,
-                child: Row(
-                  children: [
-                    ContainerButton(
-                      radius: 20,
-                      size: 30,
-                      color: Colors.white,
-                      icon: Icons.share,
-                      iconColor: AppColor.black,
-                      onTap: () {},
-                    ),
-                    const Gap(8),
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor: AppColor.white,
-                      child: FavoriteButton(
-                        product: widget.productModel,
-                        ref: ref,
-                        size: 50,
-                        color: AppColor.black,
-                        isFavorited: ref.watch(isFavoritedProduct(
-                            widget.productModel.id.toString())),
+              if (!widget.isMine)
+                PositionedDirectional(
+                  start: 10,
+                  bottom: 15,
+                  child: Row(
+                    children: [
+                      ContainerButton(
+                        radius: 20,
+                        size: 30,
+                        color: Colors.white,
+                        icon: Icons.share,
+                        iconColor: AppColor.black,
+                        onTap: () {},
                       ),
-                    ),
-                  ],
+                      const Gap(8),
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundColor: AppColor.white,
+                        child: FavoriteButton(
+                          product: widget.productModel,
+                          ref: ref,
+                          size: 50,
+                          color: AppColor.black,
+                          isFavorited: ref.watch(isFavoritedProduct(
+                              widget.productModel.id.toString())),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ),

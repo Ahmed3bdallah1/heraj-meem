@@ -80,128 +80,121 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> with 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          AnimatedBackground(
-            animation: _backgroundAnimationController,
-          ),
-          CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 100,
-                floating: true,
-                pinned: true,
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                leading: Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColor.white.withAlpha(230),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(10),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 100,
+            floating: true,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            leading: Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColor.white.withAlpha(230),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(10),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      color: AppColor.black,
-                    ),
-                    onPressed: () => Get.back(),
-                  ),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
-                  title: Text(
-                    "Notifications".tr,
-                    style: AppFont.font20W700Black,
-                  ),
-                  centerTitle: false,
-                ),
+                ],
               ),
-              SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    AnimatedSizeAndFade.showHide(
-                        show: !ref.watch(hideNavBarProvider2),
-                        child: Consumer(builder: (context, ref, child) {
-                          const data = NotificationFilterType.values;
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: Row(
-                                  children: data
-                                      .map(
-                                        (e) =>
-                                            NotificationsCustomActionChip(value: e),
-                                      )
-                                      .toList()),
+              child: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColor.black,
+                ),
+                onPressed: () => Get.back(),
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
+              title: Text(
+                "Notifications".tr,
+                style: AppFont.font20W700Black,
+              ),
+              centerTitle: false,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Row(
+              children: [
+                AnimatedSizeAndFade.showHide(
+                    show: !ref.watch(hideNavBarProvider2),
+                    child: Consumer(builder: (context, ref, child) {
+                      const data = NotificationFilterType.values;
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Row(
+                              children: data
+                                  .map(
+                                    (e) =>
+                                        NotificationsCustomActionChip(value: e),
+                                  )
+                                  .toList()),
+                        ),
+                      );
+                    })),
+              ],
+            ),
+          ),
+          SliverFillRemaining(
+            child: HideNavBarWidget(
+              customProvider: hideNavBarProvider2,
+              child: Consumer(builder: (context, ref, _) {
+                final notificationsList = ref.watch(fetchNotificationsProvider);
+                return notificationsList.customWhen(
+                    ref: ref,
+                    refreshable: fetchNotificationsProvider.future,
+                    data: (notifications) {
+                      if (notifications.isEmpty) {
+                        return NotFoundWidget(
+                            haveIcon: true,
+                            title: "No Notifications right now.!".tr);
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ListView.separated(
+                            itemBuilder: (context, index) {
+                              return NotificationContainer(
+                                  notificationEntity: notifications[index]);
+                            },
+                            separatorBuilder: (context, index) {
+                              return const Gap(10);
+                            },
+                            itemCount: notifications.length),
+                      );
+                    },
+                    loading: () {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: 6,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey[900]!,
+                              highlightColor: Colors.green[100]!,
+                              child: Container(
+                                height: 180,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withAlpha(38),
+                                  borderRadius: BorderRadius.circular(35),
+                                ),
+                              ),
                             ),
                           );
-                        })),
-                  ],
-                ),
-              ),
-              SliverFillRemaining(
-                child: HideNavBarWidget(
-                  customProvider: hideNavBarProvider2,
-                  child: Consumer(builder: (context, ref, _) {
-                    final notificationsList = ref.watch(fetchNotificationsProvider);
-                    return notificationsList.customWhen(
-                        ref: ref,
-                        refreshable: fetchNotificationsProvider.future,
-                        data: (notifications) {
-                          if (notifications.isEmpty) {
-                            return NotFoundWidget(
-                                haveIcon: true,
-                                title: "No Notifications right now.!".tr);
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: ListView.separated(
-                                itemBuilder: (context, index) {
-                                  return NotificationContainer(
-                                      notificationEntity: notifications[index]);
-                                },
-                                separatorBuilder: (context, index) {
-                                  return const Gap(10);
-                                },
-                                itemCount: notifications.length),
-                          );
                         },
-                        loading: () {
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: 6,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Shimmer.fromColors(
-                                  baseColor: Colors.grey[900]!,
-                                  highlightColor: Colors.green[100]!,
-                                  child: Container(
-                                    height: 180,
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withAlpha(38),
-                                      borderRadius: BorderRadius.circular(35),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        });
-                  }),
-                ),
-              )
-            ],
-          ),
+                      );
+                    });
+              }),
+            ),
+          )
         ],
       ),
     );

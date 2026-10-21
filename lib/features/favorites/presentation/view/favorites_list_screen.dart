@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import 'package:heraj_meem/features/favorites/presentation/view/widgets/favorite_widgets.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
-import 'package:heraj_meem/features/categories/presentation/view/widgets/all_categories/animated_background.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../config/app_font.dart';
 import '../managers/favorites.dart';
 
@@ -120,6 +121,7 @@ class _FavoritesListScreenState extends ConsumerState<FavoritesListScreen>
                     refreshable: favoritesProvider.future,
                     skipLoadingOnRefresh: true,
                     skipLoadingOnReload: true,
+                    loading: () => const _FavoritesSkeleton(),
                     data: (data) {
                       if (data.isEmpty) {
                         return _EmptyFavoritesState();
@@ -153,6 +155,66 @@ class _FavoritesListScreenState extends ConsumerState<FavoritesListScreen>
       ),
     );
   }
+}
+
+class _FavoritesSkeleton extends StatelessWidget {
+  const _FavoritesSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final base = Color.lerp(AppColor.primary, Colors.white, 0.72)!;
+    final highlight = Color.lerp(AppColor.primary, Colors.white, 0.9)!;
+    return Skeletonizer(
+      enabled: true,
+      ignorePointers: true,
+      containersColor: AppColor.primary.withAlpha(22),
+      effect: ShimmerEffect(
+        baseColor: base,
+        highlightColor: highlight,
+        duration: const Duration(milliseconds: 1200),
+      ),
+      child: Column(
+        children: [
+          const Gap(16),
+          for (var index = 0; index < 4; index++)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: FavoriteWidget(
+                favoritesModel: _placeholderFavorite(index),
+              ),
+            ),
+          Gap(MediaQuery.of(context).padding.bottom + 16),
+        ],
+      ),
+    );
+  }
+}
+
+ProductModel _placeholderFavorite(int index) {
+  return ProductModel(
+    id: 'skeleton-$index',
+    name: 'Favorite ad title',
+    sku: '',
+    isFeatured: false,
+    isFavorite: true,
+    productType: 'customer',
+    images: const [],
+    badges: const [],
+    status: 'ACTIVE',
+    stock: 1,
+    variants: const [],
+    variantCombinations: const [],
+    isFeaturedDeal: false,
+    views: 0,
+    specifications: const [],
+    priceHistory: const [],
+    createdAt: '',
+    updatedAt: '',
+    v: 0,
+    price: 1200,
+    category: Category(id: index, name: 'Category'),
+    averageRating: '4.5',
+  );
 }
 
 class AnimatedFavoriteCard extends StatefulWidget {

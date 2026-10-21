@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import '../features/address/presentation/view/address_screen.dart';
 import '../features/auth/presentation/view/login_page.dart';
 import '../features/auth/presentation/view/register_page.dart';
 import '../features/categories/presentation/view/all_categories_screen.dart';
@@ -106,12 +105,6 @@ final List<GetPage> appRoutes = [
   GetPage(
     name: '/open-store',
     page: () => const OpenStoreView(),
-  ),
-
-  // Address
-  GetPage(
-    name: '/addresses',
-    page: () => const AddressScreen(),
   ),
 
   // Other Features

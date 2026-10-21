@@ -10,6 +10,13 @@ abstract class CreateAdRepo {
 
   Future<Either<Failure, String>> createAd(CreateAdRequest request);
 
+  Future<Either<Failure, bool>> publishAd(String adId);
+
+  Future<Either<Failure, String>> updateAd({
+    required String adId,
+    required CreateAdRequest request,
+  });
+
   Future<Either<Failure, bool>> promoteMedia({
     required String adId,
     required List<String> mediaIds,
