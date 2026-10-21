@@ -1,6 +1,5 @@
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:location/location.dart';
-import 'package:tuple/tuple.dart';
-import '../../../features/address/domain/use_case/address_use_cases.dart';
 
 class LocationDetails {
   const LocationDetails({
@@ -19,11 +18,9 @@ class LocationDetails {
 class LocationService {
   LocationService({
     Location? location,
-    required this.reverseGeocodeUseCase,
   }) : _location = location ?? Location();
 
   final Location _location;
-  final ReverseGeocodeUseCase reverseGeocodeUseCase;
 
   Future<LocationDetails?> getCurrentLocation() async {
     try {
@@ -61,44 +58,60 @@ class LocationService {
   Future<LocationDetails> _geocodeLocation(
       double latitude, double longitude) async {
     try {
-      final result = await reverseGeocodeUseCase.call(Tuple2(latitude, longitude));
+      final marks = await geo.placemarkFromCoordinates(latitude, longitude);
+      if (marks.isEmpty) return _fallbackLocation(latitude, longitude);
 
-      return result.fold(
-        (failure) {
-          print('Reverse geocoding error: ${failure.message}');
-          return LocationDetails(
-            latitude: latitude,
-            longitude: longitude,
-            name: 'Current location',
-            fullAddress: '$latitude, $longitude',
-          );
-        },
-        (geocoding) {
-          print('Geocoding success:');
-          print('  display_name: ${geocoding.displayName}');
-          print('  city: ${geocoding.address.city}');
-          print('  country: ${geocoding.address.country}');
+      final place = marks.first;
+      final name = _firstFilled([
+        place.subLocality,
+        place.locality,
+        place.subAdministrativeArea,
+        place.name,
+      ]);
+      final address = _joinAddress([
+        place.street,
+        place.subLocality,
+        place.locality,
+        place.administrativeArea,
+        place.country,
+      ]);
 
-          final name = geocoding.address.locationName;
-          final address = geocoding.address.fullAddress;
-
-          return LocationDetails(
-            latitude: latitude,
-            longitude: longitude,
-            name: name.isNotEmpty ? name : 'Current location',
-            fullAddress: address.isNotEmpty ? address : '$latitude, $longitude',
-          );
-        },
+      return LocationDetails(
+        latitude: latitude,
+        longitude: longitude,
+        name: name.isNotEmpty ? name : 'Current location',
+        fullAddress: address.isNotEmpty ? address : '$latitude, $longitude',
       );
     } catch (e, stackTrace) {
       print('Geocoding error: $e');
       print('Stack trace: $stackTrace');
-      return LocationDetails(
-        latitude: latitude,
-        longitude: longitude,
-        name: 'Current location',
-        fullAddress: '$latitude, $longitude',
-      );
+      return _fallbackLocation(latitude, longitude);
     }
+  }
+
+  LocationDetails _fallbackLocation(double latitude, double longitude) {
+    return LocationDetails(
+      latitude: latitude,
+      longitude: longitude,
+      name: 'Current location',
+      fullAddress: '$latitude, $longitude',
+    );
+  }
+
+  String _firstFilled(List<String?> parts) {
+    for (final part in parts) {
+      final text = part?.trim() ?? '';
+      if (text.isNotEmpty) return text;
+    }
+    return '';
+  }
+
+  String _joinAddress(List<String?> parts) {
+    final seen = <String>{};
+    for (final part in parts) {
+      final text = part?.trim() ?? '';
+      if (text.isNotEmpty) seen.add(text);
+    }
+    return seen.join(', ');
   }
 }
