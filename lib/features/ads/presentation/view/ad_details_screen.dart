@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -6,13 +5,17 @@ import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/features/ads/data/models/product_details_model.dart';
 import 'package:heraj_meem/features/ads/data/models/product_model.dart';
+import 'package:heraj_meem/features/ads/presentation/managers/ad_contacted_provider.dart';
 import 'package:heraj_meem/features/ads/presentation/managers/products_managers.dart';
+import 'package:heraj_meem/features/ads/presentation/managers/publish_ad_flow.dart';
+import 'package:heraj_meem/features/ads/presentation/view/add_ad_screen.dart';
 import 'package:heraj_meem/features/ads/presentation/view/widgets/publisher_section.dart';
 import 'package:heraj_meem/features/ads/presentation/view/widgets/product_image_carousel.dart';
 import 'package:heraj_meem/features/ads/presentation/view/widgets/product_info_section.dart';
 import 'package:heraj_meem/features/ads/presentation/view/widgets/product_info_cards_section.dart';
 import 'package:heraj_meem/features/ads/presentation/view/widgets/product_description_section.dart';
 import 'package:heraj_meem/features/ads/presentation/view/widgets/product_specifications_section.dart';
+import 'package:heraj_meem/features/ads/presentation/view/widgets/rate_vendor_section.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
 import 'package:heraj_meem/ui/shared_widgets/custom_outlined_button.dart';
@@ -55,7 +58,9 @@ class AdDetailsScreen extends ConsumerWidget {
             ),
           ],
         ),
-        child: Row(
+        child: _isMyAd(product)
+            ? _ownerActions(context, ref, product)
+            : Row(
           children: [
             Expanded(
               child: CustomOutlinedButton(
@@ -79,6 +84,7 @@ class AdDetailsScreen extends ConsumerWidget {
                                 ? '$countryCode${phone.substring(1)}'
                                 : '$countryCode$phone';
                     UIHelper.phoneCall(fullPhone);
+                    _markContacted(ref, product.id);
                   } else {
                     UIHelper.showGlobalSnackBar(
                       text: 'Phone number not available'.tr,
@@ -142,6 +148,7 @@ class AdDetailsScreen extends ConsumerWidget {
                             "I'm interested in this product: ${product.name}",
                         "productId": product.id,
                       });
+                      _markContacted(ref, product.id);
                       Get.to(() => ChatMessagesScreen(
                             chatId: existingChat!.id,
                             peerName: product.sellerId?.profile?.name,
@@ -163,6 +170,7 @@ class AdDetailsScreen extends ConsumerWidget {
                           );
                         },
                         (chat) {
+                          _markContacted(ref, product.id);
                           Get.to(() => ChatMessagesScreen(
                                 chatId: chat.id,
                                 isNewChat: true,
@@ -185,12 +193,69 @@ class AdDetailsScreen extends ConsumerWidget {
         ));
   }
 
+  Widget _ownerActions(
+    BuildContext context,
+    WidgetRef ref,
+    ProductDetailsModel product,
+  ) {
+    final edit = CustomOutlinedButton(
+      text: 'Edit'.tr,
+      textColor: AppColor.primary,
+      radius: 12,
+      widget: Icon(Icons.edit_outlined, color: AppColor.primary, size: 20),
+      onPressed: () => Get.to(() => AddAdScreen(ad: product)),
+    );
+    if (product.status.toUpperCase() != 'DRAFT') {
+      return CustomFilledButton(
+        text: 'Edit'.tr,
+        color: AppColor.primary,
+        radius: 12,
+        widget: const Icon(
+          Icons.edit_outlined,
+          color: Colors.white,
+          size: 20,
+        ),
+        onPressed: () => Get.to(() => AddAdScreen(ad: product)),
+      );
+    }
+    return Row(
+      children: [
+        Expanded(child: edit),
+        const Gap(6),
+        Expanded(
+          child: CustomFilledButton(
+            text: 'Publish'.tr,
+            color: AppColor.primary,
+            radius: 12,
+            widget: const Icon(
+              Icons.campaign_outlined,
+              color: Colors.white,
+              size: 20,
+            ),
+            onPressed: () => confirmPublishAd(context, ref, product.id),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _markContacted(WidgetRef ref, String adId) {
+    ref.read(adContactedProvider(adId).notifier).state = true;
+  }
+
+  bool _isMyAd(ProductDetailsModel product) {
+    final myId = getIt<LocalDataManager>().getUser()?.id ?? '';
+    final ownerId = product.sellerId?.id ?? '';
+    return myId.isNotEmpty && ownerId.isNotEmpty && myId == ownerId;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final detailsProvider = mine
         ? fetchMyAdProvider(productId)
         : fetchProductByIdProvider(productId);
     final provider = ref.watch(detailsProvider);
+    final contacted = ref.watch(adContactedProvider(productId));
     final hasProvider = provider.valueOrNull;
 
     return Scaffold(
@@ -267,6 +332,10 @@ class AdDetailsScreen extends ConsumerWidget {
         data: (product) => _ProductDetailsBody(
           product: product,
           isReviewEnabled: isReviewEnabled,
+          isMine: _isMyAd(product),
+          showRate: contacted &&
+              !_isMyAd(product) &&
+              (product.sellerId?.id ?? '').isNotEmpty,
         ),
       ),
     );
@@ -276,9 +345,15 @@ class AdDetailsScreen extends ConsumerWidget {
 class _ProductDetailsBody extends StatelessWidget {
   final ProductDetailsModel product;
   final bool isReviewEnabled;
+  final bool isMine;
+  final bool showRate;
 
-  const _ProductDetailsBody(
-      {required this.product, required this.isReviewEnabled});
+  const _ProductDetailsBody({
+    required this.product,
+    required this.isReviewEnabled,
+    required this.isMine,
+    required this.showRate,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -292,9 +367,15 @@ class _ProductDetailsBody extends StatelessWidget {
             images: product.images,
             productModel: ProductModel.fromDetailsModel(product),
             badges: product.badges,
+            isMine: isMine,
           ),
           ProductInfoSection(product: product),
           PublisherSection(product: product),
+          if (showRate)
+            RateVendorSection(
+              adId: product.id,
+              revieweeId: product.sellerId?.id ?? '',
+            ),
           ProductInfoCardsSection(product: product),
           ProductSpecificationsSection(product: product),
           ProductDescriptionSection(product: product),

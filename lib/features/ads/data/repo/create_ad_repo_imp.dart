@@ -32,6 +32,28 @@ class CreateAdRepoImp extends CreateAdRepo {
   }
 
   @override
+  Future<Either<Failure, bool>> publishAd(String adId) async {
+    try {
+      await dataSource.publishAd(adId);
+      return const Right(true);
+    } catch (error) {
+      return Left(_failure(error));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> updateAd({
+    required String adId,
+    required CreateAdRequest request,
+  }) async {
+    try {
+      return Right(await dataSource.updateAd(adId: adId, request: request));
+    } catch (error) {
+      return Left(_failure(error));
+    }
+  }
+
+  @override
   Future<Either<Failure, bool>> promoteMedia({
     required String adId,
     required List<String> mediaIds,

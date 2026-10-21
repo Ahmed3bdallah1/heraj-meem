@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -13,6 +14,13 @@ abstract class CreateAdDataSource {
   Future<String> uploadMedia(File file);
 
   Future<String> createAd(CreateAdRequest request);
+
+  Future<void> publishAd(String adId);
+
+  Future<String> updateAd({
+    required String adId,
+    required CreateAdRequest request,
+  });
 
   Future<void> promoteMedia({
     required String adId,
@@ -54,12 +62,98 @@ class CreateAdDataSourceImpl implements CreateAdDataSource {
 
   @override
   Future<String> createAd(CreateAdRequest request) async {
+    final token = getIt<LocalDataManager>().getToken();
+    final form = FormData();
+    form.fields.addAll([
+      MapEntry('categoryId', request.categoryId),
+      MapEntry('cityId', request.cityId),
+      MapEntry('title', request.title),
+      MapEntry('description', request.description),
+      MapEntry('price', request.price.toString()),
+      MapEntry('showPhone', request.showPhone.toString()),
+      // Backend rejects an empty attributes array until it accepts [].
+      if (request.attributes.isNotEmpty)
+        MapEntry('attributes', jsonEncode(request.attributes)),
+    ]);
+    for (final path in request.imagePaths) {
+      form.files.add(
+        MapEntry('images', await MultipartFile.fromFile(path)),
+      );
+    }
     final response = await apiClient.post(
       url: ApiPath.createAd,
       returnDataOnly: true,
-      requestBody: request.toJson(),
+      receiveTimeout: null,
+      sendTimeOut: null,
+      header: {
+        'Accept-Language':
+            getIt<LocaleService>().handleLocaleInMain.languageCode,
+        'Accept': Headers.jsonContentType,
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      requestBody: form,
     );
     return _adId(response);
+  }
+
+  @override
+  Future<void> publishAd(String adId) {
+    return apiClient.post(url: ApiPath.publishAd(adId));
+  }
+
+  @override
+  Future<String> updateAd({
+    required String adId,
+    required CreateAdRequest request,
+  }) async {
+    final token = getIt<LocalDataManager>().getToken();
+    final header = {
+      'Accept-Language': getIt<LocaleService>().handleLocaleInMain.languageCode,
+      'Accept': Headers.jsonContentType,
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+    final localImages =
+        request.imagePaths.where((path) => !path.startsWith('http')).toList();
+    final dynamic body;
+    if (localImages.isEmpty) {
+      body = {
+        'categoryId': request.categoryId,
+        'cityId': request.cityId,
+        'title': request.title,
+        'description': request.description,
+        'price': request.price,
+        'showPhone': request.showPhone,
+        // Backend rejects an empty attributes array until it accepts [].
+        if (request.attributes.isNotEmpty) 'attributes': request.attributes,
+      };
+    } else {
+      final form = FormData();
+      form.fields.addAll([
+        MapEntry('categoryId', request.categoryId),
+        MapEntry('cityId', request.cityId),
+        MapEntry('title', request.title),
+        MapEntry('description', request.description),
+        MapEntry('price', request.price.toString()),
+        MapEntry('showPhone', request.showPhone.toString()),
+        // Backend rejects an empty attributes array until it accepts [].
+        if (request.attributes.isNotEmpty)
+          MapEntry('attributes', jsonEncode(request.attributes)),
+      ]);
+      for (final path in localImages) {
+        form.files.add(MapEntry('images', await MultipartFile.fromFile(path)));
+      }
+      body = form;
+    }
+    final response = await apiClient.patch(
+      url: ApiPath.getAd(adId),
+      returnDataOnly: true,
+      receiveTimeout: null,
+      sendTimeOut: null,
+      header: localImages.isEmpty ? null : header,
+      requestBody: body,
+    );
+    final id = _adId(response);
+    return id.isEmpty ? adId : id;
   }
 
   @override

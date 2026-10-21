@@ -9,6 +9,9 @@ class _AddAdDetailsStep extends StatelessWidget {
     required this.descriptionFocus,
     required this.onPickImages,
     required this.onRemoveImage,
+    required this.attributeFocus,
+    required this.onAddAttribute,
+    required this.onRemoveAttribute,
   });
 
   final ValueNotifier<List<AddAdPhoto>> photos;
@@ -18,6 +21,9 @@ class _AddAdDetailsStep extends StatelessWidget {
   final FocusNode descriptionFocus;
   final VoidCallback onPickImages;
   final ValueChanged<int> onRemoveImage;
+  final List<AddAdAttributeFocus> attributeFocus;
+  final VoidCallback onAddAttribute;
+  final ValueChanged<int> onRemoveAttribute;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +67,12 @@ class _AddAdDetailsStep extends StatelessWidget {
           maxLines: 6,
           style: AppFont.font14W500Black,
           decoration: _fieldDecoration('Enter product description here...'.tr),
+        ),
+        const Gap(16),
+        _AddAdAttributes(
+          focus: attributeFocus,
+          onAdd: onAddAttribute,
+          onRemove: onRemoveAttribute,
         ),
         const Gap(16),
         ValueListenableBuilder<bool>(

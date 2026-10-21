@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import 'package:heraj_meem/features/ads/presentation/managers/products_managers.dart';
+import 'package:heraj_meem/features/ads/presentation/managers/publish_ad_flow.dart';
 import 'package:heraj_meem/features/ads/presentation/view/ad_details_screen.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
+import 'package:heraj_meem/ui/shared_widgets/custom_filled_button.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
 
@@ -139,7 +141,13 @@ class _MyAdsScreenState extends ConsumerState<MyAdsScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (context, index) => _AdCard(product: shown[index]),
+                      (context, index) {
+                        final ad = shown[index];
+                        return _AdCard(
+                          product: ad,
+                          onPublish: () => confirmPublishAd(context, ref, ad.id),
+                        );
+                      },
                       childCount: shown.length,
                     ),
                   ),
@@ -155,9 +163,10 @@ class _MyAdsScreenState extends ConsumerState<MyAdsScreen> {
 }
 
 class _AdCard extends StatelessWidget {
-  const _AdCard({required this.product});
+  const _AdCard({required this.product, required this.onPublish});
 
   final ProductModel product;
+  final VoidCallback onPublish;
 
   @override
   Widget build(BuildContext context) {
@@ -215,6 +224,15 @@ class _AdCard extends StatelessWidget {
                         ),
                       ),
                       const Gap(8),
+                      if (product.status.toUpperCase() == 'DRAFT') ...[
+                        CustomFilledButton(
+                          text: 'Publish'.tr,
+                          radius: 8,
+                          verticalPadding: 8,
+                          onPressed: onPublish,
+                        ),
+                        const Gap(8),
+                      ],
                       Align(
                         alignment: AlignmentDirectional.centerEnd,
                         child: Container(
@@ -255,6 +273,8 @@ class _AdCard extends StatelessWidget {
         return 'Pending Review'.tr;
       case 'EXPIRED':
         return 'Expired'.tr;
+      case 'DRAFT':
+        return 'Draft'.tr;
       default:
         return status;
     }

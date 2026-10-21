@@ -3,13 +3,15 @@ part of '../../add_ad_screen.dart';
 class _AddAdPendingStep extends StatelessWidget {
   const _AddAdPendingStep({
     required this.createdAdId,
+    required this.publishing,
     required this.onViewAd,
-    required this.onGoHome,
+    required this.onPublish,
   });
 
   final ValueNotifier<String?> createdAdId;
+  final ValueNotifier<bool> publishing;
   final VoidCallback onViewAd;
-  final VoidCallback onGoHome;
+  final VoidCallback onPublish;
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +38,26 @@ class _AddAdPendingStep extends StatelessWidget {
             ValueListenableBuilder<String?>(
               valueListenable: createdAdId,
               builder: (context, adId, _) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: CustomFilledButton(
-                        text: 'View My Ad'.tr,
-                        onPressed:
-                            adId == null || adId.isEmpty ? null : onViewAd,
-                      ),
-                    ),
-                    const Gap(12),
-                    Expanded(
-                      child: CustomOutlinedButton(
-                        text: 'Go To Home'.tr,
-                        textColor: AppColor.primary,
-                        onPressed: onGoHome,
-                      ),
-                    ),
-                  ],
+                final canAct = adId != null && adId.isNotEmpty;
+                return ValueListenableBuilder<bool>(
+                  valueListenable: publishing,
+                  builder: (context, isPublishing, _) {
+                    return Column(
+                      children: [
+                        CustomOutlinedButton(
+                          text: 'Leave it draft & view it'.tr,
+                          textColor: AppColor.primary,
+                          onPressed: !canAct || isPublishing ? null : onViewAd,
+                        ),
+                        const Gap(12),
+                        CustomFilledButton(
+                          text: 'Publish the ad'.tr,
+                          isLoading: isPublishing,
+                          onPressed: !canAct || isPublishing ? null : onPublish,
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             ),

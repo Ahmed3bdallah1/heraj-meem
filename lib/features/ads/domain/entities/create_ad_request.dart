@@ -5,8 +5,8 @@ class CreateAdRequest {
   final String description;
   final num price;
   final bool showPhone;
-  final List<String> mediaIds;
-  final Map<String, dynamic> attributes;
+  final List<String> imagePaths;
+  final List<Map<String, String>> attributes;
 
   const CreateAdRequest({
     required this.categoryId,
@@ -15,12 +15,12 @@ class CreateAdRequest {
     required this.description,
     required this.price,
     required this.showPhone,
-    this.mediaIds = const [],
-    this.attributes = const {},
+    this.imagePaths = const [],
+    this.attributes = const [],
   });
 
   factory CreateAdRequest.fromJson(Map<String, dynamic> json) {
-    final media = json['mediaIds'];
+    final images = json['imagePaths'] ?? json['images'];
     return CreateAdRequest(
       categoryId: json['categoryId']?.toString() ?? '',
       cityId: json['cityId']?.toString() ?? '',
@@ -29,13 +29,11 @@ class CreateAdRequest {
       price: json['price'] is num
           ? json['price'] as num
           : num.tryParse(json['price']?.toString() ?? '') ?? 0,
-      showPhone: json['showPhone'] != false,
-      mediaIds: media is List
-          ? media.map((item) => item.toString()).toList()
+      showPhone: json['showPhone'] == true || json['showPhone'] == 'true',
+      imagePaths: images is List
+          ? images.map((item) => item.toString()).toList()
           : const [],
-      attributes: json['attributes'] is Map
-          ? Map<String, dynamic>.from(json['attributes'] as Map)
-          : const {},
+      attributes: _attributeList(json['attributes']),
     );
   }
 
@@ -46,11 +44,14 @@ class CreateAdRequest {
         'description': description,
         'price': price,
         'showPhone': showPhone,
-        'mediaIds': mediaIds,
+        'images': imagePaths,
         'attributes': attributes,
       };
 
-  CreateAdRequest copyWith({List<String>? mediaIds}) {
+  CreateAdRequest copyWith({
+    List<String>? imagePaths,
+    List<Map<String, String>>? attributes,
+  }) {
     return CreateAdRequest(
       categoryId: categoryId,
       cityId: cityId,
@@ -58,8 +59,24 @@ class CreateAdRequest {
       description: description,
       price: price,
       showPhone: showPhone,
-      mediaIds: mediaIds ?? this.mediaIds,
-      attributes: attributes,
+      imagePaths: imagePaths ?? this.imagePaths,
+      attributes: attributes ?? this.attributes,
     );
   }
+}
+
+List<Map<String, String>> _attributeList(dynamic raw) {
+  if (raw is List) {
+    return raw.whereType<Map>().map((item) {
+      return item.map(
+        (key, value) => MapEntry(key.toString(), value.toString()),
+      );
+    }).toList();
+  }
+  if (raw is Map) {
+    return raw.entries
+        .map((entry) => {entry.key.toString(): entry.value.toString()})
+        .toList();
+  }
+  return const [];
 }
