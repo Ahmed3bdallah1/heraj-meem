@@ -107,24 +107,8 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
     return 'N/A';
   }
 
-  String? _getComparePrice() {
-    if (widget.favoritesModel.compareAtPrice != null &&
-        widget.favoritesModel.price != null &&
-        widget.favoritesModel.compareAtPrice! > widget.favoritesModel.price!) {
-      return widget.favoritesModel.compareAtPrice!.toStringAsFixed(2);
-    }
-
-    if (widget.favoritesModel.beforePrice != null &&
-        widget.favoritesModel.afterPrice != null) {
-      return widget.favoritesModel.beforePrice;
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final comparePrice = _getComparePrice();
-
     return GestureDetector(
         onTap: () => Get.to(
           () => AdDetailsScreen(
@@ -281,16 +265,6 @@ class _FavoriteWidgetState extends ConsumerState<FavoriteWidget>
                                 'Contact the publisher'.tr,
                                 style: AppFont.font14W600Primary,
                               ),
-                            if (comparePrice != null) ...[
-                              const Gap(8),
-                              PriceWidget(
-                                price: comparePrice,
-                                style: AppFont.font14W600Black,
-                                textColor: AppColor.grey2,
-                                decoration: TextDecoration.lineThrough,
-                                currencySize: 12,
-                              ),
-                            ],
                           ],
                         ),
                         if (widget.favoritesModel.averageRating != null) ...[
