@@ -104,6 +104,7 @@ dependencies:
   google_maps_flutter: ^2.12.3
   url_launcher: ^6.3.2
   location: ^8.0.1
+  geocoding: ^4.0.0
   share_plus: ^11.1.0
   country_picker: ^2.0.20
   story_view: ^0.16.6

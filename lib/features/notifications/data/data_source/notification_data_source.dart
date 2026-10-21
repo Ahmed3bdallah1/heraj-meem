@@ -22,17 +22,30 @@ class NotificationDataSourceImp extends NotificationDataSource {
     int page = 1,
     int limit = 50,
   }) async {
-    final res = await apiService.get<Map<String, dynamic>>(
+    final res = await apiService.get(
       url: '${ApiPath.notifications}?page=$page&limit=$limit',
       returnDataOnly: true,
     );
-    
-    final data = res['data'] as Map<String, dynamic>? ?? res;
-    final List<dynamic> notificationsList = data['notifications'] as List<dynamic>? ?? [];
-    final paginationData = data['pagination'] as Map<String, dynamic>? ?? {};
+
+    final List<dynamic> notificationsList;
+    Map<String, dynamic> paginationData = {};
+    if (res is List) {
+      notificationsList = res;
+    } else if (res is Map) {
+      final data = Map<String, dynamic>.from(res);
+      final nested = data['notifications'] ?? data['items'] ?? data['data'];
+      notificationsList = nested is List ? nested : const [];
+      final pagination = data['pagination'];
+      if (pagination is Map) {
+        paginationData = Map<String, dynamic>.from(pagination);
+      }
+    } else {
+      notificationsList = const [];
+    }
     
     final List<NotificationModel> notifications = notificationsList
-        .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
+        .whereType<Map>()
+        .map((e) => NotificationModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
     
     final pagination = NotificationPagination.fromJson(paginationData);
@@ -57,7 +70,14 @@ class NotificationDataSourceImp extends NotificationDataSource {
       url: ApiPath.notificationsUnreadCount,
       returnDataOnly: true,
     );
-    return res['count'] as int? ?? 0;
+    if (res is int) return res;
+    if (res is num) return res.toInt();
+    if (res is Map) {
+      final count = res['count'] ?? res['unread'] ?? res['unreadCount'];
+      if (count is int) return count;
+      return int.tryParse(count?.toString() ?? '') ?? 0;
+    }
+    return 0;
   }
 
   @override
