@@ -5,12 +5,14 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_color.dart';
 import 'package:heraj_meem/config/app_font.dart';
+import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
 import 'package:heraj_meem/core/service/localization_service/localization_service.dart';
+import 'package:heraj_meem/features/store/data/models/open_store_model.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/main.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
-import 'package:heraj_meem/ui/shared_widgets/shimmer_effect.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../ads/presentation/view/widgets/product_tile.dart';
 import '../managers/category_products_provider.dart';
 
@@ -63,6 +65,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen>
       body: categoryDetailsProvider.customWhen(
           ref: ref,
           refreshable: fetchCategoryDetailsProvider(widget.category.id).future,
+          loading: () => const _CategoryScreenSkeleton(),
           data: (categoryDetails) {
             return CustomScrollView(
               controller: _scrollController,
@@ -160,10 +163,12 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen>
 class _BreadcrumbAppBar extends StatelessWidget {
   final List breadcrumb;
   final String langCode;
+  final bool showLeading;
 
   const _BreadcrumbAppBar({
     required this.breadcrumb,
     required this.langCode,
+    this.showLeading = true,
   });
 
   @override
@@ -173,13 +178,15 @@ class _BreadcrumbAppBar extends StatelessWidget {
       floating: false,
       backgroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back,
-          color: AppColor.primary,
-        ),
-        onPressed: () => Get.back(),
-      ),
+      leading: showLeading
+          ? IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: AppColor.primary,
+              ),
+              onPressed: () => Get.back(),
+            )
+          : const SizedBox.shrink(),
       title: Row(
         children: [
           InkWell(
@@ -467,33 +474,170 @@ class AnimatedProductCard extends StatelessWidget {
   }
 }
 
+class _CategoryScreenSkeleton extends StatelessWidget {
+  const _CategoryScreenSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final langCode = Get.locale?.languageCode ?? 'ar';
+    return Stack(
+      children: [
+        _CategorySkeletonBody(
+          child: CustomScrollView(
+            slivers: [
+              _BreadcrumbAppBar(
+                breadcrumb: [_placeholderCrumb],
+                langCode: langCode,
+                showLeading: false,
+              ),
+              SliverToBoxAdapter(
+                child: _CategoryHeaderCard(
+                  category: _placeholderCategory(),
+                  langCode: langCode,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _SubcategoriesSection(
+                  subcategories: List.generate(
+                    4,
+                    (index) => _placeholderCategory(id: 'child-$index'),
+                  ),
+                  langCode: langCode,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    '12 ${'products found'.tr}',
+                    style: AppFont.font14W600Black.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(child: Gap(16)),
+              const SliverToBoxAdapter(child: _ProductTilesSkeleton()),
+              const SliverToBoxAdapter(child: Gap(80)),
+            ],
+          ),
+        ),
+        PositionedDirectional(
+          top: MediaQuery.paddingOf(context).top,
+          start: 4,
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColor.primary),
+            onPressed: Get.back,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CategorySkeletonBody extends StatelessWidget {
+  const _CategorySkeletonBody({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final base = Color.lerp(AppColor.primary, Colors.white, 0.72)!;
+    final highlight = Color.lerp(AppColor.primary, Colors.white, 0.9)!;
+    return Skeletonizer(
+      enabled: true,
+      ignorePointers: true,
+      containersColor: AppColor.primary.withAlpha(22),
+      effect: ShimmerEffect(
+        baseColor: base,
+        highlightColor: highlight,
+        duration: const Duration(milliseconds: 1200),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _ProductTilesSkeleton extends StatelessWidget {
+  const _ProductTilesSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return MasonryGridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      crossAxisCount: 2,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      itemCount: 4,
+      itemBuilder: (_, index) => ProductTile(product: _placeholderProduct(index)),
+    );
+  }
+}
+
 class _LoadingProductsGrid extends StatelessWidget {
   const _LoadingProductsGrid();
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      sliver: SliverMasonryGrid.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        itemBuilder: (context, index) {
-          return ShimmerEffect(
-            enable: true,
-            child: Container(
-              height: 250,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          );
-        },
-        childCount: 6,
-      ),
+    return const SliverToBoxAdapter(
+      child: _CategorySkeletonBody(child: _ProductTilesSkeleton()),
     );
   }
+}
+
+CategoryModel _placeholderCategory({String id = 'skeleton'}) {
+  return CategoryModel(
+    id: id,
+    name: 'Category name',
+    nameTr: 'Category name',
+    nameAr: 'اسم التصنيف',
+    slug: id,
+    level: 0,
+    order: 0,
+    isActive: true,
+    createdAt: '',
+    updatedAt: '',
+    v: 0,
+  );
+}
+
+final _placeholderCrumb = BreadcrumbItem(
+  id: 'skeleton',
+  name: 'Category',
+  nameAr: 'التصنيف',
+  nameTr: 'Category',
+  slug: 'skeleton',
+);
+
+ProductModel _placeholderProduct(int index) {
+  return ProductModel(
+    id: 'skeleton-$index',
+    name: 'Ad title',
+    sku: '',
+    afterPrice: '1200',
+    titleAr: 'عنوان الإعلان',
+    isFeatured: false,
+    isFavorite: false,
+    productType: 'customer',
+    images: const [],
+    badges: const [],
+    status: 'ACTIVE',
+    stock: 1,
+    variants: const [],
+    variantCombinations: const [],
+    isFeaturedDeal: false,
+    views: 0,
+    specifications: const [],
+    priceHistory: const [],
+    createdAt: '',
+    updatedAt: '',
+    v: 0,
+    price: 1200,
+    location: Location(neighborhood: 'الرياض'),
+    rating: Rating(average: 4, count: 12),
+  );
 }
 
 class _EmptyProductsState extends StatelessWidget {
