@@ -25,6 +25,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
     with PhoneValidationMixin, TickerProviderStateMixin {
   late final FormGroup formGroup;
   UserModel? _initialUser;
+  final nameFocus = FocusNode();
+  final phoneFocus = FocusNode();
+  final emailFocus = FocusNode();
+  final bioFocus = FocusNode();
   late AnimationController _backgroundAnimationController;
   final ScrollController _scrollController = ScrollController();
 
@@ -41,6 +45,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
 
   void _initializeForm() {
     final user = _initialUser;
+    final phoneParts = splitStoredPhone(user?.phone, user?.countryCode);
     formGroup = FormGroup({
       'name': FormControl<String>(
         validators: [Validators.required],
@@ -52,11 +57,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
       ),
       'phone': FormControl<String>(
         validators: [Validators.required],
-        value: user?.phone ?? '',
+        value: phoneParts.local,
       ),
       'countryCode': FormControl<String>(
         validators: [Validators.required],
-        value: user?.countryCode ?? '+20',
+        value: phoneParts.code,
       ),
       'email': FormControl<String>(
         value: user?.email ?? '',
@@ -64,6 +69,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
           Validators.required,
           Validators.email,
         ],
+      ),
+      'bio': FormControl<String>(
+        value: user?.bio ?? '',
       ),
     });
 
@@ -106,6 +114,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
 
   @override
   void dispose() {
+    nameFocus.dispose();
+    phoneFocus.dispose();
+    emailFocus.dispose();
+    bioFocus.dispose();
     formGroup.dispose();
     _backgroundAnimationController.dispose();
     _scrollController.dispose();
@@ -186,6 +198,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
                           EditPersonalInfo(
                             formGroup: formGroup,
                             phoneValidationMixin: this,
+                            nameFocus: nameFocus,
+                            phoneFocus: phoneFocus,
+                            emailFocus: emailFocus,
+                            bioFocus: bioFocus,
                           ),
                           Gap(MediaQuery.of(context).padding.bottom + 100),
                         ],

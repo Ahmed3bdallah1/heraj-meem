@@ -22,6 +22,10 @@ class ProfileHeaderTile extends ConsumerWidget {
     final imageUrl = user?.image ?? "";
     final userName = user?.name ?? "";
     final userPhone = user?.phone ?? "";
+    final placeLabel = [
+      user?.cityName,
+      user?.regionName,
+    ].whereType<String>().where((part) => part.trim().isNotEmpty).join(' · ');
     final editText = "Edit".tr;
 
     return SliverToBoxAdapter(
@@ -57,6 +61,27 @@ class ProfileHeaderTile extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        if (placeLabel.isNotEmpty) ...[
+                          const Gap(4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 14,
+                                color: AppColor.grey2,
+                              ),
+                              const Gap(4),
+                              Expanded(
+                                child: Text(
+                                  placeLabel,
+                                  style: AppFont.font12w500Grey2,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

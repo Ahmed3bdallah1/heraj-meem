@@ -15,10 +15,18 @@ class EditPersonalInfo extends ConsumerWidget {
     super.key,
     required this.formGroup,
     required this.phoneValidationMixin,
+    required this.nameFocus,
+    required this.phoneFocus,
+    required this.emailFocus,
+    required this.bioFocus,
   });
 
   final FormGroup formGroup;
   final PhoneValidationMixin phoneValidationMixin;
+  final FocusNode nameFocus;
+  final FocusNode phoneFocus;
+  final FocusNode emailFocus;
+  final FocusNode bioFocus;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +38,8 @@ class EditPersonalInfo extends ConsumerWidget {
           formControlName: "name",
           labelText: "name".tr,
           borderRadius: BorderRadius.circular(12),
+          focusNode: nameFocus,
+          textInputAction: TextInputAction.next,
         ),
         const Gap(12),
         Row(
@@ -41,6 +51,9 @@ class EditPersonalInfo extends ConsumerWidget {
                 formControlName: "phone",
                 hintText: "phone".tr,
                 labelText: "phone".tr,
+                inputType: TextInputType.phone,
+                focusNode: phoneFocus,
+                textInputAction: TextInputAction.next,
               ),
             ),
             const Gap(10),
@@ -71,8 +84,9 @@ class EditPersonalInfo extends ConsumerWidget {
                           showCountryPicker(
                             context: context,
                             onSelect: (Country selectedCountry) {
+                              final code = selectedCountry.phoneCode;
                               formGroup.control('countryCode').updateValue(
-                                    selectedCountry.phoneCode,
+                                    code.startsWith('+') ? code : '+$code',
                                     emitEvent: true,
                                   );
                             },
@@ -112,7 +126,9 @@ class EditPersonalInfo extends ConsumerWidget {
                               const Gap(6),
                               Flexible(
                                 child: Text(
-                                  country.phoneCode,
+                                  country.phoneCode.startsWith('+')
+                                      ? country.phoneCode
+                                      : '+${country.phoneCode}',
                                   style: AppFont.font14W500Black,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -132,6 +148,20 @@ class EditPersonalInfo extends ConsumerWidget {
         CustomTextField(
           formControlName: "email",
           labelText: "Email".tr,
+          focusNode: emailFocus,
+          textInputAction: TextInputAction.next,
+          inputType: TextInputType.emailAddress,
+        ),
+        const Gap(12),
+        CustomTextField(
+          formControlName: "bio",
+          labelText: "Bio".tr,
+          hintText: "Bio".tr,
+          focusNode: bioFocus,
+          textInputAction: TextInputAction.done,
+          maxLines: 4,
+          maxHeight: 120,
+          inputType: TextInputType.multiline,
         ),
         const Gap(50),
       ],
