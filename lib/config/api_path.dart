@@ -53,6 +53,7 @@ abstract class ApiPath {
   static String deleteFromCart(String id) => 'cart/remove/$id';
 
   static const createReview = 'reviews';
+  static String getSellerReviews(String userId) => 'reviews/user/$userId';
 
   static String getProductReviews(String productId) =>
       'reviews/product/$productId';
@@ -98,6 +99,7 @@ abstract class ApiPath {
   static const getMyAds = 'ads/mine';
   static String getAd(String adId) => 'ads/$adId';
   static String getMyAd(String adId) => 'ads/mine/$adId';
+  static const searchAds = 'search';
   static const searchSuggestions = 'search/suggestions';
   static String getNeighborhoods(String cityCode, String districtName) =>
       'locations/neighborhoods/$cityCode/${Uri.encodeComponent(districtName)}';
