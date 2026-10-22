@@ -6,7 +6,9 @@ class PublicProfileModel {
   final String avatarUrl;
   final String bio;
   final String phone;
+  final String countryCode;
   final String cityName;
+  final String regionName;
   final double score;
   final int memberNumber;
 
@@ -16,7 +18,9 @@ class PublicProfileModel {
     required this.avatarUrl,
     required this.bio,
     required this.phone,
+    this.countryCode = '',
     required this.cityName,
+    this.regionName = '',
     required this.score,
     required this.memberNumber,
   });
@@ -30,14 +34,23 @@ class PublicProfileModel {
         : json['city'] is Map
             ? Map<String, dynamic>.from(json['city'] as Map)
             : null;
+    final region = profile['region'] is Map
+        ? Map<String, dynamic>.from(profile['region'] as Map)
+        : json['region'] is Map
+            ? Map<String, dynamic>.from(json['region'] as Map)
+            : null;
     final trust = json['trustScore'] is Map
         ? Map<String, dynamic>.from(json['trustScore'] as Map)
         : null;
     final rawAvatar = profile['avatarUrl']?.toString() ??
         profile['avatar']?.toString() ??
         '';
-    final score = trust?['score'];
-    final member = json['memberNumber'];
+    final rating = json['rating'];
+    final score = trust?['score'] ??
+        (rating is Map
+            ? rating['average'] ?? rating['score']
+            : rating);
+    final member = json['memberNumber'] ?? profile['memberNumber'];
     return PublicProfileModel(
       id: json['id']?.toString() ?? '',
       displayName: profile['displayName']?.toString() ??
@@ -46,10 +59,20 @@ class PublicProfileModel {
           '',
       avatarUrl: _mediaUrl(rawAvatar),
       bio: profile['bio']?.toString() ?? json['bio']?.toString() ?? '',
-      phone: json['phone']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? profile['phone']?.toString() ?? '',
+      countryCode: json['countryCode']?.toString() ??
+          json['country_code']?.toString() ??
+          '',
       cityName: city?['nameAr']?.toString() ??
           city?['nameEn']?.toString() ??
+          city?['name']?.toString() ??
+          json['cityName']?.toString() ??
           json['location']?.toString() ??
+          '',
+      regionName: region?['nameAr']?.toString() ??
+          region?['nameEn']?.toString() ??
+          region?['name']?.toString() ??
+          json['regionName']?.toString() ??
           '',
       score: score is num
           ? score.toDouble()
@@ -67,7 +90,9 @@ class PublicProfileModel {
       'avatarUrl': avatarUrl,
       'bio': bio,
       'phone': phone,
+      'countryCode': countryCode,
       'cityName': cityName,
+      'regionName': regionName,
       'score': score,
       'memberNumber': memberNumber,
     };
