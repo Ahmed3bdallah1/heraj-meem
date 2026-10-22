@@ -134,6 +134,7 @@ When a screen file grows large (many private step/section widgets), **split it w
 
 - **Use `FormGroup` (reactive_forms) for screens with multiple text fields or form inputs.** Define a `FormGroup` with a `FormControl` for each field (e.g. title, description, dates, status). Wrap the screen body in `ReactiveForm(formGroup: formGroup, child: …)` and use `ReactiveTextField` / `CustomTextField(formControlName: '…')` (or `ReactiveDropdownField`) for inputs. Initialize the form in `initState`, dispose it in `dispose()`. This keeps form state and validation in one place and avoids scattered `TextEditingController`s.
 - **Give every text field in a form or bottom sheet its own `FocusNode`.** Create the nodes on the `State`, pass each one through `focusNode`, and dispose them in `dispose()`. Use `TextInputAction.next` on every field except the last, which uses `TextInputAction.done`. On submit, move focus to the next field’s node. The last field unfocuses the keyboard. Search fields in the same sheet take a focus node too, so the keyboard can move into and out of them.
+- **For any text field used for search, debounce with the `CustomDelay` class** (from `ui/shared_widgets/search_shipments_text_field.dart`). Call `run` on each change. Call `cancel` when the field is disposed or the search is submitted immediately. Do not use a raw `Timer` or another debounce helper for search.
 
 ---
 
