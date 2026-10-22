@@ -12,6 +12,7 @@ import 'package:heraj_meem/features/notifications/presentation/view/notification
 import 'location_bottom_sheet.dart';
 import '../../../../../config/app_font.dart';
 import '../../../../../ui/shared_widgets/loading_widget.dart';
+import '../../../../search/presentation/view/baho_search_screen.dart';
 import '../../../../search/presentation/view/search_screen.dart';
 
 class HomeHeaderWidget extends ConsumerWidget {
@@ -224,6 +225,12 @@ class HomeHeaderWidget extends ConsumerWidget {
                             child: TextField(
                               controller: controller,
                               focusNode: focusNode,
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (value) {
+                                final query = value.trim();
+                                if (query.isEmpty) return;
+                                Get.to(() => BahoSearchScreen(query: query));
+                              },
                               decoration: InputDecoration(
                                 hintText: 'Search in Baho...'.tr,
                                 hintStyle: AppFont.font14W500Grey2,
@@ -267,6 +274,12 @@ class HomeHeaderWidget extends ConsumerWidget {
                         },
                         itemBuilder: (context, String suggestion) {
                           return ListTile(
+                            leading: Icon(
+                              CupertinoIcons.search,
+                              color: AppColor.grey2,
+                              size: 18,
+                            ),
+                            minTileHeight: 48,
                             title: Text(
                               suggestion,
                               style: AppFont.font14W600Black,
@@ -276,8 +289,7 @@ class HomeHeaderWidget extends ConsumerWidget {
                           );
                         },
                         onSelected: (String suggestion) {
-                          ref.read(homeSearchQueryProvider.notifier).state =
-                              suggestion;
+                          Get.to(() => BahoSearchScreen(query: suggestion));
                         },
                         emptyBuilder: (context) => Padding(
                           padding: const EdgeInsets.all(16),

@@ -1,10 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heraj_meem/config/api_path.dart';
+import 'package:heraj_meem/core/service/auth_service.dart';
+import 'package:heraj_meem/core/service/local_data_manager.dart';
 import 'package:heraj_meem/core/service/webservice/dio_helper.dart';
 import 'package:heraj_meem/features/ads/data/models/product_model.dart';
 import 'package:heraj_meem/features/categories/data/models/main_category_model.dart';
 import 'package:heraj_meem/features/home/data/models/baho_feed.dart';
 import 'package:heraj_meem/main.dart';
+import 'package:heraj_meem/models/user_model.dart';
 
 final bahoPlaceProvider = StateProvider<BahoPlace?>((ref) => null);
 final photosOnlyProvider = StateProvider<bool>((ref) => false);
@@ -250,5 +253,60 @@ Future<void> saveUserPlace(BahoPlace place) async {
       'regionId': place.regionId,
     },
     returnDataOnly: false,
+  );
+  await _storeUserPlace(
+    cityId: place.cityId,
+    regionId: place.regionId,
+    cityName: place.cityName,
+    regionName: place.regionName,
+    citySlug: place.citySlug,
+  );
+}
+
+Future<void> clearUserPlace() async {
+  final api = getIt<ApiService>();
+  await api.patch(
+    url: ApiPath.updateUserMe,
+    requestBody: {
+      'cityId': null,
+      'regionId': null,
+    },
+    returnDataOnly: false,
+  );
+  await _storeUserPlace(clear: true);
+}
+
+Future<void> _storeUserPlace({
+  String? cityId,
+  String? regionId,
+  String? cityName,
+  String? regionName,
+  String? citySlug,
+  bool clear = false,
+}) async {
+  final current = dataManager.getUser();
+  if (current == null) return;
+  final updated = current.copyWithPlace(
+    cityId: cityId,
+    regionId: regionId,
+    cityName: cityName,
+    regionName: regionName,
+    citySlug: citySlug,
+    clearPlace: clear,
+  );
+  await dataManager.setUser(updated);
+  providerContainer.read(userProvider.notifier).state = updated;
+}
+
+BahoPlace? placeFromUser([UserModel? user]) {
+  user ??= dataManager.getUser();
+  final cityId = user?.cityId ?? '';
+  if (user == null || cityId.isEmpty) return null;
+  return BahoPlace(
+    regionId: user.regionId ?? '',
+    regionName: user.regionName ?? '',
+    cityId: cityId,
+    cityName: user.cityName ?? '',
+    citySlug: user.citySlug ?? '',
   );
 }
