@@ -528,13 +528,13 @@ String adAgeLabel(String createdAt) {
   final diff = DateTime.now().difference(date.toLocal());
   if (diff.isNegative || diff.inMinutes < 1) return 'Just now'.tr;
   if (diff.inMinutes < 60) {
-    return '%s mins ago'.trParams({'s': '${diff.inMinutes}'});
+    return '%s mins ago'.trArgs(['${diff.inMinutes}']);
   }
   if (diff.inHours < 24) {
-    return '%s hours ago'.trParams({'s': '${diff.inHours}'});
+    return '%s hours ago'.trArgs(['${diff.inHours}']);
   }
   if (diff.inDays == 1) return '1 day ago'.tr;
-  return '%s days ago'.trParams({'s': '${diff.inDays}'});
+  return '%s days ago'.trArgs(['${diff.inDays}']);
 }
 
 String _wholePrice(double value) {

@@ -21,6 +21,10 @@ import 'package:heraj_meem/features/ads/data/data_source/rate_vendor_data_source
 import 'package:heraj_meem/features/ads/data/repo/rate_vendor_repo_imp.dart';
 import 'package:heraj_meem/features/ads/domain/repo/rate_vendor_repo.dart';
 import 'package:heraj_meem/features/ads/domain/use_case/rate_vendor_use_case.dart';
+import 'package:heraj_meem/features/search/data/data_source/baho_search_data_source.dart';
+import 'package:heraj_meem/features/search/data/repo/baho_search_repo_imp.dart';
+import 'package:heraj_meem/features/search/domain/repo/baho_search_repo.dart';
+import 'package:heraj_meem/features/search/domain/use_case/search_ads_use_case.dart';
 import 'package:heraj_meem/features/ads/domain/use_case/create_ad_use_case.dart';
 import 'package:heraj_meem/features/ads/data/repo/product_repo_imp.dart';
 import 'package:heraj_meem/features/ads/domain/repo/product_repo.dart';
@@ -178,6 +182,12 @@ Future setupLocator() async {
       () => RateVendorRepoImp(dataSource: getIt<RateVendorDataSource>()));
   getIt.registerLazySingleton<RateVendorUseCase>(
       () => RateVendorUseCase(getIt<RateVendorRepo>()));
+  getIt.registerLazySingleton<BahoSearchDataSource>(
+      () => BahoSearchDataSourceImpl(api: getIt<ApiService>()));
+  getIt.registerLazySingleton<BahoSearchRepo>(
+      () => BahoSearchRepoImp(dataSource: getIt<BahoSearchDataSource>()));
+  getIt.registerLazySingleton<SearchAdsUseCase>(
+      () => SearchAdsUseCase(getIt<BahoSearchRepo>()));
 
   /// ads entity
   getIt.registerLazySingleton<AdsDataSource>(

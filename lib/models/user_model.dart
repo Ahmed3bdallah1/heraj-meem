@@ -167,6 +167,12 @@ class UserModel {
   final String? phone;
   final String? countryCode;
   final String? image;
+  final String? cityId;
+  final String? regionId;
+  final String? cityName;
+  final String? regionName;
+  final String? citySlug;
+  final String? bio;
   final bool isVerified;
   final String role;
   final bool? isProfileComplete;
@@ -180,6 +186,12 @@ class UserModel {
     this.phone,
     this.countryCode,
     this.image,
+    this.cityId,
+    this.regionId,
+    this.cityName,
+    this.regionName,
+    this.citySlug,
+    this.bio,
     required this.isVerified,
     this.isProfileComplete,
     this.hasPassword,
@@ -202,6 +214,12 @@ class UserModel {
         json['avatarUrl'] ??
         json['image_url'] ??
         '';
+    final city = json['city'] is Map
+        ? Map<String, dynamic>.from(json['city'] as Map)
+        : null;
+    final region = json['region'] is Map
+        ? Map<String, dynamic>.from(json['region'] as Map)
+        : null;
     var role = (json['role'] ?? json['userType'] ?? 'customer').toString();
     if (role == 'BUYER') role = 'customer';
     if (role == 'SELLER' || role == 'VENDOR') role = 'vendor';
@@ -213,6 +231,20 @@ class UserModel {
       phone: json['phone']?.toString(),
       countryCode: json['countryCode'] ?? json['country_code'],
       image: imageValue?.toString() ?? '',
+      cityId: json['cityId']?.toString() ?? city?['id']?.toString(),
+      regionId: json['regionId']?.toString() ??
+          region?['id']?.toString() ??
+          city?['regionId']?.toString(),
+      cityName: city?['nameAr']?.toString() ??
+          city?['nameEn']?.toString() ??
+          city?['name']?.toString() ??
+          json['cityName']?.toString(),
+      regionName: region?['nameAr']?.toString() ??
+          region?['nameEn']?.toString() ??
+          region?['name']?.toString() ??
+          json['regionName']?.toString(),
+      citySlug: city?['slug']?.toString() ?? json['citySlug']?.toString(),
+      bio: profile?['bio']?.toString() ?? json['bio']?.toString(),
       role: role,
       hasPassword: json['hasPassword'] ?? false,
       isRoleSelected: json['isRoleSelected'] ?? true,
@@ -231,11 +263,105 @@ class UserModel {
       'phone': phone,
       'countryCode': countryCode,
       'image': image,
+      'cityId': cityId,
+      'regionId': regionId,
+      'cityName': cityName,
+      'regionName': regionName,
+      'citySlug': citySlug,
+      'bio': bio,
       'is_verified': isVerified,
       'isProfileComplete': isProfileComplete,
       'hasPassword': hasPassword,
       'isRoleSelected': isRoleSelected,
       'role': role,
     };
+  }
+
+  UserModel copyWithPlace({
+    String? cityId,
+    String? regionId,
+    String? cityName,
+    String? regionName,
+    String? citySlug,
+    bool clearPlace = false,
+  }) {
+    return UserModel(
+      id: id,
+      name: name,
+      email: email,
+      phone: phone,
+      countryCode: countryCode,
+      image: image,
+      isVerified: isVerified,
+      isProfileComplete: isProfileComplete,
+      hasPassword: hasPassword,
+      isRoleSelected: isRoleSelected,
+      role: role,
+      cityId: clearPlace ? null : cityId ?? this.cityId,
+      regionId: clearPlace ? null : regionId ?? this.regionId,
+      cityName: clearPlace ? null : cityName ?? this.cityName,
+      regionName: clearPlace ? null : regionName ?? this.regionName,
+      citySlug: clearPlace ? null : citySlug ?? this.citySlug,
+      bio: bio,
+    );
+  }
+
+  UserModel copyWithPersonal({
+    String? name,
+    String? bio,
+    String? phone,
+    String? countryCode,
+    String? email,
+  }) {
+    return UserModel(
+      id: id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      countryCode: countryCode ?? this.countryCode,
+      image: image,
+      isVerified: isVerified,
+      isProfileComplete: isProfileComplete,
+      hasPassword: hasPassword,
+      isRoleSelected: isRoleSelected,
+      role: role,
+      cityId: cityId,
+      regionId: regionId,
+      cityName: cityName,
+      regionName: regionName,
+      citySlug: citySlug,
+      bio: bio ?? this.bio,
+    );
+  }
+
+  UserModel withSavedPlaceFrom(UserModel? stored) {
+    if (stored == null) return this;
+    final incomingCity = cityId ?? '';
+    final storedCity = stored.cityId ?? '';
+    final UserModel placed;
+    if (incomingCity.isEmpty) {
+      placed = storedCity.isEmpty
+          ? this
+          : copyWithPlace(
+              cityId: stored.cityId,
+              regionId: stored.regionId,
+              cityName: stored.cityName,
+              regionName: stored.regionName,
+              citySlug: stored.citySlug,
+            );
+    } else if (incomingCity != storedCity) {
+      placed = this;
+    } else {
+      placed = copyWithPlace(
+        regionId: (regionId ?? '').isEmpty ? stored.regionId : regionId,
+        cityName: (cityName ?? '').isEmpty ? stored.cityName : cityName,
+        regionName: (regionName ?? '').isEmpty ? stored.regionName : regionName,
+        citySlug: (citySlug ?? '').isEmpty ? stored.citySlug : citySlug,
+      );
+    }
+    return placed.copyWithPersonal(
+      name: placed.name.trim().isEmpty ? stored.name : placed.name,
+      bio: placed.bio ?? stored.bio,
+    );
   }
 }

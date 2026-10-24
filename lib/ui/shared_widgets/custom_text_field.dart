@@ -39,6 +39,7 @@ class CustomTextField<T> extends StatelessWidget {
     this.suffixText,
     this.focusNode,
     this.textInputAction,
+    this.maxHeight = 62,
   });
 
   final Iterable<String>? autofillHints;
@@ -68,6 +69,7 @@ class CustomTextField<T> extends StatelessWidget {
   final BorderRadius? borderRadius;
   final bool hideSelectableIconIfIgnore;
   final TextInputAction? textInputAction;
+  final double maxHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +86,17 @@ class CustomTextField<T> extends StatelessWidget {
           ValidationMessage.mustMatch.tr,
     };
     final InputDecoration decoration = InputDecoration(
-      contentPadding: const EdgeInsetsDirectional.only(start: 8),
+      isDense: maxLines == 1,
+      contentPadding: EdgeInsetsDirectional.only(
+        start: 8,
+        end: 12,
+        top: maxLines == 1 ? 0 : 12,
+        bottom: maxLines == 1 ? 0 : 12,
+      ),
+      prefixIconConstraints: const BoxConstraints(
+        minWidth: 40,
+        minHeight: 48,
+      ),
       labelStyle: AppFont.labelTextField,
       filled: true,
       suffixIcon: iconButton,
@@ -113,7 +125,7 @@ class CustomTextField<T> extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(radius)),
         borderSide: BorderSide(color: AppColor.primary, width: 2),
       ),
-      constraints: BoxConstraints(minHeight: 48, maxHeight: 62),
+      constraints: BoxConstraints(minHeight: 48, maxHeight: maxHeight),
     );
     final wid = type == TextFieldType.text
         ? ReactiveTextField<T>(
@@ -162,7 +174,7 @@ class CustomTextField<T> extends StatelessWidget {
             ],
             obscureText: obscure,
             style: AppFont.textFiled,
-            textAlignVertical: iconButton != null
+            textAlignVertical: maxLines == 1
                 ? TextAlignVertical.center
                 : TextAlignVertical.top,
             formControlName: formControlName,

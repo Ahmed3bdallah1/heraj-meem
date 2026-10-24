@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import '../../../../../core/service/auth_service.dart';
 import '../../../../../core/service/loading_provider.dart';
+import '../../../../../core/service/local_data_manager.dart';
 import '../../../../../main.dart';
 import '../../../../../ui/shared_widgets/custom_filled_button.dart';
 import '../../../../../ui/shared_widgets/custom_reactive_form_consumer.dart';
 import '../../../../../ui/ui.dart';
+import '../../../../../helper/phone_validation_mixin.dart';
 import '../../../domain/use_cases/update_profile_use_case.dart';
 import '../../manager/update_profile_provider.dart';
 import '../../manager/upload_file_notifier.dart';
 
-class EditProfileConfirmButton extends StatelessWidget {
+class EditProfileConfirmButton extends StatelessWidget with PhoneValidationMixin {
   const EditProfileConfirmButton({
     super.key,
     required this.formGroup,
@@ -40,7 +43,13 @@ class EditProfileConfirmButton extends StatelessWidget {
   }
 
   Future<void> _confirmEditProfile(FormGroup form,WidgetRef ref) async {
-    Map<String, dynamic> requestBody = form.value;
+    final countryCode = form.control('countryCode').value?.toString();
+    final localPhone = form.control('phone').value?.toString();
+    Map<String, dynamic> requestBody = {
+      ...form.value,
+      'countryCode': normalizeCountryCode(countryCode),
+      'phone': joinPhone(countryCode, localPhone),
+    };
     if (form.valid) {
       try {
         ref
@@ -63,9 +72,11 @@ class EditProfileConfirmButton extends StatelessWidget {
         );
         res.fold((l) {
           UIHelper.showAlert(l.message, type: DialogType.error);
-        }, (r) {
-          UIHelper.showAlert(r);
-          return ref.refresh(refreshProfileProvider.future);
+        }, (r) async {
+          await _rememberPersonalInfo(form);
+          UIHelper.showAlert(r.tr);
+          await ref.refresh(refreshProfileProvider.future).then((_) {});
+          await _rememberPersonalInfo(form);
         });
       } finally {
         ref
@@ -75,5 +86,21 @@ class EditProfileConfirmButton extends StatelessWidget {
     } else {
       form.markAllAsTouched();
     }
+  }
+
+  Future<void> _rememberPersonalInfo(FormGroup form) async {
+    final current = dataManager.getUser();
+    if (current == null) return;
+    final countryCode = form.control('countryCode').value?.toString();
+    final localPhone = form.control('phone').value?.toString();
+    final updated = current.copyWithPersonal(
+      name: form.control('name').value?.toString() ?? current.name,
+      bio: form.control('bio').value?.toString() ?? '',
+      phone: joinPhone(countryCode, localPhone),
+      countryCode: normalizeCountryCode(countryCode),
+      email: form.control('email').value?.toString() ?? current.email,
+    );
+    await dataManager.setUser(updated);
+    providerContainer.read(userProvider.notifier).state = updated;
   }
 }

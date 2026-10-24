@@ -108,9 +108,12 @@ class _RegionCitySheetState extends ConsumerState<_RegionCitySheet> {
           if (_region == null)
             ListTile(
               title: Text('All regions'.tr, style: AppFont.font14W600Black),
-              onTap: () {
+              onTap: () async {
+                try {
+                  await clearUserPlace();
+                } catch (_) {}
                 ref.read(bahoPlaceProvider.notifier).state = null;
-                Navigator.pop(context);
+                if (context.mounted) Navigator.pop(context);
               },
             ),
           Expanded(

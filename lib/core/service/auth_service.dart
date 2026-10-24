@@ -51,7 +51,9 @@ final fetchUserProvider = FutureProvider.autoDispose<bool>((ref) async {
         throw error;
       }
     }, (user) async {
-      ref.read(userProvider.notifier).state = user;
+      final merged = user.withSavedPlaceFrom(dataManager.getUser());
+      await dataManager.setUser(merged);
+      ref.read(userProvider.notifier).state = merged;
 
       // try {
       //   final uploader = FirestoreDataUploader();

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:heraj_meem/config/app_font.dart';
 import 'package:heraj_meem/features/ads/data/models/product_details_model.dart';
 import 'package:heraj_meem/features/ads/presentation/managers/public_profile_provider.dart';
+import 'package:heraj_meem/features/ads/presentation/view/public_profile_screen.dart';
 import 'package:heraj_meem/helper/riverpod.dart';
 import 'package:heraj_meem/ui/shared_widgets/image_or_svg.dart';
 import 'package:heraj_meem/ui/shared_widgets/loading_widget.dart';
@@ -20,11 +21,23 @@ class PublisherSection extends ConsumerWidget {
     if (sellerId.isEmpty) return const SizedBox.shrink();
 
     final profile = ref.watch(publicProfileProvider(sellerId));
+    void openProfile() {
+      Get.to(() => PublicProfileScreen(userId: sellerId, product: product));
+    }
+
     return profile.customWhen(
       ref: ref,
       refreshable: publicProfileProvider(sellerId).future,
-      loading: () => const _PublisherCard(child: LoadingWidget()),
+      loading: () => _PublisherCard(
+        onTap: openProfile,
+        child: const SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: LoadingWidget(),
+        ),
+      ),
       error: (_, __) => _PublisherCard(
+        onTap: openProfile,
         name: product.sellerId?.profile?.name ?? '',
         avatarUrl: product.sellerId?.profile?.avatar ?? '',
         cityName: [
@@ -34,9 +47,13 @@ class PublisherSection extends ConsumerWidget {
         score: product.rating.average,
       ),
       data: (publisher) => _PublisherCard(
+        onTap: openProfile,
         name: publisher.displayName,
         avatarUrl: publisher.avatarUrl,
-        cityName: publisher.cityName,
+        cityName: [
+          publisher.cityName,
+          publisher.regionName,
+        ].where((part) => part.trim().isNotEmpty).join(' · '),
         score: publisher.score,
         bio: publisher.bio,
         phone: publisher.phone,
@@ -48,6 +65,7 @@ class PublisherSection extends ConsumerWidget {
 
 class _PublisherCard extends StatelessWidget {
   const _PublisherCard({
+    required this.onTap,
     this.child,
     this.name = '',
     this.avatarUrl = '',
@@ -58,6 +76,7 @@ class _PublisherCard extends StatelessWidget {
     this.memberNumber = 0,
   });
 
+  final VoidCallback onTap;
   final Widget? child;
   final String name;
   final String avatarUrl;
@@ -79,22 +98,38 @@ class _PublisherCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xffE6E6E6)),
         ),
-        child: child ??
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _Avatar(url: avatarUrl),
-                const Gap(12),
-                Expanded(child: _Details(
-                  name: name,
-                  cityName: cityName,
-                  bio: bio,
-                  phone: phone,
-                  score: score,
-                  memberNumber: memberNumber,
-                )),
-              ],
-            ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            child: child ??
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _Avatar(url: avatarUrl),
+                    const Gap(12),
+                    Expanded(
+                      child: _Details(
+                        name: name,
+                        cityName: cityName,
+                        bio: bio,
+                        phone: phone,
+                        score: score,
+                        memberNumber: memberNumber,
+                      ),
+                    ),
+                    const Gap(8),
+                    Icon(
+                      Directionality.of(context) == TextDirection.rtl
+                          ? Icons.chevron_left_rounded
+                          : Icons.chevron_right_rounded,
+                      color: AppColor.grey2,
+                    ),
+                  ],
+                ),
+          ),
+        ),
       ),
     );
   }

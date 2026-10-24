@@ -20,7 +20,7 @@ import '../../../ads/presentation/view/my_ads_screen.dart';
 import '../../../favorites/presentation/view/favorites_list_screen.dart';
 import '../../../root/view/root_view.dart';
 import '../../../root/controller/root_controller.dart';
-import '../../../plans/presentation/view/plans_screen.dart';
+// import '../../../plans/presentation/view/plans_screen.dart';
 import '../../../profile/presentation/view/update_profile_view.dart';
 import 'help_support_screen.dart';
 import 'languages_screen.dart';
@@ -230,12 +230,12 @@ class _SettingsSectionContent extends ConsumerWidget {
             ),
           ),
           const _SettingsDivider(),
-          SettingsItem(
-            onTap: () => Get.to(() => const PlansScreen()),
-            icon: Icons.account_balance_wallet_outlined,
-            title: 'Pricing Plan'.tr,
-          ),
-          const _SettingsDivider(),
+          // SettingsItem(
+          //   onTap: () => Get.to(() => const PlansScreen()),
+          //   icon: Icons.account_balance_wallet_outlined,
+          //   title: 'Pricing Plan'.tr,
+          // ),
+          // const _SettingsDivider(),
           SettingsItem(
             onTap: () => Get.to(() => const HelpSupportScreen()),
             icon: Icons.help_outline,
@@ -506,12 +506,12 @@ class _SettingsSection extends ConsumerWidget {
               ),
             ),
             const _SettingsDivider(),
-            SettingsItem(
-              onTap: () => Get.to(() => const PlansScreen()),
-              icon: Icons.account_balance_wallet_outlined,
-              title: 'Pricing Plan'.tr,
-            ),
-            const _SettingsDivider(),
+            // SettingsItem(
+            //   onTap: () => Get.to(() => const PlansScreen()),
+            //   icon: Icons.account_balance_wallet_outlined,
+            //   title: 'Pricing Plan'.tr,
+            // ),
+            // const _SettingsDivider(),
             SettingsItem(
               onTap: () => Get.to(() => const HelpSupportScreen()),
               icon: Icons.help_outline,

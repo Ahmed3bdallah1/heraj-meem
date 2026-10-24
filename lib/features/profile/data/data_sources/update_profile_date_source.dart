@@ -60,26 +60,29 @@ class UpdateProfileDataSourceImpl extends UpdateProfileDataSource {
       }
     }
 
-    // Prepare request body
-    Map<String, dynamic> requestBody = Map<String, dynamic>.from(data);
-
-    // Remove the File object and add the image path if available
-    requestBody.remove('image');
+    final requestBody = <String, dynamic>{
+      'displayName': data['displayName'] ?? data['name'] ?? '',
+      'bio': data['bio']?.toString() ?? '',
+    };
+    final phone = data['phone'];
+    final countryCode = data['countryCode'];
+    final email = data['email'];
+    if (phone is String && phone.isNotEmpty) requestBody['phone'] = phone;
+    if (countryCode is String && countryCode.isNotEmpty) {
+      requestBody['countryCode'] = countryCode;
+    }
+    if (email is String && email.isNotEmpty) requestBody['email'] = email;
     if (imagePath != null && imagePath.isNotEmpty) {
-      requestBody['image'] = imagePath;
+      requestBody['avatarUrl'] = imagePath;
     }
 
-    // Remove null and empty values
-    requestBody.removeWhere(
-        (key, value) => value == null || (value is String && value.isEmpty));
-
-    // Use PUT method for auth/update-profile endpoint
-    final res = await apiService.put(
-      url: ApiPath.updateProfile,
+    final res = await apiService.patch(
+      url: ApiPath.updateUserMe,
       requestBody: requestBody,
       returnDataOnly: false,
     );
 
-    return res['message'] ?? 'Profile updated successfully';
+    final body = res is Map ? Map<String, dynamic>.from(res) : <String, dynamic>{};
+    return body['message']?.toString() ?? 'Profile updated successfully';
   }
 }

@@ -62,7 +62,49 @@ mixin PhoneValidationMixin {
 
   int? getPhoneLengthForCountryCode(String? phoneCode) {
     if (phoneCode == null) return null;
-    return phoneCodeToLength[phoneCode];
+    final code = phoneCode.startsWith('+') ? phoneCode : '+$phoneCode';
+    return phoneCodeToLength[code];
+  }
+
+  String normalizeCountryCode(String? raw, {String fallback = '+966'}) {
+    final value = (raw ?? '').trim();
+    if (value.isEmpty) return fallback;
+    return value.startsWith('+') ? value : '+$value';
+  }
+
+  ({String code, String local}) splitStoredPhone(
+    String? phone,
+    String? countryCode,
+  ) {
+    var local = (phone ?? '').trim().replaceAll(RegExp(r'[\s-]'), '');
+    var code = (countryCode ?? '').trim();
+    if (code.isNotEmpty && !code.startsWith('+')) code = '+$code';
+
+    if (code.isNotEmpty && local.startsWith(code)) {
+      local = local.substring(code.length);
+    } else if (local.startsWith('+')) {
+      final codes = phoneCodeToLength.keys.toList()
+        ..sort((a, b) => b.length.compareTo(a.length));
+      for (final known in codes) {
+        if (local.startsWith(known)) {
+          code = known;
+          local = local.substring(known.length);
+          break;
+        }
+      }
+    }
+
+    if (code.isEmpty) code = '+966';
+    if (local.startsWith('0')) local = local.substring(1);
+    return (code: code, local: local);
+  }
+
+  String joinPhone(String? countryCode, String? localNumber) {
+    final code = normalizeCountryCode(countryCode);
+    var local = (localNumber ?? '').trim().replaceAll(RegExp(r'[\s-]'), '');
+    if (local.startsWith('0')) local = local.substring(1);
+    if (local.startsWith(code)) return local;
+    return '$code$local';
   }
 
   PhoneNumberValidator phoneNumberValidator(FormGroup formGroup) {
