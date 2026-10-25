@@ -72,7 +72,6 @@ class _BahoSearchScreenState extends ConsumerState<BahoSearchScreen>
                       focusNode: searchFocus,
                       textInputAction: TextInputAction.search,
                       radius: 16,
-                      maxHeight: 48,
                       onChanged: (control) =>
                           onQueryChanged('${control.value ?? ''}'),
                       iconDataPrefix: Icon(

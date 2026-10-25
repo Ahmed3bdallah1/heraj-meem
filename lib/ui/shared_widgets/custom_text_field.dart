@@ -39,7 +39,6 @@ class CustomTextField<T> extends StatelessWidget {
     this.suffixText,
     this.focusNode,
     this.textInputAction,
-    this.maxHeight = 62,
   });
 
   final Iterable<String>? autofillHints;
@@ -69,7 +68,6 @@ class CustomTextField<T> extends StatelessWidget {
   final BorderRadius? borderRadius;
   final bool hideSelectableIconIfIgnore;
   final TextInputAction? textInputAction;
-  final double maxHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +84,10 @@ class CustomTextField<T> extends StatelessWidget {
           ValidationMessage.mustMatch.tr,
     };
     final InputDecoration decoration = InputDecoration(
-      isDense: maxLines == 1,
+      isDense: false,
       contentPadding: EdgeInsetsDirectional.only(
-        start: 8,
-        end: 12,
+        start: 16,
+        end: 16,
         top: maxLines == 1 ? 0 : 12,
         bottom: maxLines == 1 ? 0 : 12,
       ),
@@ -99,6 +97,7 @@ class CustomTextField<T> extends StatelessWidget {
       ),
       labelStyle: AppFont.labelTextField,
       filled: true,
+      fillColor: AppColor.white,
       suffixIcon: iconButton,
       prefixIcon: iconDataPrefix,
       hintText: hintText,
@@ -106,26 +105,36 @@ class CustomTextField<T> extends StatelessWidget {
       suffixText: suffixText,
       prefixStyle: AppFont.textFiled,
       suffixStyle: AppFont.textFiled,
-      hintStyle: AppFont.hintTextField,
+      hintStyle: AppFont.hintTextField.copyWith(height: 1.2),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(radius)),
-        borderSide: BorderSide(
-          color: AppColor.primary,
-        ),
+        borderSide: const BorderSide(color: AppColor.primary),
       ),
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(radius)),
-        borderSide: BorderSide(color: AppColor.grey1, width: 2),
+        borderSide: BorderSide(color: AppColor.grey1),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(radius)),
-        borderSide: BorderSide(color: AppColor.grey1, width: 2),
+        borderSide: BorderSide(color: AppColor.grey1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(radius)),
-        borderSide: BorderSide(color: AppColor.primary, width: 2),
+        borderSide: const BorderSide(color: AppColor.primary, width: 1.5),
       ),
-      constraints: BoxConstraints(minHeight: 48, maxHeight: maxHeight),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(radius)),
+        borderSide: BorderSide(color: AppColor.danger),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(radius)),
+        borderSide: BorderSide(color: AppColor.danger, width: 1.5),
+      ),
+      errorStyle: AppFont.font12w400Black.copyWith(
+        color: AppColor.danger,
+        height: 1.2,
+      ),
+      errorMaxLines: 2,
     );
     final wid = type == TextFieldType.text
         ? ReactiveTextField<T>(

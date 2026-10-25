@@ -6,6 +6,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../../../config/app_font.dart';
 import '../../../../../helper/phone_validation_mixin.dart';
+import '../../../../../ui/shared_widgets/country_flag.dart';
 
 class CountryCodeButton extends StatelessWidget with PhoneValidationMixin {
   const CountryCodeButton({
@@ -31,6 +32,7 @@ class CountryCodeButton extends StatelessWidget with PhoneValidationMixin {
               ? () {
                   showCountryPicker(
                     context: context,
+                    customFlagBuilder: (country) => CountryFlag(country, size: 24),
                     onSelect: (Country selectedCountry) {
                       formGroup.control('country_code').updateValue(
                             '+${selectedCountry.phoneCode}',
@@ -55,21 +57,22 @@ class CountryCodeButton extends StatelessWidget with PhoneValidationMixin {
                 }
               : null,
           child: Container(
-            width: 100,
+            width: 108,
             height: 48,
             decoration: BoxDecoration(
+              color: AppColor.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xffE6E6E6)),
+              border: Border.all(color: AppColor.grey1),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(country.flagEmoji, style: AppFont.font20W700Black),
+                CountryFlag(country),
                 const Gap(6),
                 Text(
                   country.phoneCode,
-                  style: AppFont.font14W500Black,
+                  style: AppFont.font14W500Black.copyWith(height: 1),
                 ),
               ],
             ),

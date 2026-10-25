@@ -4,7 +4,9 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../config/app_font.dart';
+import '../../../core/enum/language.dart';
 import '../../../core/service/local_data_manager.dart';
+import '../../../core/service/localization_service/localization_service.dart';
 import '../../../helper/responsive.dart';
 import '../../../ui/shared_widgets/custom_filled_button.dart';
 import '../../auth/presentation/view/login_page.dart';
@@ -86,36 +88,27 @@ class GetStartedScreen extends ConsumerWidget {
                   ),
                   const Gap(12),
                   Text(
-                    'Welcome! How would you like to use the app Welcome! How would.'.tr,
+                    'Choose your language'.tr,
                     style: AppFont.font14W500Black.copyWith(
                       color: AppColor.grey2,
                     ),
                   ),
                   const Gap(50),
                   CustomFilledButton(
-                    text: "I'm A Customer".tr,
+                    text: 'English'.tr,
                     textSize: 16,
                     color: AppColor.primary,
                     fontColor: Colors.white,
-                    onPressed: () async {
-                      dataManager.setSecondTime();
-                      ref.read(isUserProvider.notifier).state = true;
-                      Get.offAll(() => LoginPage());
-                    },
+                    onPressed: () => _continueWithLanguage(ref, Language.english),
                   ),
                   const Gap(16),
                   CustomFilledButton(
-                    text: "I'm A Vendor".tr,
+                    text: 'العربية'.tr,
                     textSize: 16,
                     color: AppColor.primary,
                     fontColor: Colors.white,
-                    onPressed: () async {
-                      dataManager.setSecondTime();
-                      ref.read(isUserProvider.notifier).state = false;
-                      Get.offAll(() => LoginPage());
-                    },
+                    onPressed: () => _continueWithLanguage(ref, Language.arabic),
                   ),
-                  const Gap(16),
                 ],
               ),
             ),
@@ -124,4 +117,11 @@ class GetStartedScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<void> _continueWithLanguage(WidgetRef ref, Language language) async {
+  await localeService.changeLocale(language);
+  await dataManager.setSecondTime();
+  ref.read(isUserProvider.notifier).state = true;
+  Get.offAll(() => LoginPage());
 }
