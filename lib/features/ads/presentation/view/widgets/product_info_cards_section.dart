@@ -12,19 +12,6 @@ class ProductInfoCardsSection extends StatelessWidget {
 
   const ProductInfoCardsSection({super.key, required this.product});
 
-  String _getWarrantyText() {
-    final langCode = getIt<LocaleService>().getLocale().locale.languageCode;
-    if (product.warranty == null || !product.warranty!.hasWarranty) {
-      return '';
-    }
-    if (langCode == 'ar') {
-      return product.warranty!.durationAr ?? product.warranty!.duration ?? '';
-    } else if (langCode == 'tr') {
-      return product.warranty!.durationTr ?? product.warranty!.duration ?? '';
-    }
-    return product.warranty!.duration ?? '';
-  }
-
   String _getDeliveryText() {
     final langCode = getIt<LocaleService>().getLocale().locale.languageCode;
     if (product.deliveryInfo == null) {
@@ -67,16 +54,6 @@ class ProductInfoCardsSection extends StatelessWidget {
       return 'Yerel müşteriler için daha hızlı teslimat';
     }
     return 'Faster delivery for local customers';
-  }
-
-  String _getWarrantyLabel() {
-    final langCode = getIt<LocaleService>().getLocale().locale.languageCode;
-    if (langCode == 'ar') {
-      return 'الضمان';
-    } else if (langCode == 'tr') {
-      return 'Garanti';
-    }
-    return 'Warranty';
   }
 
   String _getDeliveryInfoLabel() {
@@ -308,49 +285,6 @@ class ProductInfoCardsSection extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ],
-                    ),
-                  ),
-                ),
-              if (product.deliveryInfo != null && product.warranty != null)
-                const Gap(12),
-              if (product.warranty != null && product.warranty!.hasWarranty)
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE3F2FD),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.shield,
-                              color: Colors.blue,
-                              size: 20,
-                            ),
-                            const Gap(6),
-                            Expanded(
-                              child: Text(
-                                _getWarrantyLabel(),
-                                style: AppFont.font12W600Black,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Gap(8),
-                        if (_getWarrantyText().isNotEmpty)
-                          Text(
-                            _getWarrantyText(),
-                            style: AppFont.font12w400Black.copyWith(
-                              color: AppColor.grey2,
-                            ),
-                          ),
                       ],
                     ),
                   ),
