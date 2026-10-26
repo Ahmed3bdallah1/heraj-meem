@@ -268,10 +268,18 @@ class _EmptyAds extends StatelessWidget {
   final bool canCreate;
   final double bottom;
 
+  static const _horizontalPadding = 32.0;
+
   @override
   Widget build(BuildContext context) {
+    final buttonWidth = MediaQuery.sizeOf(context).width - _horizontalPadding * 2;
     return Padding(
-      padding: EdgeInsets.fromLTRB(32, 24, 32, bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        _horizontalPadding,
+        24,
+        _horizontalPadding,
+        bottom + 24,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -284,16 +292,12 @@ class _EmptyAds extends StatelessWidget {
           ),
           if (canCreate) ...[
             const Gap(16),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return CustomFilledButton(
-                  width: constraints.maxWidth,
-                  height: 48,
-                  radius: 16,
-                  text: 'Create your first ad'.tr,
-                  onPressed: () => Get.to(() => const AddAdScreen()),
-                );
-              },
+            CustomFilledButton(
+              width: buttonWidth,
+              height: 48,
+              radius: 16,
+              text: 'Create your first ad'.tr,
+              onPressed: () => Get.to(() => const AddAdScreen()),
             ),
           ],
         ],

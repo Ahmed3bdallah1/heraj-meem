@@ -239,24 +239,25 @@ class _HomeProductTileState extends ConsumerState<HomeProductTile> {
                   Row(
                     children: [
                       ...List.generate(5, (index) {
+                        final trustScore = widget.product.trustScore?.score;
+                        final rating = trustScore ??
+                            (double.tryParse(
+                                    widget.product.averageRating ?? "0") ??
+                                0);
                         return Icon(
                           Icons.star,
                           size: 12,
-                          color: index <
-                                  (double.tryParse(
-                                              widget.product.averageRating ??
-                                                  "0") ??
-                                          0)
-                                      .floor()
+                          color: index < rating.floor()
                               ? const Color(0xFFFFB800)
                               : Colors.grey[300],
                         );
                       }),
                       const SizedBox(width: 4),
                       Text(
-                        '(${widget.product.rating?.count ?? 0})',
-                        style: TextStyle(
-                          fontSize: 10,
+                        widget.product.trustScore != null
+                            ? widget.product.trustScore!.score.toStringAsFixed(1)
+                            : '(${widget.product.rating?.count ?? 0})',
+                        style: AppFont.font10w400Black.copyWith(
                           color: Colors.grey[600],
                         ),
                       ),

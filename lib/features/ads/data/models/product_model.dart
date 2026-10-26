@@ -1,5 +1,6 @@
 import 'package:heraj_meem/config/api_path.dart';
 import 'package:heraj_meem/features/ads/data/models/product_details_model.dart';
+import 'package:heraj_meem/features/ads/domain/entities/trust_score.dart';
 
 class ProductPaginatedModel {
   final bool success;
@@ -84,6 +85,7 @@ class ProductModel {
   final Warranty? warranty;
   final Location? location;
   final Rating? rating;
+  final TrustScore? trustScore;
   final String productType;
   final String? titleTr;
   final String? titleAr;
@@ -132,6 +134,7 @@ class ProductModel {
     this.warranty,
     this.location,
     this.rating,
+    this.trustScore,
     required this.productType,
     this.titleTr,
     this.titleAr,
@@ -253,8 +256,21 @@ class ProductModel {
     final ratingModel = ratingObj != null && ratingObj is Map<String, dynamic>
         ? Rating.fromJson(ratingObj)
         : null;
-    final averageRating = ratingModel?.average.toString() ??
-        (json['average_rating']?.toString() ?? '0.0');
+    final user = json['user'] is Map
+        ? Map<String, dynamic>.from(json['user'] as Map)
+        : null;
+    final trustScore = TrustScore.maybeFrom(user?['trustScore']);
+    final averageRating = trustScore != null
+        ? trustScore.score.toStringAsFixed(1)
+        : (ratingModel?.average.toString() ??
+            json['average_rating']?.toString() ??
+            '0.0');
+    final tileRating = trustScore != null
+        ? Rating(
+            average: trustScore.score,
+            count: ratingModel?.count ?? 0,
+          )
+        : ratingModel;
 
     final deliveryInfo = json['deliveryInfo'] != null &&
             json['deliveryInfo'] is Map<String, dynamic>
@@ -264,9 +280,6 @@ class ProductModel {
         json['warranty'] != null && json['warranty'] is Map<String, dynamic>
             ? Warranty.fromJson(json['warranty'])
             : null;
-    final user = json['user'] is Map
-        ? Map<String, dynamic>.from(json['user'] as Map)
-        : null;
     final location = _locationFromAd(json);
     final vendorId =
         json['vendorId'] != null && json['vendorId'] is Map<String, dynamic>
@@ -298,7 +311,8 @@ class ProductModel {
       deliveryInfo: deliveryInfo,
       warranty: warranty,
       location: location,
-      rating: ratingModel,
+      rating: tileRating,
+      trustScore: trustScore,
       productType: json['productType']?.toString() ?? '',
       titleTr: json['titleTr'] ?? json["title"] ?? json["name"] ?? "",
       titleAr: json['titleAr'] ?? json["title"] ?? json["name"] ?? "",
@@ -421,6 +435,13 @@ class ProductModel {
       "warranty": warranty?.toJson(),
       "location": location?.toJson(),
       "rating": rating?.toJson(),
+      if (trustScore != null)
+        "user": {
+          if (sellerId != null) "id": sellerId,
+          if (sellerPhone != null) "phone": sellerPhone,
+          if (sellerName != null) "profile": {"displayName": sellerName},
+          "trustScore": trustScore!.toJson(),
+        },
       "productType": productType,
       "adminCategory": adminCategory,
       "badges": badges,
