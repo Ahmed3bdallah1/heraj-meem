@@ -17,6 +17,7 @@ import '../../../../../config/app_font.dart';
 import '../../../../../helper/phone_validation_mixin.dart';
 import '../../../../../helper/responsive.dart';
 import '../../../../../ui/shared_widgets/custom_reactive_form_consumer.dart';
+import '../../../../../ui/shared_widgets/country_flag.dart';
 import '../../../../../ui/shared_widgets/custom_text_field.dart';
 import '../../../../../ui/ui.dart';
 import '../manager/auth_provuder.dart';
@@ -208,6 +209,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage>
                                 onTap: () {
                                   showCountryPicker(
                                     context: context,
+                                    customFlagBuilder: (country) =>
+                                        CountryFlag(country, size: 24),
                                     onSelect: (Country selectedCountry) {
                                       formGroup
                                           .control('country_code')
@@ -246,10 +249,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage>
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        country.flagEmoji,
-                                        style: AppFont.font20W700Black,
-                                      ),
+                                      CountryFlag(country),
                                       const Gap(6),
                                       Text(
                                         country.phoneCode,

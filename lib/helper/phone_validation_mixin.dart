@@ -52,12 +52,14 @@ mixin PhoneValidationMixin {
       '+90': 'TR', // Turkey
     };
 
-    try {
-      final isoCode = phoneCodeToIso[phoneCode] ?? 'EG';
+    final normalized = phoneCode.startsWith('+') ? phoneCode : '+$phoneCode';
+    final isoCode = phoneCodeToIso[normalized];
+    if (isoCode != null) {
       return Country.parse(isoCode);
-    } catch (e) {
-      return Country.parse('AE');
     }
+
+    final match = CountryService().findByPhoneCode(normalized.replaceFirst('+', ''));
+    return match ?? Country.parse('SA');
   }
 
   int? getPhoneLengthForCountryCode(String? phoneCode) {

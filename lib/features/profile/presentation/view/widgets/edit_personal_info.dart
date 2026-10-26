@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import '../../../../../../config/app_color.dart';
+import '../../../../../../ui/shared_widgets/country_flag.dart';
 import '../../../../../../ui/shared_widgets/custom_text_field.dart';
 import '../../../../../config/app_font.dart';
 
@@ -83,6 +84,8 @@ class EditPersonalInfo extends ConsumerWidget {
                         onTap: () {
                           showCountryPicker(
                             context: context,
+                            customFlagBuilder: (country) =>
+                                CountryFlag(country, size: 24),
                             onSelect: (Country selectedCountry) {
                               final code = selectedCountry.phoneCode;
                               formGroup.control('countryCode').updateValue(
@@ -119,10 +122,7 @@ class EditPersonalInfo extends ConsumerWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                country.flagEmoji,
-                                style: AppFont.font20W700Black,
-                              ),
+                              CountryFlag(country),
                               const Gap(6),
                               Flexible(
                                 child: Text(
@@ -160,7 +160,6 @@ class EditPersonalInfo extends ConsumerWidget {
           focusNode: bioFocus,
           textInputAction: TextInputAction.done,
           maxLines: 4,
-          maxHeight: 120,
           inputType: TextInputType.multiline,
         ),
         const Gap(50),

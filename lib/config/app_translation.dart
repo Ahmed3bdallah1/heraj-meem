@@ -282,6 +282,9 @@ class Translation extends Translations {
           "Business Document Selected": "Business Document Selected",
           "I'm A Customer": "I'm A Customer",
           "I'm A Vendor": "I'm A Vendor",
+          "Choose your language": "Choose your language",
+          "English": "English",
+          "العربية": "العربية",
           "Welcome! How would you like to use the app Welcome! How would.":
               "Welcome! How would you like to use the app?",
           // Onboarding
@@ -1096,6 +1099,9 @@ class Translation extends Translations {
           "Business Document Selected": "تم اختيار المستند التجاري",
           "I'm A Customer": "أنا عميل",
           "I'm A Vendor": "أنا بائع",
+          "Choose your language": "اختر لغتك",
+          "English": "English",
+          "العربية": "العربية",
           "Welcome! How would you like to use the app Welcome! How would.":
               "مرحباً! كيف تريد استخدام التطبيق",
           "Or": "أو",

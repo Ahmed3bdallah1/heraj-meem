@@ -62,33 +62,32 @@ class _LocationRequestBottomSheetState
       PermissionStatus permissionGranted = await location.hasPermission();
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await location.requestPermission();
-        if (permissionGranted != PermissionStatus.granted) {
-          if (mounted) {
-            _showLocationError('Location permission denied'.tr);
-          }
+      }
+      final allowed = permissionGranted == PermissionStatus.granted ||
+          permissionGranted == PermissionStatus.grantedLimited;
+      if (!allowed) {
+        if (mounted) {
+          _showLocationError('Location permission denied'.tr);
           setState(() => _isLoadingLocation = false);
-          return;
         }
+        return;
       }
 
-      // Get current location
+      // Let CoreLocation finish the authorization callback before reading
+      // a fix. Calling getLocation in that window never returns.
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      if (!mounted) return;
+
       final locationDetails = await locationService.getCurrentLocation();
+      if (!mounted) return;
 
       if (locationDetails != null) {
-        ref
-            .read(currentDisplayLocationProvider.notifier)
-            .state =
+        ref.read(currentDisplayLocationProvider.notifier).state =
             locationDetails;
         ref.invalidate(fetchLocationDetailsProvider);
-
-        if (mounted) {
-          Navigator.pop(context, locationDetails);
-        }
-      } else {
-        if (mounted) {
-          _showLocationError('Unable to get current location'.tr);
-        }
       }
+
+      Navigator.pop(context, locationDetails);
     } catch (e) {
       if (mounted) {
         _showLocationError('Error: ${e.toString()}');

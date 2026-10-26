@@ -27,13 +27,18 @@ class LocationService {
       final serviceEnabled = await _location.serviceEnabled();
       if (!serviceEnabled) return null;
 
+      // distanceFilter must stay 0. The iOS plugin drops the first two
+      // fixes, and a filter above 0 often never delivers another one
+      // while the phone is still, so getLocation() never completes.
       await _location.changeSettings(
         accuracy: LocationAccuracy.high,
         interval: 1000,
-        distanceFilter: 10,
+        distanceFilter: 0,
       );
 
-      final locationData = await _location.getLocation();
+      final locationData = await _location.getLocation().timeout(
+            const Duration(seconds: 8),
+          );
       final latitude = locationData.latitude;
       final longitude = locationData.longitude;
 
@@ -58,7 +63,9 @@ class LocationService {
   Future<LocationDetails> _geocodeLocation(
       double latitude, double longitude) async {
     try {
-      final marks = await geo.placemarkFromCoordinates(latitude, longitude);
+      final marks = await geo
+          .placemarkFromCoordinates(latitude, longitude)
+          .timeout(const Duration(seconds: 6));
       if (marks.isEmpty) return _fallbackLocation(latitude, longitude);
 
       final place = marks.first;

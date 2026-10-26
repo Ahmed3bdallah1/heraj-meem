@@ -52,12 +52,13 @@ class DefaultFirebaseOptions {
     projectId: 'heraj-meem',
     storageBucket: 'heraj-meem.firebasestorage.app',
   );
+
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCPaBZYTiEo3FIgAW224P1IppnsbF3K4bo',
-    appId: '1:732467824772:ios:eb42650ce64ec007b65ad1',
+    appId: '1:732467824772:ios:09c0b545660d9053b65ad1',
     messagingSenderId: '732467824772',
     projectId: 'heraj-meem',
     storageBucket: 'heraj-meem.firebasestorage.app',
-    iosBundleId: 'com.qeema.heraj.meem',
+    iosBundleId: 'app.qeema.heraj.meem',
   );
 }

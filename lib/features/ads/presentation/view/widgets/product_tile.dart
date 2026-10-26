@@ -137,10 +137,11 @@ class StarRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final trustScore = product.trustScore?.score;
+    final rating = trustScore ?? product.rating?.average ?? 0.0;
     return Row(
       children: [
         ...List.generate(5, (index) {
-          final rating = product.rating?.average ?? 0.0;
           if (index + 1 <= rating.floor()) {
             return Icon(
               Icons.star,
@@ -161,8 +162,11 @@ class StarRating extends StatelessWidget {
             );
           }
         }),
+        const SizedBox(width: 4),
         Text(
-          '(${product.rating?.count ?? 0})',
+          trustScore != null
+              ? trustScore.toStringAsFixed(1)
+              : '(${product.rating?.count ?? 0})',
           style: AppFont.font10w400Black.copyWith(color: AppColor.grey2),
         ),
       ],

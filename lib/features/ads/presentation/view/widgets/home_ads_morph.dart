@@ -468,6 +468,21 @@ class HomeAdListCard extends ConsumerWidget {
                               color: AppColor.grey2,
                             ),
                           ),
+                          if (product.trustScore != null) ...[
+                            const Gap(8),
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 14,
+                              color: Color(0xffE39B00),
+                            ),
+                            const Gap(2),
+                            Text(
+                              product.trustScore!.score.toStringAsFixed(1),
+                              style: AppFont.font12w400Black.copyWith(
+                                color: AppColor.grey2,
+                              ),
+                            ),
+                          ],
                           const Spacer(),
                           if (seller.isNotEmpty)
                             Flexible(
