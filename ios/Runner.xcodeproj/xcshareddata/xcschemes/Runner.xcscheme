@@ -97,5 +97,23 @@
    <ArchiveAction
       buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Materialize archived app"
+               scriptText = "set -e&#10;# The Strip Finder metadata build phase signs the app outside iCloud via a symlink.&#10;# exportArchive ignores that symlink, so replace it with the real bundle.&#10;app=&quot;${ARCHIVE_PRODUCTS_PATH:-}/Applications/Runner.app&quot;&#10;if [ ! -e &quot;$app&quot; ] &amp;&amp; [ -n &quot;${ARCHIVE_PATH:-}&quot; ]; then&#10;  app=&quot;${ARCHIVE_PATH}/Products/Applications/Runner.app&quot;&#10;fi&#10;if [ -L &quot;$app&quot; ]; then&#10;  target=&quot;$(readlink &quot;$app&quot;)&quot;&#10;  rm -f &quot;$app&quot;&#10;  /usr/bin/ditto --norsrc &quot;$target&quot; &quot;$app&quot;&#10;  /usr/bin/xattr -cr &quot;$app&quot;&#10;fi&#10;">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "97C146ED1CF9000F007C117D"
+                     BuildableName = "Runner.app"
+                     BlueprintName = "Runner"
+                     ReferencedContainer = "container:Runner.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
    </ArchiveAction>
 </Scheme>
