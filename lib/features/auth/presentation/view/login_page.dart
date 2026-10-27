@@ -25,8 +25,6 @@ import '../view/widgets/country_code_button.dart';
 import '../view/widgets/otp_bottom_sheet.dart';
 import 'otp_register_page.dart';
 
-final acceptPolicyProvider = StateProvider.autoDispose<bool>((ref) => false);
-
 final securePasswordProvider =
     StateProvider.family.autoDispose<bool, dynamic>((ref, _) => true);
 final isRememberProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -200,13 +198,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             color: AppColor.primary,
                             fontColor: Colors.white,
                             onPressed: () async {
-                              if (!ref.read(acceptPolicyProvider)) {
-                                UIHelper.showGlobalSnackBar(
-                                  text: 'Please accept the policy'.tr,
-                                  color: AppColor.danger,
-                                );
-                                return;
-                              }
                               if (formGroup.valid) {
                                 final countryCode =
                                     formGroup.value['country_code'] as String;
